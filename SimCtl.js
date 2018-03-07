@@ -3,7 +3,7 @@
 
 var TICKS_PER_DAY = 24 * 60;
 var TICKS_PER_HOUR = 60;
-//var body = Object.create(HumanBody.prototype);
+var body = new HumanBody();
 
 
 const EventType = {
@@ -77,13 +77,13 @@ class SimCtl {
         var event_type = event_.eventType_;
 
         switch(event_type){
-            case FOOD:
+            case EventType.FOOD:
                 body.processFoodEvent(event_.foodID_, event_.quantity_);
                 break;
-            case EXERCISE:
-                vody.processExerciseEvent(event_.exerciseID_, event_.duration_)
+            case EventType.EXERCISE:
+                body.processExerciseEvent(event_.exerciseID_, event_.duration_)
                 break;
-            case HALT:
+            case EventType.HALT:
                 process.ext();
                 break;
             default:
