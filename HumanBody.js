@@ -1,14 +1,3 @@
-var humanBodyH = require('./HumanBody.js'); // at end of each class need to include exports.data = methods
-var stomachIntestineH = require('./StomachIntestine.js');
-var liverH = require('./Liver.js');
-var bloodH = require('./Blood.js');
-var heartH = require('./Heart.js');
-var brainH = require('./Brain.js');
-var musclesH = require('./Muscles.js');
-var adiposeIissueH = require('./AdiposeTissue.js');
-var kidneysH = require('./Kidneys.js');
-var stimCtlH = require('./SimCtl.js');
-
 const BodyState = {
     FED_RESTING: 'FED_RESTING',
     FED_EXERCISING: 'FED_EXERCISING',
@@ -63,11 +52,11 @@ class HumanBody {
         var oldState = bodyState;
 
         switch (bodyState){
-            case FED_RESTING:
-                bodyState = POSTABSORPTIVE_RESTING;
+            case BodyState.FED_RESTING:
+                bodyState = BodyState.POSTABSORPTIVE_RESTING;
                 break;
-            case FED_EXERCISING:
-                bodyState = POSTABSORPTIVE_EXERCISING;
+            case BodyState.FED_EXERCISING:
+                bodyState = BodyState.POSTABSORPTIVE_EXERCISING;
                 break;
             default:
                 break;
@@ -93,18 +82,18 @@ class HumanBody {
         // dont worry about time_stamp yet, will be read from real-time database
         Console.log(" bgl " + blood.getBGL() + " weight "  + bodyWeight_);
 
-        if(bodyState == FED_EXERCISING){
+        if(bodyState == BodyState.FED_EXERCISING){
             // need to work on if statement, read from realtime db
             //if(){
-                bodyState = FED_RESTING;
+                bodyState = BodyState.FED_RESTING;
                 currEnergyExpenditure = 1.0/60.0;
             //}
         }
 
-        if(bodyState == POSTABSORPTIVE_EXERCISING){
+        if(bodyState == BodyState.POSTABSORPTIVE_EXERCISING){
             // need to work on if statement, read ticks from realtime db
             //if(){
-                bodyState = POSTABSORPTIVE_RESTING;
+                bodyState = BodyState.POSTABSORPTIVE_RESTING;
                 currEnergyExpenditure = 1.0/60.0;
             //}
         }
@@ -130,11 +119,11 @@ class HumanBody {
         stomach.addFood(foodId, howmuch);
         var oldState = bodyState;
         switch(bodyState){
-            case POSTABSORPTIVE_RESTING:
-                bodyState = FED_RESTING;
+            case BodyState.POSTABSORPTIVE_RESTING:
+                bodyState = BodyState.FED_RESTING;
                 break;
-            case POSTABSORPTIVE_EXERCISING:
-                bodyState = FED_EXERCISING;
+            case BodyState.POSTABSORPTIVE_EXERCISING:
+                bodyState = BodyState.FED_EXERCISING;
                 break;
             default:
                 break;
@@ -149,7 +138,7 @@ class HumanBody {
     }
 
     isExercising(){
-        if(bodyState == FED_EXERCISING || bodyState == POSTABSORPTIVE_EXERCISING){
+        if(bodyState == BodyState.FED_EXERCISING || bodyState == BodyState.POSTABSORPTIVE_EXERCISING){
             return true;
         }else{
             return false;
@@ -170,8 +159,8 @@ class HumanBody {
         // need to look into Javascript maps
         //currEnergyExpenditure = (exerciseTypes[exerciseID].intensity_)/60.0;
 
-        if(bodyState == FED_RESTING){
-            bodyState = FED_EXERCISING;
+        if(bodyState == BodyState.FED_RESTING){
+            bodyState = BodyState.FED_EXERCISING;
             // Look into accessing SimCtl
             //exerciseOverAt = SimCtl::ticks + duration;
             return;
