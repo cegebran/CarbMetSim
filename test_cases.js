@@ -1,6 +1,8 @@
 $('document').ready(function(){
     // creating object for queue classs
     var priorityQueue = new PriorityQueue();
+    var simCtl = new SimCtl();
+    var humanBody = new HumanBody();
 
     // testing isEmpty and front on an empty queue
     // return true
@@ -10,15 +12,16 @@ $('document').ready(function(){
     console.log(priorityQueue.front());
     
     //creating elements
-    var element1 = new QElement("heart", 2);
+    // (firetime, id, howmuch)
+    var element1 = new QElement(100, "heart", "sub1", 2);
     
-    var element2 = new QElement("kidney", 4);//check
+    var element2 = new QElement(10, "kidney", "sub2", 4);//check
     
-    var element3 = new QElement("liver", 3);//check
+    var element3 = new QElement(8, "liver", "sub3", 3);//check
     
-    var element4 = new QElement("brain", 1);//check
+    var element4 = new QElement(20, "brain", "sub4", 1);//check
     
-    var element5 = new QElement("heart2", 2);
+    var element5 = new QElement(25, "heart2", "sub5", 2);
     
     // adding elements to the queue
     priorityQueue.enqueue(element1);
@@ -44,9 +47,19 @@ $('document').ready(function(){
     // prints [Piyush Sumit Sunny Sunil Sheru]
     console.log(priorityQueue.printPQueue());
 
-    var simCtl = new SimCtl();
     simCtl.readEvents();
+    simCtl.addEvent(2018, EventType.FOOD, '2', 1);
+    simCtl.addEvent(2017, EventType.FOOD, '3', 1);
+    simCtl.addEvent(2016, EventType.EXERCISE, '2', 1);
+    console.log(simCtl.eventQ.front());
+    console.log(simCtl.fire_event());
+
+
     
-    var humanBody = new HumanBody();
     console.log(humanBody.currentEnergyExpenditure());
+
+    console.log(simCtl.elapsed_days());
+    console.log(simCtl.elapsed_hours());
+    console.log(simCtl.elapsed_minutes());
+
 });
