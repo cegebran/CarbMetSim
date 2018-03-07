@@ -51,20 +51,20 @@ class HumanBody {
     }
 
     stomachEmpty(){
-        var oldState = bodyState;
+        this.oldState = this.bodyState;
 
-        switch (bodyState){
+        switch (this.bodyState){
             case BodyState.FED_RESTING:
-                bodyState = BodyState.POSTABSORPTIVE_RESTING;
+                this.bodyState = BodyState.POSTABSORPTIVE_RESTING;
                 break;
             case BodyState.FED_EXERCISING:
-                bodyState = BodyState.POSTABSORPTIVE_EXERCISING;
+                this.bodyState = BodyState.POSTABSORPTIVE_EXERCISING;
                 break;
             default:
                 break;
         }
 
-        if(bodyState != oldState){
+        if(this.bodyState != this.oldState){
             // do nothing, original code just has cout but it is commented out
         }
     }
@@ -118,20 +118,20 @@ class HumanBody {
     }
 
     processFoodEvent(foodID, howmuch){
-        stomach.addFood(foodId, howmuch);
-        var oldState = bodyState;
-        switch(bodyState){
+        this.stomach.addFood(foodId, howmuch);
+        this.oldState = this.bodyState;
+        switch(this.bodyState){
             case BodyState.POSTABSORPTIVE_RESTING:
-                bodyState = BodyState.FED_RESTING;
+                this.bodyState = BodyState.FED_RESTING;
                 break;
             case BodyState.POSTABSORPTIVE_EXERCISING:
-                bodyState = BodyState.FED_EXERCISING;
+                this.bodyState = BodyState.FED_EXERCISING;
                 break;
             default:
                 break;
         }
         
-        if(bodyState != oldState){
+        if(this.bodyState != this.oldState){
             // all this code was commented out in original
             //setParams();
             //SimCtl::time_stamp();
@@ -140,7 +140,7 @@ class HumanBody {
     }
 
     isExercising(){
-        if(bodyState == BodyState.FED_EXERCISING || bodyState == BodyState.POSTABSORPTIVE_EXERCISING){
+        if(this.bodyState == BodyState.FED_EXERCISING || this.bodyState == BodyState.POSTABSORPTIVE_EXERCISING){
             return true;
         }else{
             return false;
@@ -148,7 +148,7 @@ class HumanBody {
     }
     
     processExerciseEvent(exerciseID, duration){
-        if( isExercising() ){
+        if(this.isExercising()){
             // convert when work on real-time database
             // SimCtl::time_stamp();
 
@@ -156,20 +156,20 @@ class HumanBody {
             process.exit();
         }
 
-        currExercise = exerciseID;
+        this.currExercise = exerciseID;
 
         // need to look into Javascript maps
         //currEnergyExpenditure = (exerciseTypes[exerciseID].intensity_)/60.0;
 
-        if(bodyState == BodyState.FED_RESTING){
-            bodyState = BodyState.FED_EXERCISING;
+        if(this.bodyState == BodyState.FED_RESTING){
+            this.bodyState = BodyState.FED_EXERCISING;
             // Look into accessing SimCtl
             //exerciseOverAt = SimCtl::ticks + duration;
             return;
         }
 
-        if(bodyState == POSTABSORPTIVE_RESTING){
-            bodyState = POSTABSORPTIVE_EXERCISING;
+        if(this.bodyState == BodyState.POSTABSORPTIVE_RESTING){
+            this.bodyState = BodyState.POSTABSORPTIVE_EXERCISING;
             // Look into accessing SimCtl
             // exerciseOverAt = SimCtl::ticks + duration;
             return;
