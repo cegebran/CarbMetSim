@@ -47,7 +47,7 @@ class HumanBody {
     // do not need to implement ~HumanBody as garbageCollection will take care of all objects (of organs)
 
     currentEnergyExpenditure(){
-        return bodyWeight_ * currEnergyExpenditure;
+        return this.bodyWeight_ * this.currEnergyExpenditure;
     }
 
     stomachEmpty(){
