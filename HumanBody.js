@@ -21,21 +21,23 @@ const BodyOrgan = {
 class HumanBody {
     constructor(){
 
-        this.stomach = new Stomach(this);
-        this.intestine = new Intestine(this);
-        this.portalVein = new PortalVein(this);
-        this.liver = new liverH(this);
-        this.brain = new brainH(this);
-        this.heart = new heartH(this);
+        // *****all commented out lines need to be uncommented when add each class for different organs*****
+
+        //this.stomach = new Stomach(this);
+        //this.intestine = new Intestine(this);
+        //this.portalVein = new PortalVein(this);
+        //this.liver = new liverH(this);
+        //this.brain = new brainH(this);
+        //this.heart = new heartH(this);
 
         this.insulinResistance_ = 0;
         this.insulinPeakLevel_ = 1.0;
-        this.bodyState = POSTABSORPTIVE_RESTING;    // need to figure out where this constant is stored
+        this.bodyState = BodyState.POSTABSORPTIVE_RESTING;
         this.bodyWeight_ = 65; //kg
         this.fatFraction = 0.2;
 
-        this.adiposeTissue = new AdiposeTissue(this);
-        this.muscles = new musclesH(this);
+        //this.adiposeTissue = new AdiposeTissue(this);
+        //this.muscles = new musclesH(this);
 
         this.currExercise = 0;
         this.currEnergyExpenditure = 1.0/60.0;
