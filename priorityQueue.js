@@ -1,10 +1,11 @@
 // User defined class
 // to store element and its priority
 class QElement {
-    constructor(firetime, ID, howmuch)
+    constructor(firetime, activityID, subID, howmuch)
     {
         this.firetime = firetime;
-        this.ID = ID;
+        this.ID = activityID;
+        this.subID = subID;
         this.howmuch = howmuch;
     }
 
@@ -82,7 +83,8 @@ class PriorityQueue {
         // in the Priority queue without removing it.
         if (this.isEmpty())
             return "No elements in Queue";
-        return this.items[0].ID + ", " + this.items[0].firetime;
+        return this.items[0];
+        //return this.items[0].ID + ", " + this.items[0].firetime;
     }
     
     // rear function
@@ -92,7 +94,8 @@ class PriorityQueue {
         // element of the queue
         if (this.isEmpty())
             return "No elements in Queue";
-        return this.items[this.items.length - 1].ID + ", " + this.items[this.items.length - 1].firetime;
+        return this.items[this.items.length - 1];
+        //return this.items[this.items.length - 1].ID + ", " + this.items[this.items.length - 1].firetime;
     }
     
     // isEmpty function
