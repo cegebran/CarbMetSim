@@ -56,41 +56,41 @@ class SimCtl {
     run_simulation(){
         while(true){
             var val;
-            while( (val = fire_event()) == 1);
+            while( (val = this.fire_event()) == 1);
             body.processTick();
-            ticks++;
+            this.ticks++;
         }
     }
 
     fire_event(){
-        var event_ = eventQ.front();
+        var event_ = this.eventQ.front();
 
-        if(!(event_)){
+        if(event_ === "No elements in Queue"){
             console.log("No event left");
-            process.exit();
+            // terminate program
         }
 
-        if(event_.fireTime > ticks){
+        if(event_.firetime > this.ticks){
             return -1;
         }
 
-        var event_type = event_.eventType_;
+        var event_type = event_.ID;
 
         switch(event_type){
             case EventType.FOOD:
-                body.processFoodEvent(event_.foodID_, event_.quantity_);
+                body.processFoodEvent(event_.subID, event_.howmuch);
                 break;
             case EventType.EXERCISE:
-                body.processExerciseEvent(event_.exerciseID_, event_.duration_)
+                body.processExerciseEvent(event_.subID, event_.howmuch)
                 break;
             case EventType.HALT:
-                process.ext();
+                // terminate program
                 break;
             default:
                 break;
         }
 
-        event_ = eventQ.dequeue();
+        event_ = this.eventQ.dequeue();
         //delete event_;
         return 1;
     }
@@ -98,15 +98,15 @@ class SimCtl {
     addEvent(fireTime, type, subtype, howmuch){
         switch (type){
             case EventType.FOOD:
-                var e = new QElement(fireTime, subtype, howmuch);
+                var e = new QElement(fireTime, type, subtype, howmuch);
                 this.eventQ.enqueue(e);
                 break;
             case EventType.EXERCISE:
-                var e = new QElement(fireTime, subtype, howmuch);
+                var e = new QElement(fireTime, type, subtype, howmuch);
                 this.eventQ.enqueue(e);
                 break;
             case EventType.HALT:
-                var e = new QElement(fireTime, subtype, howmuch);
+                var e = new QElement(fireTime, type, subtype, howmuch);
                 this.eventQ.enqueue(e);
             default:
                 break;               
@@ -127,26 +127,20 @@ class SimCtl {
             }
         }
         rawFile.send(null);*/
-        
-        // testing
-        this.addEvent(2018, EventType.FOOD, '2', 1);
-        this.addEvent(2017, EventType.FOOD, '3', 1);
-        this.addEvent(2016, EventType.EXERCISE, '2', 1);
-        console.log(this.eventQ.front());
     }
 
 
     elapsed_days(){
-        return(ticks/TICKS_PER_DAY);
+        return(this.ticks/TICKS_PER_DAY);
     }
 
     elapsed_hours(){
-        var x = ticks % TICKS_PER_DAY;
+        var x = this.ticks % TICKS_PER_DAY;
         return(x/TICKS_PER_HOUR);
     }
 
     elapsed_minutes(){
-        var x = ticks % TICKS_PER_DAY;
+        var x = this.ticks % TICKS_PER_DAY;
         return(x % TICKS_PER_HOUR);
     }
 }
@@ -158,7 +152,7 @@ function run_simulation(){
         var val;
         while( (val = fire_event()) == 1);
         // need to convert body->processTick();
-        ticks++;
+        this.ticks++;
     }
 
     return 0;
