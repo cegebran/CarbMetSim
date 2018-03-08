@@ -44,7 +44,6 @@ $('document').ready(function(){
     // Adding another element to the queue
     priorityQueue.enqueue(element5);
 
-    // prints [Piyush Sumit Sunny Sunil Sheru]
     console.log(priorityQueue.printPQueue());
 
     simCtl.readEvents();
