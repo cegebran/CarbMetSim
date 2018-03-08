@@ -1,8 +1,8 @@
 class AdiposeTissue{
     constructor(myBody)
     {
-        body = myBody;
-        fat = (body.fatFraction_) * (body.bodyWeight_)*1000.0;
+        this.body = myBody;
+        this.fat = (body.fatFraction_) * (body.bodyWeight_)*1000.0;
     }
 
     processTick()
