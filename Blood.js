@@ -1,4 +1,3 @@
-
 var ONEDAY = 24*60;
 var MAXAGE = 120;
 var HUNDREDDAYS = 100;
@@ -28,7 +27,7 @@ class Blood {
 
         //Gerich: insulin dependent: 1 to 5 micromol per kg per minute
         this.glycolysisMin_ = 0.1801559;
-        this.glycolysisMax_ = 5 * glycolysisMin_;
+        this.glycolysisMax_ = 5 * this.glycolysisMin_;
 
         this.glycolysisToLactate_ = 0.2;
 
@@ -41,11 +40,11 @@ class Blood {
         // 1 mmol/l of lactate = 0.5mmol/l of glucose = 0.5*180.1559*5 mg of glucose = 450.39 mg of glucose
 
         // initial number of RBCs
-        for(i = 0; i <= MAXAGE; i++){
+        for(var i = 0; i <= MAXAGE; i++){
             var e = new Object();
-            e.RBCs = 0.94 * rbcBirthRate_;
-            e.glycatedRBCs = 0.06 * rbcBirthRate_;
-            AgeBins.push(e);
+            e.RBCs = 0.94 * this.rbcBirthRate_;
+            e.glycatedRBCs = 0.06 * this.rbcBirthRate_;
+            this.AgeBins.push(e);
         }
 
         this.avgBGLOneDay = 0;
@@ -54,35 +53,35 @@ class Blood {
     }
 
     getBGL(){
-        var returnValue = glucose / fluidVolume_;
+        var returnValue = this.glucose / this.fluidVolume_;
         return returnValue;
     }
 
     getGNGSubstrates(){
-        var returnValue = gngSubstrates + lactate + alanine + glutamine;
+        var returnValue = this.gngSubstrates + this.lactate + this.alanine + this.glutamine;
         return returnValue;
     }
 
     updateRBCs(){
-        bin0--;
+        this.bin0--;
 
-        if(bin0 < 0){
-            bin0 = MAXAGE;
+        if(this.bin0 < 0){
+            this.bin0 = MAXAGE;
         }
 
         var k = new Object();
-        k.RBCs = rbcBirthRate_;
+        k.RBCs = this.rbcBirthRate_;
         k.glycatedRBCs = 0;
 
-        AgeBins.splice(bin0, 0, k);
+        this.AgeBins.splice(this.bin0, 0, k);
 
-        var start_bin = bin0 + HUNDREDDAYS;
+        var start_bin = this.bin0 + HUNDREDDAYS;
 
-        if(start_btn > MAXAGE){
+        if(start_bin > MAXAGE){
             start_bin -= (MAXAGE + 1);
         }
 
-        for(i = 0; i <= (MAXAGE-HUNDREDDAYS); i++){
+        for(var i = 0; i <= (MAXAGE-HUNDREDDAYS); i++){
             var j = start_bin + i;
 
             if(j < 0){
@@ -97,40 +96,40 @@ class Blood {
 
             var kill_rate = (1.0) * (i / (MAXAGE - HUNDREDDAYS));
 
-            var orginalRBCs = AgeBins[j].RBCs;
-            var orginalGlycatedRBCs = AgeBins[j].glycatedRBCs;
+            var orginalRBCs = this.AgeBins[j].RBCs;
+            var orginalGlycatedRBCs = this.AgeBins[j].glycatedRBCs;
 
             var p = new Object();
             p.RBCs = (1.0) * (orginalRBCs * (1.0 - kill_rate));
-            p.glycatedRBCs = (1.0) * (orginalGlycatedRBCs * (1.0 - kill_rate));
-            AgeBins.splice(j, 0, p);
+            p.glycatedRBCs = (1.0) * (this.orginalGlycatedRBCs * (1.0 - this.kill_rate));
+            this.AgeBins.splice(j, 0, p);
         }
 
-        var glycation_prob = avgBGLOneDay * glycationProbSlope_ + glycationProbConst_;
+        var glycation_prob = this.avgBGLOneDay * this.glycationProbSlope_ + this.glycationProbConst_;
 
         for(i = 0; i <= MAXAGE; i++){
-            var AgeBins_i_element_RBCs = AgeBins[i].RBCs;
-            var AgeBins_i_element_glycatedRBCs = AgeBins[i].glycatedRBCs;
-            var newly_glycated = glycation_prob * AgeBins_i_element;
+            var AgeBins_i_element_RBCs = this.AgeBins[i].RBCs;
+            var AgeBins_i_element_glycatedRBCs = this.AgeBins[i].glycatedRBCs;
+            var newly_glycated = this.glycation_prob * AgeBins_i_element_RBCs;
 
             var q = new Object();
             q.RBCs = AgeBins_i_element_RBCs - newly_glycated;
             q.glycatedRBCs = AgeBins_i_element_glycatedRBCs
 
-            AgeBins.splite(i, 0, q);
+            this.AgeBins.splice(i, 0, q);
         }
 
-        SimCtl.time_stamp();
-        Console.log("New HbAlc: " + currentHbAlc());
+        // print to the screen
+        return "New HbAlc: " + this.currentHbAlc();
     }
 
     currentHbAlc(){
         var rbcs = 0;
         var glycated_rbcs = 0;
 
-        for(i = 0; i <= MAXAGE; i++){
-            var AgeBins_RBCs = AgeBins[i].RBCs;
-            var AgeBins_glycatedRBCs = AgeBins[i].glycatedRBCs;
+        for(var i = 0; i <= MAXAGE; i++){
+            var AgeBins_RBCs = this.AgeBins[i].RBCs;
+            var AgeBins_glycatedRBCs = this.AgeBins[i].glycatedRBCs;
 
             rbcs += AgeBins_RBCs;
             rbcs += AgeBins_glycatedRBCs;
@@ -138,8 +137,9 @@ class Blood {
         }
 
         if(rbcs == 0){
-            Consle.log("Error in Bloody::currentHbAlc");
-            process.exit();
+            //Error in Bloody::currentHbAlc
+            // terminate program (return may not accomplish this)
+            return;
         }
 
         return (glycated_rbcs / rbcs);
@@ -148,69 +148,73 @@ class Blood {
     processTick(){
         var x;
 
-        var scale = (1.0) * ((1.0 - body.insulinResistance_) * (1000.0 * glycolysisMin_));
+        var scale = (1.0) * ((1.0 - body.insulinResistance_) * (1000.0 * this.glycolysisMin_));
 
         // revisit these lines
-        x = (1.0) * (glycolysisMin__(SimCtl.myEngine()));
+        //x = (1.0) * (this.glycolysisMin__(SimCtl.myEngine()));
+        x = 1; // placeholder to test other parts
+
         x = x * ((body.bodyWeight_)/1000.0);
 
-        if(x > (glycolysisMax_*(body.bodyWeight_))){
-            x = glycolysisMax_ * (body.bodyWeight_);
+        if(x > (this.glycolysisMax_*(body.bodyWeight_))){
+            x = this.glycolysisMax_ * (body.bodyWeight_);
         }
 
-        var toGlycolysis = (1.0) * (x + scale * ((glycolysisMax_*(body.bodyWeight_)) - x ));
+        var toGlycolysis = (1.0) * (x + scale * ((this.glycolysisMax_*(body.bodyWeight_)) - x ));
 
-        if(toGlycolysis > glucose){
-            toGlycolysis = glucose;
+        if(toGlycolysis > this.glucose){
+            toGlycolysis = this.glucose;
         }
 
-        glucose -= toGlycolysis;
-        body.blood.lactate += glycolysisToLactate_*toGlycolysis;
+        this.glucose -= toGlycolysis;
+        //body.blood.lactate += this.glycolysisToLactate_*toGlycolysis;
 
-        var bgl = (1.0) * (glucose/fluidVolume_);
+        var bgl = (1.0) * (this.glucose/this.fluidVolume_);
 
         // update insulin level
 
-        if(bgl >= highGlucoseLevel_){
-            insulinLevel = body.insulinPeakLevel_;
+        if(bgl >= this.highGlucoseLevel_){
+            this.insulinLevel = body.insulinPeakLevel_;
         }else{
-            if(bgl < normalGlucoseLevel_){
-                insulinLevel = 0;
+            if(bgl < this.normalGlucoseLevel_){
+                this.insulinLevel = 0;
             }else{
-                insulinLevel = (body.insulinPeakLevel_)*(bgl - normalGlucoseLevel_)/(highGlucoseLevel_ - normalGlucoseLevel_);
+                this.insulinLevel = (body.insulinPeakLevel_)*(bgl - this.normalGlucoseLevel_)/(this.highGlucoseLevel_ - this.normalGlucoseLevel_);
             }
         }
 
         // calculating average bgl during a day
-        if( avgBGLOneDayCount == ONEDAY){
-            avgBGLOneDay = avgBGLOneDaySum / avgBGLOneDayCount;
-            avgBGLOneDaySum = 0;
-            avgBGLOneDayCount = 0;
-            updateRBCs();
-            SimCtl.time_stamp();
-            Console.log(" Blood::avgBGL " + avgBGLOneDay);
+        if( this.avgBGLOneDayCount == ONEDAY){
+            this.avgBGLOneDay = this.avgBGLOneDaySum / this.avgBGLOneDayCount;
+            this.avgBGLOneDaySum = 0;
+            this.avgBGLOneDayCount = 0;
+            this.updateRBCs();
+            //SimCtl.time_stamp();
+
+            // need to print this to the screen
+            //Console.log(" Blood::avgBGL " + this.avgBGLOneDay);
         }
 
-        avgBGLOneDaySum += bgl;
-        avgBGLOneDayCount++;
+        this.avgBGLOneDaySum += bgl;
+        this.avgBGLOneDayCount++;
     }
 
     consumeGNGSubstrates(howmuch){
-        var total = (1.0) * (gngSubstrates + lactate + alanine + glutamine);
+        var total = (1.0) * (this.gngSubstrates + this.lactate + this.alanine + this.glutamine);
 
         if(total < howmuch){
-            gngSubstrates = 0;
-            lactate = 0;
-            alanine = 0;
-            glutamine = 0;
+            this.gngSubstrates = 0;
+            this.lactate = 0;
+            this.alanine = 0;
+            this.glutamine = 0;
             return total;
         }
 
         var factor = (1.0) * ( (total-howmuch)/total );
-        gngSubstrates = gngSubstrates * factor;
-        lactate = lactate * factor;
-        alanine = alanine * factor;
-        glutamine = glutamine * factor;
+        this.gngSubstrates = this.gngSubstrates * factor;
+        this.lactate = this.lactate * factor;
+        this.alanine = this.alanine * factor;
+        this.glutamine = this.glutamine * factor;
 
         return howmuch;
     }
@@ -220,27 +224,31 @@ class Blood {
     }
 
     removeGlucose(howmuch){
-        glucose -= howmuch;
+        this.glucose -= howmuch;
 
-        if( getBGL() <= minGlucoseLevel_){
-            SimCtl.time_stamp();
-            Console.log(" bgl dips to: " + getBGL());
-            process.exit();
+        if( this.getBGL() <= this.minGlucoseLevel_){
+            //SimCtl.time_stamp();
+
+            // print to the screen
+            //Console.log(" bgl dips to: " + this.getBGL());
+            
+            // exit
+            return;
         }
     }
 
     addGlucose(howmuch){
-        glucose += howmuch;
+        this.glucose += howmuch;
     }
 
     gngFromHighLactate(rate_){
-        var x = (1.0) * (rate_ * (lactate/highLactateLevel_));
+        var x = (1.0) * (rate_ * (this.lactate/this.highLactateLevel_));
 
-        if(x > lactate){
-            x = lactate
+        if(x > this.lactate){
+            x = this.lactate
         }
 
-        lactate -= x;
+        this.lactate -= x;
         return x;
     }
 
