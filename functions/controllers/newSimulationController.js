@@ -135,14 +135,31 @@ function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_ty
                 var newExerciseName = newExerciseName0[i];
                 var newExerciseIntensity = newExerciseIntensity0[i];
                 writeExerciseSubtypeData(nextExerciseTypeID, newExerciseName, newExerciseIntensity);
+                var exerciseQtyInput = exerciseQtyInput0[i];
+                var monthSelection = monthSelection0[i];
+                var daySelection = daySelection0[i];
+                var yearSelection = yearSelection0[i];
+                var hourSelection = hourSelection0[i];
+                var minuteSelection = minuteSelection0[i];
+                var secondSelection = secondSelection0[i];
+                var amPmSelection = amPmSelection0[i];
+                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextExerciseTypeID, exerciseQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, secondSelection, amPmSelection)
                 nextExerciseTypeID++;
             }else if(exerciseType == "Select Exercise"){
-
+                // no selection made, do not add anything to database
             }else{
-
+                var exerciseQtyInput = exerciseQtyInput0[i];
+                var monthSelection = monthSelection0[i];
+                var daySelection = daySelection0[i];
+                var yearSelection = yearSelection0[i];
+                var hourSelection = hourSelection0[i];
+                var minuteSelection = minuteSelection0[i];
+                var secondSelection = secondSelection0[i];
+                var amPmSelection = amPmSelection0[i];
+                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, exerciseType, exerciseQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, secondSelection, amPmSelection)
             }
         }else{
-
+            // no selection made, do not add anything to database
         }
 
         i++;
