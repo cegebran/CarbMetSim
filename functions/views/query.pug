@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  h1 Query
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='activitytype') Activity Type:
+      select#activitytype.form-control(type='select', placeholder='' name='activity' required='false' )
+        for activitytype in activityTypes
+            option(value=activitytype._id) #{activitytype.name}
+    div.form-group
+      label(for='start_date') Start Date:
+      input#start_date.form-control(type='date', name='start_date', required='true', value=('') )
+    div.form-group
+      label(for='end_date') End Date:
+      input#end_date.form-control(type='date', name='end_date', required='true', value=('') )
+    div.form-group
+      label(for='start_timeofday') Time Range Start:
+      select#start_timeofday.form-control(type='select', placeholder='' name='start_timeofday' required='true' )
+        for timestamp in timestamps
+            option(value=timestamp._id) #{timestamp.name}
+    div.form-group
+      label(for='end_timeofday') Time Range End:
+      select#end_timeofday.form-control(type='select', placeholder='' name='end_timeofday' required='true' )
+        for timestamp in timestamps
+            option(value=timestamp._id) #{timestamp.name}
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors 
+    ul
+      for error in errors
+        li!= error

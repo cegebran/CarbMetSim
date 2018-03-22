@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1 New Food Subtype
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='food_name') Food Name:
+      input#value.form-control(type='text', placeholder='' name='food_name' required='true' value=(''))
+    div.form-group
+      label(for='servingSize') Servings:
+      input#value.form-control(type='text', placeholder='' name='servingSize' required='true' value=(''))
+    div.form-group
+      label(for='RAG') Readily Available Glucose:
+      input#value.form-control(type='text', placeholder='' name='RAG' required='true' value=(''))
+    div.form-group
+      label(for='SAG') Slowly Available Glucose:
+      input#value.form-control(type='text', placeholder='' name='SAG' required='true' value=(''))
+    div.form-group
+      label(for='protein') Protein:
+      input#value.form-control(type='text', placeholder='' name='protein' required='true' value=(''))
+    div.form-group
+      label(for='fat') Fat:
+      input#value.form-control(type='text', placeholder='' name='fat' required='true' value=(''))
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

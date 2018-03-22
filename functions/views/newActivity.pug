@@ -1,0 +1,296 @@
+extends layout
+
+block content
+  h1 Add New Activity
+
+  form(method='POST' action='')
+    div.form-group(id='formType')
+      label(for='activity_type') Activity Type:
+      select#activity.form-control(type='select', placeholder='', name='activity_type', required='true' )
+        for activity in activityTypes
+            option(value=activity._id) #{activity.name}
+      br(id='br1')
+      br(id='br2')
+      label(for='food_type', id="foodLabel") Food Type:
+      select#food.form-control(type='select', placeholder='', name='food_type', required='false')
+        for food in foodTypes
+            option(value=food._id) #{food.name}
+      label(for='exercise_type', id="exerciseLabel") Exercise Type:
+      select#exercise.form-control(type='select', placeholder='', name='exercise_type', required='false')
+        for exercise in exerciseTypes
+            option(value=exercise._id) #{exercise.name}
+      br(id='br3a')
+      br(id='br4a')
+      label(id='newFoodTitle') Create New Food Type:
+      div.form-inline(id='foodNameInputSection')
+        label(for='newFoodName', id="newFoodNameLabel") Name:
+        br() 
+        input(type='text', name='newFoodName', id="newFoodNameInput")
+      div.form-inline(id='foodServingSizeInputSection')
+        label(for='newFoodServingSize', id="newFoodServingSizeLabel") Serving Size: 
+        br()
+        input(type='text', name='newFoodServingSize', id="newFoodServingSizeInput")
+      div.form-inline(id='foodFatInputSection')
+        label(for='newFoodFat', id="newFoodFatLabel") Fat: 
+        br()
+        input(type='text', name='newFoodFat', id="newFoodFatInput")
+      div.form-inline(id='foodProteinInputSection')
+        label(for='newFoodProtein', id="newFoodProteinLabel") Protein: 
+        br()
+        input(type='text', name='newFoodProtein', id="newFoodProteinInput")
+      div.form-inline(id='foodRAGInputSection')
+        label(for='newFoodRAG', id="newFoodRAGLabel") Readily Available Glucose (RAG): 
+        br()
+        input(type='text', name='newFoodRAG', id="newFoodRAGInput")
+      div.form-inline(id='foodSAGInputSection')
+        label(for='newFoodSAG', id="newFoodSAGLabel") Slowly Available Glucose (SAG): 
+        br()
+        input(type='text', name='newFoodSAG', id="newFoodSAGInput")
+
+      label(id='newExerciseTitle') Create New Exercise Type:
+      div.form-inline(id='exerciseNameInputSection')
+        label(for='newExerciseName', id="newExerciseNameLabel") Name: 
+        br()
+        input(type='text', name='newExerciseName', id="newExerciseNameInput")
+      div.form-inline(id='exerciseIntensityInputSection')
+        label(for='newExerciseIntensity', id="newExerciseIntensityLabel") Intensity: 
+        br()
+        input(type='text', name='newExerciseIntensity', id="newExerciseIntensityInput")
+
+      br(id='br3')
+      br(id='br4')
+      div.form-inline(id='dateSection')
+        label(for='month', id="dateLabel") Date: 
+        br()
+        select#month.form-control(type='select', placeholder='', name='month', required='true')
+          for month in months
+            option(value=month._id) #{month.name}
+        label(id="dateSep1") / 
+        select#day.form-control(type='select', placeholder='', name='day', required='true')
+          for day in days31
+            option(value=day._id) #{day.name}
+        label(id="dateSep2") / 
+        select#year.form-control(type='select', placeholder='', name='year', required='true')
+          for year in years
+            option(value=year._id) #{year.name}
+      br(id='br5')
+      br(id='br6')
+      div.form-inline(id='timeSection')
+        label(for='hour', id="timeLabel") Time: 
+        br()
+        select#hour.form-control(type='select', placeholder='', name='hour', required='true')
+          for hTime in hours
+            option(value=hTime._id) #{hTime.name}
+        label(id="timeSep2") : 
+        select#minute.form-control(type='select', placeholder='', name='minute', required='true')
+          for mTime in minutes
+            option(value=mTime._id) #{mTime.name}
+        label(id="timeSep2") : 
+        select#second.form-control(type='select', placeholder='', name='second', required='true')
+          for sTime in seconds
+            option(value=sTime._id) #{sTime.name}
+        select#amPm.form-control(type='select', placeholder='', name='amPm', required='true')
+          for amPmSel in amPms
+            option(value=amPmSel._id) #{amPmSel.name}
+      br(id='br7')
+      br(id='br8')
+      div.form-inline(id='quantitySectionFood')
+        label(for='qtyFood', id="foodQtyLabel") Servings: 
+        br()
+        input(type='text', name='foodQtyInput', id="foodQtyInputID")
+      div.form-inline(id='quantitySectionExercise')
+        label(for='qtyEx', id="exerciseQtyLabel") Count: 
+        br()
+        input(type='text', name='exerciseQtyInput', id="exerciseQtyInputID")
+      br(id='br9')
+      br(id='br10')
+      button.btn.btn-primary(type='submit', id="submitButton") Submit  
+    
+    script.
+      document.getElementById("food").style.display = "none";
+      document.getElementById("foodLabel").style.display = "none";
+      document.getElementById("exercise").style.display = "none";
+      document.getElementById("exerciseLabel").style.display = "none";
+      document.getElementById("submitButton").style.display = "none";
+      document.getElementById("timeSection").style.display = "none";
+      document.getElementById("dateSection").style.display = "none";
+      document.getElementById("quantitySectionFood").style.display = "none";
+      document.getElementById("quantitySectionExercise").style.display = "none";
+      document.getElementById("newFoodTitle").style.display = "none";
+      document.getElementById("newExerciseTitle").style.display = "none";
+      document.getElementById("br3a").style.display = "none";
+      document.getElementById("br4a").style.display = "none";
+      document.getElementById("foodNameInputSection").style.display = "none";
+      document.getElementById("foodServingSizeInputSection").style.display = "none";
+      document.getElementById("foodFatInputSection").style.display = "none";
+      document.getElementById("foodProteinInputSection").style.display = "none";
+      document.getElementById("foodRAGInputSection").style.display = "none";
+      document.getElementById("foodSAGInputSection").style.display = "none";
+      document.getElementById("exerciseNameInputSection").style.display = "none";
+      document.getElementById("exerciseIntensityInputSection").style.display = "none";
+      
+
+      var activities = document.getElementById("activity");
+      activities.addEventListener("click", function() {
+        var options = activities.querySelectorAll("option");
+        var count = options.length;
+      });
+      activities.addEventListener("change", function() {
+        if(activities.value == "Exercise")
+        {
+          addExerciseForm(); 
+        }
+        if(activities.value == "Food")
+        {
+          addFoodForm();
+        }
+        if(activities.value == "Select Activity Type")
+        {
+          selectActivityTypeForm();
+        }
+      });
+
+      var food = document.getElementById("food");
+      food.addEventListener("click", function() {
+        var options = food.querySelectorAll("option");
+        var count = options.length;
+      });
+      food.addEventListener("change", function() {
+        if(food.value == "+ New Food")
+        {
+          newFoodAction();
+        }else{
+          foodSelectionAction();
+        }
+      });
+
+      var exercise = document.getElementById("exercise");
+      exercise.addEventListener("click", function() {
+        var options = exercise.querySelectorAll("option");
+        var count = options.length;
+      });
+      exercise.addEventListener("change", function() {
+        if(exercise.value == "+ New Exercise")
+        {
+          newExerciseAction();
+        }else{
+          exerciseSelectionAction();
+        }
+      });
+
+      function addExerciseForm() {
+        document.getElementById("food").style.display = "none";
+        document.getElementById("foodLabel").style.display = "none";
+        document.getElementById("exercise").style.display = "block";
+        document.getElementById("exerciseLabel").style.display = "block";
+        document.getElementById("br3a").style.display = "none";
+        document.getElementById("br4a").style.display = "none";
+        document.getElementById("newFoodTitle").style.display = "none";
+        document.getElementById("newExerciseTitle").style.display = "none";
+        document.getElementById("foodNameInputSection").style.display = "none";
+        document.getElementById("foodServingSizeInputSection").style.display = "none";
+        document.getElementById("foodFatInputSection").style.display = "none";
+        document.getElementById("foodProteinInputSection").style.display = "none";
+        document.getElementById("foodRAGInputSection").style.display = "none";
+        document.getElementById("foodSAGInputSection").style.display = "none";
+        document.getElementById("exerciseNameInputSection").style.display = "none";
+        document.getElementById("exerciseIntensityInputSection").style.display = "none";
+        document.getElementById("dateSection").style.display = "block";
+        document.getElementById("timeSection").style.display = "block";
+        document.getElementById("quantitySectionFood").style.display = "none";
+        document.getElementById("quantitySectionExercise").style.display = "block";
+        document.getElementById("submitButton").style.display = "block";
+      }
+      
+      function addFoodForm() {
+        document.getElementById("food").style.display = "block";
+        document.getElementById("foodLabel").style.display = "block";
+        document.getElementById("exercise").style.display = "none";
+        document.getElementById("exerciseLabel").style.display = "none";
+        document.getElementById("br3a").style.display = "none";
+        document.getElementById("br4a").style.display = "none";
+        document.getElementById("newFoodTitle").style.display = "none";
+        document.getElementById("newExerciseTitle").style.display = "none";
+        document.getElementById("foodNameInputSection").style.display = "none";
+        document.getElementById("foodServingSizeInputSection").style.display = "none";
+        document.getElementById("foodFatInputSection").style.display = "none";
+        document.getElementById("foodProteinInputSection").style.display = "none";
+        document.getElementById("foodRAGInputSection").style.display = "none";
+        document.getElementById("foodSAGInputSection").style.display = "none";
+        document.getElementById("exerciseNameInputSection").style.display = "none";
+        document.getElementById("exerciseIntensityInputSection").style.display = "none";
+        document.getElementById("dateSection").style.display = "block";
+        document.getElementById("timeSection").style.display = "block";
+        document.getElementById("quantitySectionFood").style.display = "block";
+        document.getElementById("quantitySectionExercise").style.display = "none";
+        document.getElementById("submitButton").style.display = "block";
+      }
+
+      function selectActivityTypeForm(){
+        document.getElementById("food").style.display = "none";
+        document.getElementById("foodLabel").style.display = "none";
+        document.getElementById("exercise").style.display = "none";
+        document.getElementById("exerciseLabel").style.display = "none";
+        document.getElementById("br3a").style.display = "none";
+        document.getElementById("br4a").style.display = "none";
+        document.getElementById("newFoodTitle").style.display = "none";
+        document.getElementById("newExerciseTitle").style.display = "none";
+        document.getElementById("foodNameInputSection").style.display = "none";
+        document.getElementById("foodServingSizeInputSection").style.display = "none";
+        document.getElementById("foodFatInputSection").style.display = "none";
+        document.getElementById("foodProteinInputSection").style.display = "none";
+        document.getElementById("foodRAGInputSection").style.display = "none";
+        document.getElementById("foodSAGInputSection").style.display = "none";
+        document.getElementById("exerciseNameInputSection").style.display = "none";
+        document.getElementById("exerciseIntensityInputSection").style.display = "none";
+        document.getElementById("dateSection").style.display = "none";
+        document.getElementById("timeSection").style.display = "none";
+        document.getElementById("quantitySectionFood").style.display = "none";
+        document.getElementById("quantitySectionExercise").style.display = "none";
+        document.getElementById("submitButton").style.display = "none";
+      }
+
+      function newFoodAction(){
+        document.getElementById("newFoodTitle").style.display = "block";
+        document.getElementById("br3a").style.display = "block";
+        document.getElementById("br4a").style.display = "block";
+        document.getElementById("foodNameInputSection").style.display = "block";
+        document.getElementById("foodServingSizeInputSection").style.display = "block";
+        document.getElementById("foodFatInputSection").style.display = "block";
+        document.getElementById("foodProteinInputSection").style.display = "block";
+        document.getElementById("foodRAGInputSection").style.display = "block";
+        document.getElementById("foodSAGInputSection").style.display = "block";
+      }
+
+      function foodSelectionAction(){
+        document.getElementById("newFoodTitle").style.display = "none";
+        document.getElementById("br3a").style.display = "none";
+        document.getElementById("br4a").style.display = "none";
+        document.getElementById("foodNameInputSection").style.display = "none";
+        document.getElementById("foodServingSizeInputSection").style.display = "none";
+        document.getElementById("foodFatInputSection").style.display = "none";
+        document.getElementById("foodProteinInputSection").style.display = "none";
+        document.getElementById("foodRAGInputSection").style.display = "none";
+        document.getElementById("foodSAGInputSection").style.display = "none";
+      }
+
+      function newExerciseAction(){
+        document.getElementById("br3a").style.display = "block";
+        document.getElementById("br4a").style.display = "block";
+        document.getElementById("newExerciseTitle").style.display = "block";
+        document.getElementById("exerciseNameInputSection").style.display = "block";
+        document.getElementById("exerciseIntensityInputSection").style.display = "block";
+      }
+
+      function exerciseSelectionAction(){
+        document.getElementById("br3a").style.display = "none";
+        document.getElementById("br4a").style.display = "none";
+        document.getElementById("newExerciseTitle").style.display = "none";
+        document.getElementById("exerciseNameInputSection").style.display = "none";
+        document.getElementById("exerciseIntensityInputSection").style.display = "none";
+      }
+
+  if errors
+    ul
+      for error in errors
+        li!= erorr.msg
