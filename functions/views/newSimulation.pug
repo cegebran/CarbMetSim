@@ -69,6 +69,7 @@ block content
                     select#amPm0.form-control(type='select', placeholder='', name='amPmSelection0', required='true')
                         for amPmSel in amPms
                             option(value=amPmSel._id) #{amPmSel.name}
+                button.btn.btn-primary(type='button', id='deleteEntry0', onclick='deleteEntry(this.id)') Delete Entry
 
                 label(for='qtyFood', id="foodQtyLabel0") Servings: 
                 input(type='text', name='foodQtyInput0', id='foodQtyInputID0')
@@ -116,18 +117,13 @@ block content
             document.getElementById("exerciseQtyInputID0").style.display = "none";
             document.getElementById("dateInLine0").style.display = "none";
             document.getElementById("timeInLine0").style.display = "none";
+            document.getElementById("deleteEntry0").style.display = "none";
 
             var i = 0;
 
             function duplicate() {
                 var p = document.getElementById("duplicatedInputSet");
                 i++;
-
-                if(i > 1){
-                    p.parentNode.appendChild(document.createElement("br"));
-                    p.parentNode.appendChild(document.createElement("br"));
-                    p.parentNode.appendChild(document.createElement("br"));
-                }
 
                 var activityLabelOriginal = document.getElementById('activityLabel0');
                 var activityLabelClone = activityLabelOriginal.cloneNode(true);
@@ -299,6 +295,23 @@ block content
                 exerciseQtyInputIDClone.value = "";
                 p.parentNode.appendChild(exerciseQtyInputIDClone);
 
+                var deleteEntryOriginal = document.getElementById("deleteEntry0");
+                var deleteEntryClone = deleteEntryOriginal.cloneNode(true);
+                deleteEntryClone.id = "deleteEntry" + i
+                deleteEntryClone.value = "";
+                p.parentNode.appendChild(deleteEntryClone);
+
+                var break1Original = document.createElement("br");
+                break1Original.id = "break1" + i
+                p.parentNode.appendChild(break1Original);
+
+                var break2Original = document.createElement("br");
+                break2Original.id = "break2" + i
+                p.parentNode.appendChild(break2Original);
+
+                var break3Original = document.createElement("br");
+                break3Original.id = "break3" + i
+                p.parentNode.appendChild(break3Original);
 
                 document.getElementById("activityLabel" + i).style.display = "block";
                 document.getElementById("activity" + i).style.display = "block";
@@ -332,6 +345,10 @@ block content
                 document.getElementById("exerciseQtyInputID" + i).style.display = "none";
                 document.getElementById("dateInLine" + i).style.display = "none";
                 document.getElementById("timeInLine" + i).style.display = "none";
+                document.getElementById("deleteEntry" + i).style.display = "none";
+                document.getElementById("break1" + i).style.display = "block";
+                document.getElementById("break2" + i).style.display = "block";
+                document.getElementById("break3" + i).style.display = "block";
             }
 
             function activityTypeChange(id){
@@ -369,6 +386,7 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("dateInLine" + index).style.display = "none";
                     document.getElementById("timeInLine" + index).style.display = "none";
+                    document.getElementById("deleteEntry" + index).style.display = "none";
                 }
                 if(activities.value == "Food")
                 {
@@ -402,6 +420,7 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("dateInLine" + index).style.display = "none";
                     document.getElementById("timeInLine" + index).style.display = "none";
+                    document.getElementById("deleteEntry" + index).style.display = "none";
                 }
                 if(activities.value == "Select Activity Type")
                 {
@@ -435,6 +454,7 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("dateInLine" + index).style.display = "none";
                     document.getElementById("timeInLine" + index).style.display = "none";
+                    document.getElementById("deleteEntry" + index).style.display = "none";
                 }
             }
 
@@ -468,6 +488,7 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("dateInLine" + index).style.display = "block";
                     document.getElementById("timeInLine" + index).style.display = "block";
+                    document.getElementById("deleteEntry" + index).style.display = "block";
                 }else if(foods.value == "Select Food"){
                     document.getElementById("newFoodTitle" + index).style.display = "none";
                     document.getElementById("newFoodNameLabel" + index).style.display = "none";
@@ -495,6 +516,7 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("dateInLine" + index).style.display = "none";
                     document.getElementById("timeInLine" + index).style.display = "none";
+                    document.getElementById("deleteEntry" + index).style.display = "none";
                 }else{
                     document.getElementById("newFoodTitle" + index).style.display = "none";
                     document.getElementById("newFoodNameLabel" + index).style.display = "none";
@@ -522,6 +544,7 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("dateInLine" + index).style.display = "block";
                     document.getElementById("timeInLine" + index).style.display = "block";
+                    document.getElementById("deleteEntry" + index).style.display = "block";
                 }
             }
 
@@ -555,6 +578,7 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("dateInLine" + index).style.display = "none";
                     document.getElementById("timeInLine" + index).style.display = "none";
+                    document.getElementById("deleteEntry" + index).style.display = "none";
                 }else if(exercises.value == "+ New Exercise"){
                     document.getElementById("newFoodTitle" + index).style.display = "none";
                     document.getElementById("newFoodNameLabel" + index).style.display = "none";
@@ -582,6 +606,7 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "block";
                     document.getElementById("dateInLine" + index).style.display = "block";
                     document.getElementById("timeInLine" + index).style.display = "block";
+                    document.getElementById("deleteEntry" + index).style.display = "block";
                 }else{
                     document.getElementById("newFoodTitle" + index).style.display = "none";
                     document.getElementById("newFoodNameLabel" + index).style.display = "none";
@@ -609,7 +634,53 @@ block content
                     document.getElementById("exerciseQtyInputID" + index).style.display = "block";
                     document.getElementById("dateInLine" + index).style.display = "block";
                     document.getElementById("timeInLine" + index).style.display = "block";
+                    document.getElementById("deleteEntry" + index).style.display = "block";
                 }
+            }
+
+            function deleteEntry(id){
+                var index = id.slice(11);
+                document.getElementById("activityLabel" + index).style.display = "none";
+                document.getElementById("activity" + index).style.display = "none";
+                document.getElementById("food" + index).style.display = "none";
+                document.getElementById("foodLabel" + index).style.display = "none";
+                document.getElementById("exercise" + index).style.display = "none";
+                document.getElementById("exerciseLabel" + index).style.display = "none";
+                document.getElementById("newFoodTitle" + index).style.display = "none";
+                document.getElementById("newFoodTitle" + index).style.display = "none";
+                document.getElementById("newExerciseTitle" + index).style.display = "none";
+                document.getElementById("newFoodNameLabel" + index).style.display = "none";
+                document.getElementById("newFoodNameInput" + index).style.display = "none";
+                document.getElementById("newFoodServingSizeLabel" + index).style.display = "none";
+                document.getElementById("newFoodServingSizeInput" + index).style.display = "none";
+                document.getElementById("newFoodFatLabel" + index).style.display = "none";
+                document.getElementById("newFoodFatInput" + index).style.display = "none";
+                document.getElementById("newFoodProteinLabel" + index).style.display = "none";
+                document.getElementById("newFoodProteinInput" + index).style.display = "none";
+                document.getElementById("newFoodRAGLabel" + index).style.display = "none";
+                document.getElementById("newFoodRAGInput" + index).style.display = "none";
+                document.getElementById("newFoodSAGLabel" + index).style.display = "none";
+                document.getElementById("newFoodSAGInput" + index).style.display = "none";
+                document.getElementById("newExerciseTitle" + index).style.display = "none";
+                document.getElementById("newExerciseNameLabel" + index).style.display = "none";
+                document.getElementById("newExerciseNameInput" + index).style.display = "none";
+                document.getElementById("newExerciseIntensityLabel" + index).style.display = "none";
+                document.getElementById("newExerciseIntensityInput" + index).style.display = "none";
+                document.getElementById("dateLabel" + index).style.display = "none";
+                document.getElementById("timeLabel" + index).style.display = "none";
+                document.getElementById("foodQtyLabel" + index).style.display = "none";
+                document.getElementById("foodQtyInputID" + index).style.display = "none";
+                document.getElementById("exerciseQtyLabel" + index).style.display = "none";
+                document.getElementById("exerciseQtyInputID" + index).style.display = "none";
+                document.getElementById("dateInLine" + index).style.display = "none";
+                document.getElementById("timeInLine" + index).style.display = "none";
+                document.getElementById("deleteEntry" + index).style.display = "none";
+                document.getElementById("break1" + index).style.display = "none";
+                document.getElementById("break2" + index).style.display = "none";
+                document.getElementById("break3" + index).style.display = "none";
+
+                var activitySelect = document.getElementById("activity" + index);
+                activitySelect.value = "0";
             }
 
     if errors
