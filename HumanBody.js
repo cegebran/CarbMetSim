@@ -18,9 +18,28 @@ const BodyOrgan = {
     KIDNEY: 'KIDNEY'
 }
 
+class FoodType{
+    constructor(){
+        this.foodID = "";
+        this.name = "";
+        this.servingSize = "";
+        this.RAG = "";
+        this.SAD = "";
+        this.protein = "";
+        this.fat = "";
+    }
+};
+
+class ExerciseType{
+    constructor(){
+        this.exerciseID = "";
+        this.name = "";
+        this.intensity = "";  
+    }
+};
+
 class HumanBody {
     constructor(){
-
         // *****all commented out lines need to be uncommented when add each class for different organs*****
 
         //this.stomach = new Stomach(this);
@@ -104,7 +123,6 @@ class HumanBody {
 
     setParams(){
         // need to look into how to do iterator
-
         stomach.setParams();
         intestine.setParams();
         portalVein.setParams();
@@ -177,11 +195,57 @@ class HumanBody {
     }
 
     readExerciseFile(file){
-        // may not need to be implemented depending on real-time database
+        jQuery.get(file, function(data){
+        console.log("READING EXERCISE FILE");
+        console.log("-------------------------------");
+        var lines = data.split('\n');
+        var lineNum = 0;
+        var exerciseArray = [];
+        var exercise = new ExerciseType();
+        //for loop to seperate each new line of text file
+        for(var line = 0; line < lines.length; line++){
+            var properties = lines[line].split(' ');
+            exercise.exerciseID = properties[0];
+            exercise.name = properties[1];
+            exercise.intensity = properties[2];
+    
+            exerciseArray[lineNum] = exercise;
+            
+            console.log("exercise: " + exerciseArray[lineNum].name + " " + exerciseArray[lineNum].intensity);
+            lineNum++;
+            
+            console.log("-------------------------------");
+        }
+    });
     }
 
     readFoodFile(file){
-        // may not need to be implemented depending on real-time database
+        jQuery.get(file, function(data){
+        console.log("READING FOOD FILE");
+        console.log("-------------------------------");
+        var lines = data.split('\n');
+        var lineNum = 0;
+        var foodArray = [];
+        var food = new FoodType();
+        //for loop to seperate each new line of text file
+        for(var line = 0; line < lines.length; line++){
+            var properties = lines[line].split(' ');
+            food.foodID = properties[0];
+            food.name = properties[1];
+            food.servingSize = properties[2];
+            food.RAG = properties[3];
+            food.SAG = properties[4];
+            food.protein = properties[5];
+            food.fat = properties[6];
+    
+            foodArray[lineNum] = food;
+            
+            console.log("food types: " + foodArray[lineNum].name + " " + foodArray[lineNum].protein);
+            lineNum++;
+            
+            console.log("-------------------------------");
+        }
+    });
     }
 
     readParams(file){
