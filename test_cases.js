@@ -46,19 +46,23 @@ $('document').ready(function(){
 
     console.log(priorityQueue.printPQueue());
 
-    simCtl.readEvents();
+    console.log("events start here");
+    simCtl.readEvents("Events2.txt");
+    
     simCtl.addEvent(2018, EventType.FOOD, '2', 1);
     simCtl.addEvent(2017, EventType.FOOD, '3', 1);
     simCtl.addEvent(2016, EventType.EXERCISE, '2', 1);
     console.log(simCtl.eventQ.front());
     console.log(simCtl.fire_event());
-
-
+    
     
     console.log(humanBody.currentEnergyExpenditure());
 
     console.log(simCtl.elapsed_days());
     console.log(simCtl.elapsed_hours());
     console.log(simCtl.elapsed_minutes());
-
+    
+    var body = new HumanBody();
+    body.readFoodFile("Food.txt");
+    body.readExerciseFile("Exercise.txt");
 });
