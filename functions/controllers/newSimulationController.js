@@ -1,6 +1,471 @@
 var firebase = require('firebase');
 var async = require('async');
 
+// priorityQueue
+// User defined class
+// to store element and its priority
+class QElement {
+    constructor(firetime, activityID, subID, howmuch)
+    {
+        this.firetime = firetime;
+        this.ID = activityID;
+        this.subID = subID;
+        this.howmuch = howmuch;
+    }
+
+    costs_less(oqe){
+            if(this.firetime < oqe.firetime){
+                return true;
+            }
+            else if(this.firetime > oqe.firetime){
+                return false;
+            }
+            else if(this.firetime === oqe.firetime){
+                return "tie";
+            }
+            else{
+                return false;
+            }
+        }
+}
+
+// PriorityQueue class
+class PriorityQueue {
+ 
+    // An array is used to implement priority
+    constructor()
+    {
+        this.items = [];
+    }
+ 
+    // enqueue function to add element
+    // to the queue as per priority
+    enqueue(element)
+    {
+        // creating object from queue element
+        //var qElement = new QElement();
+        var contain = false;
+
+        // iterating through the entire
+        // item array to add element at the
+        // correct location of the Queue
+        for (var i = 0; i < this.items.length; i++) {
+            /*if(this.items[i].costs_less(element) === "tie"){
+                this.items.splice(i+1,0, element);
+            }*/
+            if(this.items[i].costs_less(element) === false){
+                this.items.splice(i,0, element);
+                contain = true;
+                break;
+            }
+        }
+
+        // if the element have the highest priority
+        // it is added at the end of the queue
+        if (!contain) {
+            this.items.push(element);
+        }
+    }
+    
+    // dequeue method to remove
+    // element from the queue
+    dequeue()
+    {
+        // return the dequeued element
+        // and remove it.
+        // if the queue is empty
+        // returns Underflow
+        if (this.isEmpty())
+            return "Underflow";
+        return this.items.shift();
+    }
+    
+    // front function
+    front()
+    {
+        // returns the highest priority element
+        // in the Priority queue without removing it.
+        if (this.isEmpty())
+            return "No elements in Queue";
+        return this.items[0];
+        //return this.items[0].ID + ", " + this.items[0].firetime;
+    }
+    
+    // rear function
+    rear()
+    {
+        // returns the lowest priorty
+        // element of the queue
+        if (this.isEmpty())
+            return "No elements in Queue";
+        return this.items[this.items.length - 1];
+        //return this.items[this.items.length - 1].ID + ", " + this.items[this.items.length - 1].firetime;
+    }
+    
+    // isEmpty function
+    isEmpty()
+    {
+        // return true if the queue is empty.
+        return this.items.length == 0;
+    }
+ 
+    // printQueue function
+    // prints all the element of the queue
+    printPQueue()
+    {
+        var str = "";
+        for (var i = 0; i < this.items.length; i++)
+            str += this.items[i].ID + ", " + this.items[i].firetime + " || ";
+        
+        return str;
+    }
+}
+
+//HumanBody
+const BodyState = {
+    FED_RESTING: 'FED_RESTING',
+    FED_EXERCISING: 'FED_EXERCISING',
+    POSTABSORPTIVE_RESTING: 'POSTABSORPTIVE_RESTING',
+    POSTABSORPTIVE_EXERCISING: 'POSTABSORPTIVE_EXERCISING'
+}
+
+const BodyOrgan = {
+    HUMAN_BODY: 'HUMAN_BODY',
+    INTESTINE: 'INTESTINE',
+    PORTAL_VEIN: 'PORTAL_VEIN',
+    LIVER: 'LIVER',
+    BLOOD: 'BLOOD',
+    MUSCLES: 'MUSCLES',
+    BRAIN: 'BRAIN',
+    HEART: 'HEART',
+    ADIPOSE_TISSUE: 'ADIPOSE_TISSUE',
+    KIDNEY: 'KIDNEY'
+}
+
+class FoodType{
+    constructor(){
+        this.foodID = "";
+        this.name = "";
+        this.servingSize = "";
+        this.RAG = "";
+        this.SAD = "";
+        this.protein = "";
+        this.fat = "";
+    }
+};
+
+class ExerciseType{
+    constructor(){
+        this.exerciseID = "";
+        this.name = "";
+        this.intensity = "";  
+    }
+};
+
+class HumanBody {
+    constructor(){
+        // *****all commented out lines need to be uncommented when add each class for different organs*****
+
+        //this.stomach = new Stomach(this);
+        //this.intestine = new Intestine(this);
+        //this.portalVein = new PortalVein(this);
+        //this.liver = new liverH(this);
+        //this.brain = new brainH(this);
+        //this.heart = new heartH(this);
+
+        this.insulinResistance_ = 0;
+        this.insulinPeakLevel_ = 1.0;
+        this.bodyState = BodyState.POSTABSORPTIVE_RESTING;
+        this.bodyWeight_ = 65; //kg
+        this.fatFraction = 0.2;
+
+        //this.adiposeTissue = new AdiposeTissue(this);
+        //this.muscles = new musclesH(this);
+
+        this.currExercise = 0;
+        this.currEnergyExpenditure = 1.0/60.0;
+        this.exerciseOverAt = 0;
+    }
+
+    // do not need to implement ~HumanBody as garbageCollection will take care of all objects (of organs)
+
+    currentEnergyExpenditure(){
+        return this.bodyWeight_ * this.currEnergyExpenditure;
+    }
+
+    stomachEmpty(){
+        this.oldState = this.bodyState;
+
+        switch (this.bodyState){
+            case BodyState.FED_RESTING:
+                this.bodyState = BodyState.POSTABSORPTIVE_RESTING;
+                break;
+            case BodyState.FED_EXERCISING:
+                this.bodyState = BodyState.POSTABSORPTIVE_EXERCISING;
+                break;
+            default:
+                break;
+        }
+
+        if(this.bodyState != this.oldState){
+            // do nothing, original code just has cout but it is commented out
+        }
+    }
+
+    processTick(){
+        portalVein.processTick();
+        stomach.processTick();
+        intestine.processTick();
+        liver.processTick();
+        adiposeTissue.processTick();
+        brain.processTick();
+        heart.processTick();
+        muscles.processTick();
+        kidneys.processTick();
+        blood.processTick();
+
+        // dont worry about time_stamp yet, will be read from real-time database
+        Console.log(" bgl " + blood.getBGL() + " weight "  + bodyWeight_);
+
+        if(bodyState == BodyState.FED_EXERCISING){
+            // need to work on if statement, read from realtime db
+            //if(){
+                bodyState = BodyState.FED_RESTING;
+                currEnergyExpenditure = 1.0/60.0;
+            //}
+        }
+
+        if(bodyState == BodyState.POSTABSORPTIVE_EXERCISING){
+            // need to work on if statement, read ticks from realtime db
+            //if(){
+                bodyState = BodyState.POSTABSORPTIVE_RESTING;
+                currEnergyExpenditure = 1.0/60.0;
+            //}
+        }
+
+    }
+
+    setParams(){
+        // need to look into how to do iterator
+        stomach.setParams();
+        intestine.setParams();
+        portalVein.setParams();
+        liver.setParams();
+        adiposeTissue.setParams();
+        brain.setParams();
+        heart.setParams();
+        muscles.setParams();
+        blood.setParams();
+        kidneys.setParams();
+    }
+
+    processFoodEvent(foodID, howmuch){
+        this.stomach.addFood(foodId, howmuch);
+        this.oldState = this.bodyState;
+        switch(this.bodyState){
+            case BodyState.POSTABSORPTIVE_RESTING:
+                this.bodyState = BodyState.FED_RESTING;
+                break;
+            case BodyState.POSTABSORPTIVE_EXERCISING:
+                this.bodyState = BodyState.FED_EXERCISING;
+                break;
+            default:
+                break;
+        }
+        
+        if(this.bodyState != this.oldState){
+            // all this code was commented out in original
+            //setParams();
+            //SimCtl::time_stamp();
+            //cout << "Entering State " << bodyState << endl;
+        }     
+    }
+
+    isExercising(){
+        if(this.bodyState == BodyState.FED_EXERCISING || this.bodyState == BodyState.POSTABSORPTIVE_EXERCISING){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    processExerciseEvent(exerciseID, duration){
+        if(this.isExercising()){
+            // convert when work on real-time database
+            // SimCtl::time_stamp();
+
+            Console.log("Exercise within Exercise!");
+            process.exit();
+        }
+
+        this.currExercise = exerciseID;
+
+        // need to look into Javascript maps
+        //currEnergyExpenditure = (exerciseTypes[exerciseID].intensity_)/60.0;
+
+        if(this.bodyState == BodyState.FED_RESTING){
+            this.bodyState = BodyState.FED_EXERCISING;
+            // Look into accessing SimCtl
+            //exerciseOverAt = SimCtl::ticks + duration;
+            return;
+        }
+
+        if(this.bodyState == BodyState.POSTABSORPTIVE_RESTING){
+            this.bodyState = BodyState.POSTABSORPTIVE_EXERCISING;
+            // Look into accessing SimCtl
+            // exerciseOverAt = SimCtl::ticks + duration;
+            return;
+        }
+    }
+}
+
+// SimCtl
+var TICKS_PER_DAY = 24 * 60;
+var TICKS_PER_HOUR = 60;
+var body = new HumanBody();
+
+const EventType = {
+    FOOD: 'FOOD',
+    EXERCISE: 'EXERCISE',
+    HALT: 'HALT',
+    METFORMIN: 'METFORMIN',
+    INSULIN_SHORT: 'INSULIN_SHORT',
+    INSULIN_LONG: 'INSULIN_LONG'
+}
+
+class Event {
+    constructor(fireTime, the_type) {
+        this.fireTime_ = fireTime;
+        this.eventType_ = the_type;
+        this.cost0 = fireTime;
+        this.cost1 = 0; // possibly redundant and can delete
+    }
+}
+
+class FoodEvent extends Event {
+    constructor (fireTime, quantity, foodID) {
+        super(fireTime);
+        this.quantity_ = quantity;
+        this.foodID_ = foodID;
+    }
+}
+
+class ExerciseEvent extends Event {
+    constructor (fireTime, duration, exerciseID) {
+        super(fireTime);
+        this.duration_ = duration;
+        this.exerciseID_ = exerciseID;
+    }
+}
+
+class HaltEvent extends Event {
+    constructor (fireTime){
+        super(fireTime);
+    }
+}
+
+class SimCtl {
+
+    constructor(){
+        this.ticks = 0;
+        this.eventQ = new PriorityQueue();
+    }
+
+    run_simulation(){
+        while(true){
+            var val;
+            while( (val = this.fire_event()) == 1);
+            body.processTick();
+            this.ticks++;
+        }
+    }
+
+    fire_event(){
+        var event_ = this.eventQ.front();
+
+        if(event_ === "No elements in Queue"){
+            console.log("No event left");
+            // terminate program (returning -1 may not be correct)
+            return -1;
+        }
+
+        if(event_.firetime > this.ticks){
+            return -1;
+        }
+
+        var event_type = event_.ID;
+
+        switch(event_type){
+            case EventType.FOOD:
+                body.processFoodEvent(event_.subID, event_.howmuch);
+                break;
+            case EventType.EXERCISE:
+                body.processExerciseEvent(event_.subID, event_.howmuch)
+                break;
+            case EventType.HALT:
+                // terminate program
+                break;
+            default:
+                break;
+        }
+
+        event_ = this.eventQ.dequeue();
+        return 1;
+    }
+
+    addEvent(fireTime, type, subtype, howmuch){
+        switch (type){
+            case EventType.FOOD:
+                var e = new QElement(fireTime, type, subtype, howmuch);
+                this.eventQ.enqueue(e);
+                break;
+            case EventType.EXERCISE:
+                var e = new QElement(fireTime, type, subtype, howmuch);
+                this.eventQ.enqueue(e);
+                break;
+            case EventType.HALT:
+                var e = new QElement(fireTime, type, subtype, howmuch);
+                this.eventQ.enqueue(e);
+            default:
+                break;               
+        }
+    }
+
+    readEvents(){
+        // each activity read in we need to addEvent to add to priorityqueue
+    }
+
+
+    elapsed_days(){
+        return(this.ticks/TICKS_PER_DAY);
+    }
+
+    elapsed_hours(){
+        var x = this.ticks % TICKS_PER_DAY;
+        return(x/TICKS_PER_HOUR);
+    }
+
+    elapsed_minutes(){
+        var x = this.ticks % TICKS_PER_DAY;
+        return(x % TICKS_PER_HOUR);
+    }
+}
+
+// TODO need to figure out how to implement the main function in JavaScript
+// also need to determine how we will pass in the arguments that are used when sim ran in colsole
+function run_simulation(){
+    while (true) {
+        var val;
+        while( (val = this.fire_event()) == 1);
+        // need to convert body->processTick();
+        this.ticks++;
+    }
+
+    return 0;
+}
+
+
+
 var activityTypesArray = [
     {
         _id: "Select Activity Type",
@@ -81,6 +546,48 @@ var monthArray = [
         name: "December"
     }
 ];
+
+function dateConversion(dateToConvert){
+    return new Date(dateToConvert).getTime();
+}
+
+function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray){
+    var simCtl = new SimCtl();
+
+    var completedActivitiesArray = [];
+
+    for(var ai = 0; ai < activityDbArray.length; ai++){
+        var timeString = activityDbArray[ai].year + "-" + activityDbArray[ai].month + "-" + activityDbArray[ai].day + "T";
+
+        var hour;
+        if(activityDbArray[ai].amPm == "AM"){
+            if(activityDbArray[ai].hour == "12"){
+                hour = "00"
+            }else{
+                hour = activityDbArray[ai].hour;
+            }
+        }else{
+            if(activityDbArray[ai].hour == "12"){
+                hour = activityDbArray[ai].hour;
+            }else{
+                var hourConv = parseInt(activityDbArray[ai].hour);
+                var hourConv12 = hourConv + 12;
+                hour = hourConv12.toString();
+            }
+        }
+
+        timeString = timeString + hour + ":" + activityDbArray[ai].minute + ":" + activityDbArray[ai].second + ".000Z";
+
+        var time = dateConversion(timeString);
+        var activity_TypeValue = activityDbArray[ai].activity_type;
+        var subTypeNumberValue = activityDbArray[ai].subtype;
+        var quantityValue = activityDbArray[ai].quantity;
+
+        var newActivityObj = {fireTime: time, type: activity_TypeValue, subtype: subTypeNumberValue, howmuch: quantityValue};
+        completedActivitiesArray.push(newActivityObj);
+    }
+
+}
 
 function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1){
     var nextActivityTypeID = totalActivitiesInDb_1;
@@ -662,7 +1169,8 @@ exports.new_simulation_post = function(req, res) {
 
                 writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1);
 
-    
+                runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray);
+
                 res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, seconds: secondsArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
             });
         });
