@@ -1,6 +1,9 @@
 var firebase = require('firebase');
 var async = require('async');
 
+// constants
+var YEAR_CUTOFF = 525600 * 2010;    // cannot create activity before than 2010
+
 // priorityQueue
 // User defined class
 // to store element and its priority
@@ -260,7 +263,7 @@ class HumanBody {
     }
 
     processFoodEvent(foodID, howmuch){
-        console.log("process food event");
+        //console.log("process food event");
         this.stomach.addFood(foodId, howmuch);
         this.oldState = this.bodyState;
         switch(this.bodyState){
@@ -291,12 +294,12 @@ class HumanBody {
     }
     
     processExerciseEvent(exerciseID, duration){
-        console.log("process exercise event");
+        //console.log("process exercise event");
         if(this.isExercising()){
             // convert when work on real-time database
             // SimCtl::time_stamp();
 
-            Console.log("Exercise within Exercise!");
+            //Console.log("Exercise within Exercise!");
             process.exit();
         }
 
@@ -386,7 +389,7 @@ class SimCtl {
             this.fire_event();
             this.body.processTick();
             this.ticks++;
-            console.log(this.ticks);
+            //console.log(this.ticks);
         }
     }
 
@@ -394,7 +397,7 @@ class SimCtl {
         var event_ = this.eventQ.front();
 
         if(event_ === "No elements in Queue"){
-            console.log("No event left");
+            //console.log("No event left");
             // terminate program (returning -1 may not be correct)
             return -1;
         }
@@ -413,7 +416,7 @@ class SimCtl {
                 this.body.processExerciseEvent(event_.subID, event_.howmuch)
                 break;
             case EventType.HALT:
-                console.log("HALT - Stop the simulation");
+                //console.log("HALT - Stop the simulation");
                 break;
             default:
                 break;
@@ -551,7 +554,68 @@ var monthArray = [
 ];
 
 function timeCalculation(year, month, day, hour, minute, amPm){
-    
+    var yearInt = parseInt(year);
+    var monthInt = parseInt(month);
+    var dayInt = parseInt(day);
+    var hourInt = parseInt(hour);
+    var minuteInt = parseInt(minute);
+
+    var yearTicks = yearInt * 525600;
+    yearTicks = yearTicks - YEAR_CUTOFF;
+    var monthTicks;
+    if(monthInt == 1){
+        monthTicks = 0;
+    }else if(monthInt == 2){
+        monthTicks = 31 * 1440;
+    }else if(monthInt == 3){
+        monthTicks = 59 * 1440;
+    }else if(monthInt == 4){
+        monthTicks = 90 * 1440;
+    }else if(monthInt == 5){
+        monthTicks = 120 * 1440;
+    }else if(monthInt == 6){
+        monthTicks = 151 * 1440;
+    }else if(monthInt == 7){
+        monthTicks = 181 * 1440;
+    }else if(monthInt == 8){
+        monthTicks = 212 * 1440;
+    }else if(monthInt == 9){
+        monthTicks = 243 * 1440;
+    }else if(monthInt == 10){
+        monthTicks = 273 * 1440;
+    }else if(monthInt == 11){
+        monthTicks = 304 * 1440;
+    }else{
+        monthTicks = 334 * 1440;
+    }
+
+    var daysBefore = dayInt - 1;
+    var dayTicks = daysBefore * 1440;
+
+    var hourConv;
+    if(amPm == "AM"){
+        if(hourInt == 12){
+            hourConv = 0;
+        }else{
+            hourConv = hourInt;
+        }
+    }else{
+        if(hourInt == 12){
+            hourConv = 12;
+        }else{
+            hourConv = hourInt + 12;
+        }
+    }
+
+    var hourConvMinus = hourConv - 1;
+    var hourTicks = hourConvMinus * 60;
+
+    var minuteMinus = minuteInt - 1;
+    var minuteTicks = minuteMinus;
+
+    var totalReturn = yearTicks + monthTicks + dayTicks + hourTicks + minuteTicks;
+    console.log(totalReturn);
+    return totalReturn;
 }
 
 function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, req, res){
@@ -827,7 +891,7 @@ exports.new_simulation_get = function(req, res) {
     var yearID = "Year";
     var yearObj = {name: yearString, _id: yearID};
     yearArray.push(yearObj);
-    for(var i = 2018; i > 1989; i--){
+    for(var i = 2018; i > 2009; i--){
         var kaString = i;
         var kaID = i;
         var newObj = {name: kaString, _id: kaID};
@@ -839,7 +903,7 @@ exports.new_simulation_get = function(req, res) {
     var hourID = "Hour";
     var hourObj = {name: hourString, _id: hourID};
     hourArray.push(hourObj);
-    for(var i = 0; i < 13; i++){
+    for(var i = 1; i < 13; i++){
         var kaString;
         var kaID;
         if(i < 10){
@@ -1000,7 +1064,7 @@ exports.new_simulation_post = function(req, res) {
     var yearID = "Year";
     var yearObj = {name: yearString, _id: yearID};
     yearArray.push(yearObj);
-    for(var i = 2018; i > 1989; i--){
+    for(var i = 2018; i > 2009; i--){
         var kaString = i;
         var kaID = i;
         var newObj = {name: kaString, _id: kaID};
@@ -1012,7 +1076,7 @@ exports.new_simulation_post = function(req, res) {
     var hourID = "Hour";
     var hourObj = {name: hourString, _id: hourID};
     hourArray.push(hourObj);
-    for(var i = 0; i < 13; i++){
+    for(var i = 1; i < 13; i++){
         var kaString;
         var kaID;
         if(i < 10){
