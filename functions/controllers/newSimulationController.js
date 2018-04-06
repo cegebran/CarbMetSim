@@ -213,33 +213,33 @@ class HumanBody {
     }
 
     processTick(){
-        portalVein.processTick();
-        stomach.processTick();
-        intestine.processTick();
-        liver.processTick();
-        adiposeTissue.processTick();
-        brain.processTick();
-        heart.processTick();
-        muscles.processTick();
-        kidneys.processTick();
-        blood.processTick();
+        //portalVein.processTick();
+        //stomach.processTick();
+        //intestine.processTick();
+        //liver.processTick();
+        //adiposeTissue.processTick();
+        //brain.processTick();
+        //heart.processTick();
+        //muscles.processTick();
+        //kidneys.processTick();
+        //blood.processTick();
 
         // dont worry about time_stamp yet, will be read from real-time database
-        Console.log(" bgl " + blood.getBGL() + " weight "  + bodyWeight_);
+        //Console.log(" bgl " + blood.getBGL() + " weight "  + bodyWeight_);
 
-        if(bodyState == BodyState.FED_EXERCISING){
+        if(this.bodyState == BodyState.FED_EXERCISING){
             // need to work on if statement, read from realtime db
             //if(){
-                bodyState = BodyState.FED_RESTING;
-                currEnergyExpenditure = 1.0/60.0;
+                this.bodyState = BodyState.FED_RESTING;
+                this.currEnergyExpenditure = 1.0/60.0;
             //}
         }
 
-        if(bodyState == BodyState.POSTABSORPTIVE_EXERCISING){
+        if(this.bodyState == BodyState.POSTABSORPTIVE_EXERCISING){
             // need to work on if statement, read ticks from realtime db
             //if(){
-                bodyState = BodyState.POSTABSORPTIVE_RESTING;
-                currEnergyExpenditure = 1.0/60.0;
+                this.bodyState = BodyState.POSTABSORPTIVE_RESTING;
+                this.currEnergyExpenditure = 1.0/60.0;
             //}
         }
 
@@ -260,6 +260,7 @@ class HumanBody {
     }
 
     processFoodEvent(foodID, howmuch){
+        console.log("process food event");
         this.stomach.addFood(foodId, howmuch);
         this.oldState = this.bodyState;
         switch(this.bodyState){
@@ -290,6 +291,7 @@ class HumanBody {
     }
     
     processExerciseEvent(exerciseID, duration){
+        console.log("process exercise event");
         if(this.isExercising()){
             // convert when work on real-time database
             // SimCtl::time_stamp();
@@ -370,12 +372,21 @@ class SimCtl {
         this.TICKS_PER_HOUR = 60;
     }
 
-    run_simulation(){
-        while(true){
+    run_simulation(simulationPassedObject, ticks){
+        var endTicks = ticks + 100000;
+        while(this.eventQ.isEmpty() == false){
+            if(endTicks == this.ticks){
+                var objectToReturn = {
+                    ticks1: this.ticks,
+                    simulationPassedObject1: simulationPassedObject
+                };
+                return objectToReturn;
+            }
             var val;
-            while( (val = this.fire_event()) == 1);
-            body.processTick();
+            this.fire_event();
+            this.body.processTick();
             this.ticks++;
+            console.log(this.ticks);
         }
     }
 
@@ -396,10 +407,10 @@ class SimCtl {
 
         switch(event_type){
             case EventType.FOOD:
-                body.processFoodEvent(event_.subID, event_.howmuch);
+                this.body.processFoodEvent(event_.subID, event_.howmuch);
                 break;
             case EventType.EXERCISE:
-                body.processExerciseEvent(event_.subID, event_.howmuch)
+                this.body.processExerciseEvent(event_.subID, event_.howmuch)
                 break;
             case EventType.HALT:
                 console.log("HALT - Stop the simulation");
@@ -438,7 +449,7 @@ class SimCtl {
         }
 
         // add halt event at the end
-        this.addEvent(9999999999999999999999999, "HALT", "0", "1");
+        this.addEvent(99999999999999999999, "HALT", "0", "1");
     }
 
     elapsed_days(){
@@ -454,19 +465,6 @@ class SimCtl {
         var x = this.ticks % TICKS_PER_DAY;
         return(x % TICKS_PER_HOUR);
     }
-}
-
-// TODO need to figure out how to implement the main function in JavaScript
-// also need to determine how we will pass in the arguments that are used when sim ran in colsole
-function run_simulation(){
-    while (true) {
-        var val;
-        while( (val = this.fire_event()) == 1);
-        // need to convert body->processTick();
-        this.ticks++;
-    }
-
-    return 0;
 }
 
 
@@ -552,35 +550,11 @@ var monthArray = [
     }
 ];
 
-function dateConversion(dateToConvert){
-    return new Date(dateToConvert).getTime();
+function timeCalculation(year, month, day, hour, minute, amPm){
+    
 }
 
-function timeStringCompiler(year, month, day, hour, minute, second, amPm){
-    var timeString = year + "-" + month + "-" + day + "T";
-
-        var hourValue;
-        if(amPm == "AM"){
-            if(hour == "12"){
-                hourValue = "00"
-            }else{
-                hourValue = hour;
-            }
-        }else{
-            if(hour == "12"){
-                hourValue = hour;
-            }else{
-                var hourConv = parseInt(hour);
-                var hourConv12 = hourConv + 12;
-                hourValue = hourConv12.toString();
-            }
-        }
-
-        timeString = timeString + hourValue + ":" + minute + ":" + second + ".000Z";
-        return timeString;
-}
-
-function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1){
+function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, req, res){
     var nextActivityTypeID = totalActivitiesInDb_1;
     var nextFoodTypeID = totalFoodTypesinDb_1;
     var nextExerciseTypeID = totalExerciseTypesinDb_1;
@@ -590,9 +564,8 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
     var completedActivitiesArray = [];
 
     for(var ai = 0; ai < activityDbArray.length; ai++){
-        var timeString = timeStringCompiler(activityDbArray[ai].year, activityDbArray[ai].month, activityDbArray[ai].day, activityDbArray[ai].hour, activityDbArray[ai].minute, activityDbArray[ai].second, activityDbArray[ai].amPm);
+        var time = timeCalculation(activityDbArray[ai].year, activityDbArray[ai].month, activityDbArray[ai].day, activityDbArray[ai].hour, activityDbArray[ai].minute, activityDbArray[ai].amPm);
 
-        var time = dateConversion(timeString);
         var activity_TypeValue = activityDbArray[ai].activity_type;
         var subTypeNumberValue = activityDbArray[ai].subtype;
         var quantityValue = activityDbArray[ai].quantity;
@@ -609,8 +582,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
         if(activityType == "Food"){
             var foodType = food_type0[i];
             if(foodType == "+ New Food"){
-                var timeString = timeStringCompiler(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], secondSelection0[i], amPmSelection0[i]);
-                var time = dateConversion(timeString);
+                var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
                 var activityTypeValue = activity_type0[i];
                 var subTypeValue = nextFoodTypeID;
                 var foodQtyInput = foodQtyInput0[i];
@@ -622,8 +594,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
             }else if(foodType == "Select Food"){
                 // no selection made, do not add to simulation
             }else{
-                var timeString = timeStringCompiler(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], secondSelection0[i], amPmSelection0[i]);
-                var time = dateConversion(timeString);
+                var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
                 var activityTypeValue = activity_type0[i];
                 var subTypeValue = foodType;
                 var foodQtyInput = foodQtyInput0[i];
@@ -635,8 +606,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
             var exerciseType = exercise_type0[i];
             if(exerciseType == "+ New Exercise"){
 
-                var timeString = timeStringCompiler(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], secondSelection0[i], amPmSelection0[i]);
-                var time = dateConversion(timeString);
+                var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
                 var activityTypeValue = activity_type0[i];
                 var subTypeValue = nextExerciseTypeID;
                 var exerciseQtyInput = exerciseQtyInput0[i];
@@ -647,8 +617,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
             }else if(exerciseType == "Select Exercise"){
                 // no selection made, do not add to simulation
             }else{
-                var timeString = timeStringCompiler(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], secondSelection0[i], amPmSelection0[i]);
-                var time = dateConversion(timeString);
+                var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
                 var activityTypeValue = activity_type0[i];
                 var subTypeValue = exerciseType;
                 var exerciseQtyInput = exerciseQtyInput0[i];
@@ -663,9 +632,25 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
     }
 
     simCtl.readEvents(completedActivitiesArray);
+
+    // will change name of array when have idea what values will need to be stored!!!!!!!
+    var changedValue1Array = [];
+    var simulationPassedObject = {
+        changedValue1: changedValue1Array
+    };
+
+    var ticksCt = simCtl.ticks;
+
+    while(ticksCt < 99999999999999999999){
+        var retObj = simCtl.run_simulation(simulationPassedObject, ticksCt);
+        ticksCt = retObj.ticks1;
+        simulationPassedObject = retObj.simulationPassedObject1;
+        res.render('loginfirstmsg', {result: "One needs to Sign In first before logging a new Activity."});
+    }
+    
 }
 
-function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1){
+function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1){
     var nextActivityTypeID = totalActivitiesInDb_1;
     var nextFoodTypeID = totalFoodTypesinDb_1;
     var nextExerciseTypeID = totalExerciseTypesinDb_1;
@@ -695,9 +680,8 @@ function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_ty
                 var yearSelection = yearSelection0[i];
                 var hourSelection = hourSelection0[i];
                 var minuteSelection = minuteSelection0[i];
-                var secondSelection = secondSelection0[i];
                 var amPmSelection = amPmSelection0[i];
-                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextFoodTypeID, foodQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, secondSelection, amPmSelection)
+                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextFoodTypeID, foodQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, amPmSelection)
                 nextFoodTypeID++;
             }else if(foodType == "Select Food"){
                 // no selection made, do not add anything to database
@@ -708,9 +692,8 @@ function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_ty
                 var yearSelection = yearSelection0[i];
                 var hourSelection = hourSelection0[i];
                 var minuteSelection = minuteSelection0[i];
-                var secondSelection = secondSelection0[i];
                 var amPmSelection = amPmSelection0[i];
-                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, foodType, foodQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, secondSelection, amPmSelection)
+                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, foodType, foodQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, amPmSelection)
             }
         }else if(activityType == "Exercise"){
             var exerciseType = exercise_type0[i];
@@ -724,9 +707,8 @@ function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_ty
                 var yearSelection = yearSelection0[i];
                 var hourSelection = hourSelection0[i];
                 var minuteSelection = minuteSelection0[i];
-                var secondSelection = secondSelection0[i];
                 var amPmSelection = amPmSelection0[i];
-                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextExerciseTypeID, exerciseQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, secondSelection, amPmSelection)
+                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextExerciseTypeID, exerciseQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, amPmSelection)
                 nextExerciseTypeID++;
             }else if(exerciseType == "Select Exercise"){
                 // no selection made, do not add anything to database
@@ -737,14 +719,12 @@ function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_ty
                 var yearSelection = yearSelection0[i];
                 var hourSelection = hourSelection0[i];
                 var minuteSelection = minuteSelection0[i];
-                var secondSelection = secondSelection0[i];
                 var amPmSelection = amPmSelection0[i];
-                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, exerciseType, exerciseQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, secondSelection, amPmSelection)
+                writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, exerciseType, exerciseQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, amPmSelection)
             }
         }else{
             // no selection made, do not add anything to database
         }
-
         i++;
     }
 }
@@ -787,7 +767,7 @@ function writeExerciseSubtypeData(totalExerciseSubtypesPlus, exercise_activity, 
     return firebase.database().ref().update(exerciseSubtype);
 }
 
-function writeNewActivitySequenceElement(newActivitySequenceKey, totalActivitiesInDb_1, activity, subtype, quantity, month, day, year, hour, minute, second, amPm){
+function writeNewActivitySequenceElement(newActivitySequenceKey, totalActivitiesInDb_1, activity, subtype, quantity, month, day, year, hour, minute, amPm){
     var userId = firebase.auth().currentUser.uid;
     var timestampRecorded = Date.now();
     var activitySequenceElement = {
@@ -800,7 +780,6 @@ function writeNewActivitySequenceElement(newActivitySequenceKey, totalActivities
         year: year,
         hour: hour,
         minute: minute,
-        second: second,
         amPm: amPm
     };
 
@@ -893,25 +872,6 @@ exports.new_simulation_get = function(req, res) {
         minutesArray.push(newObj);
     }
 
-    var secondsArray = [];
-    var secString = "Second";
-    var secID = "Second";
-    var secObj = {name: secString, _id: secID};
-    secondsArray.push(secObj);
-    for(var i = 0; i < 60; i++){
-        var kaString;
-        var kaID;
-        if(i < 10){
-            kaString = "0" + i;
-            kaID = "0" + i;
-        }else{
-            kaString = i;
-            kaID = i;
-        }
-        var newObj = {name: kaString, _id: kaID};
-        secondsArray.push(newObj);
-    }
-
     if( firebase.auth().currentUser ) {
         var foodKeyArray = [];
         var foodKeyDataArray = [];
@@ -995,7 +955,7 @@ exports.new_simulation_get = function(req, res) {
         
                 exerciseActivitiesArray = exerciseKeyDataArray;
         
-                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, seconds: secondsArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
+                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
             });
         });
     } else {
@@ -1083,25 +1043,6 @@ exports.new_simulation_post = function(req, res) {
         }
         var newObj = {name: kaString, _id: kaID};
         minutesArray.push(newObj);
-    }
-
-    var secondsArray = [];
-    var secString = "Second";
-    var secID = "Second";
-    var secObj = {name: secString, _id: secID};
-    secondsArray.push(secObj);
-    for(var i = 0; i < 60; i++){
-        var kaString;
-        var kaID;
-        if(i < 10){
-            kaString = "0" + i;
-            kaID = "0" + i;
-        }else{
-            kaString = i;
-            kaID = i;
-        }
-        var newObj = {name: kaString, _id: kaID};
-        secondsArray.push(newObj);
     }
 
     var foodKeyArray = [];
@@ -1217,37 +1158,15 @@ exports.new_simulation_post = function(req, res) {
                 var yearSelection0 = req.body.yearSelection0;
                 var hourSelection0 = req.body.hourSelection0;
                 var minuteSelection0 = req.body.minuteSelection0;
-                var secondSelection0 = req.body.secondSelection0;
                 var amPmSelection0 = req.body.amPmSelection0;
                 var foodQtyInput0 = req.body.foodQtyInput0;
                 var exerciseQtyInput0 = req.body.exerciseQtyInput0;
 
-                /*console.log(activity_type0);
-                console.log(food_type0);
-                console.log(exercise_type0);
-                console.log(newFoodName0);
-                console.log(newFoodServingSize0);
-                console.log(newFoodFat0);
-                console.log(newFoodProtein0);
-                console.log(newFoodRAG0);
-                console.log(newFoodSAG0);
-                console.log(newExerciseName0);
-                console.log(newExerciseIntensity0);
-                console.log(monthSelection0);
-                console.log(daySelection0);
-                console.log(yearSelection0);
-                console.log(hourSelection0);
-                console.log(minuteSelection0);
-                console.log(secondSelection0);
-                console.log(amPmSelection0);
-                console.log(foodQtyInput0);
-                console.log(exerciseQtyInput0);*/
+                writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1);
 
-                writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1);
+                runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, req, res);
 
-                runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1);
-
-                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, seconds: secondsArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
+                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
             });
         });
     });
