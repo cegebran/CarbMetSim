@@ -1,4 +1,9 @@
-Class Stomach{
+import "HumanBody.js";
+import "AdiposeTissue.js";
+import "Blood.js";
+import "Stomach.js";
+
+export class Stomach{
     constructor(myBody)
     {
         this.body = myBody;
@@ -44,70 +49,70 @@ Class Stomach{
 
     	//Chyme leakage does not change the relative fraction of carbs/fats/proteins in the chyme left in the stomach. 
 
-    	if( stomachEmpty )
+    	if( this.stomachEmpty )
     		return;
 
         	//static std::poisson_distribution<int> geConstant__ (1000.0*geConstant_);
 
-        var geConstant = (1.0) * ((geConstant__(SimCtl::myEngine()))/1000.0);
-    	var totalFood = (1.0) * ( RAG+SAG+protein+fat);
+        var geConstant = (1.0) * ((this.geConstant__(SimCtl.myEngine()))/1000.0);
+    	var totalFood = (1.0) * ( this.RAG+this.SAG+this.protein+this.fat);
     	// calorific density of the food in stomach
-    	var calorificDensity = (1.0) * ((4.0*(RAG+SAG+protein) + 9.0*fat)/totalFood); 
-    	var geSlope = (1.0) * (9.0 * geSlopeMin_/calorificDensity);
+    	var calorificDensity = (1.0) * ((4.0*(this.RAG+this.SAG+this.protein) + 9.0*this.fat)/totalFood); 
+    	var geSlope = (1.0) * (9.0 * this.geSlopeMin_/calorificDensity);
 
         var geBolus = (1.0) * (geConstant + geSlope*totalFood);
 
         	SimCtl.time_stamp();
-    	Console.log("Gastric Emptying:: Total Food " + totalFood + " Calorific Density " + calorificDensity
+    	console.log("Gastric Emptying:: Total Food " + totalFood + " Calorific Density " + calorificDensity
     	+ " geSlopeMin " + geSlopeMin + " geSlope " + geSlope + " geConstant " + geConstant 
     	+ " Bolus " + geBolus + endl);
 
     	if( geBolus > totalFood )
     		geBolus = totalFood;
 
-    	double ragInBolus = (1.0) * (geBolus*RAG/totalFood);
-    	var sagInBolus = (1.0) * (geBolus*SAG/totalFood);
-    	var proteinInBolus = (1.0) * (geBolus*protein/totalFood);
-    	var fatInBolus = (1.0) * (geBolus*fat/totalFood);
+    	var ragInBolus = (1.0) * (geBolus*this.RAG/totalFood);
+    	var sagInBolus = (1.0) * (geBolus*this.SAG/totalFood);
+    	var proteinInBolus = (1.0) * (geBolus*this.protein/totalFood);
+    	var fatInBolus = (1.0) * (geBolus*this.fat/totalFood);
 
-    	RAG -= ragInBolus;
-    	SAG -= sagInBolus;
-    	protein -= proteinInBolus;
-    	fat -= fatInBolus;
+    	this.RAG -= ragInBolus;
+    	this.SAG -= sagInBolus;
+    	this.protein -= proteinInBolus;
+    	this.fat -= fatInBolus;
 
-    	body.intestine.addChyme(ragInBolus,sagInBolus,proteinInBolus,fatInBolus);
+    	this.body.intestine.addChyme(ragInBolus,sagInBolus,proteinInBolus,fatInBolus);
 
-        	if( (RAG == 0) && (SAG == 0) && (protein == 0) && (fat == 0) )
+        	if( (this.RAG == 0) && (this.SAG == 0) && (this.protein == 0) && (this.fat == 0) )
         	{
-            	stomachEmpty = true;
-            	body.stomachEmpty();
+            	this.stomachEmpty = true;
+            	this.body.stomachEmpty();
         	}
         
         SimCtl.time_stamp();
-        Console.log("Stomach : SAG " + SAG + " RAG " + RAG +  " protein " + protein + " fat " + fat + endl); 
+        console.log("Stomach : SAG " + this.SAG + " RAG " + this.RAG +  " protein " + this.protein + " fat " + this.fat + endl); 
     }
 
-    addFood(unsigned foodID, double howmuch)
+    addFood(foodID, howmuch)
     {
         // howmuch is in grams
         
         if( howmuch == 0 )
             return;
         //name is type string
-        var name = body.foodTypes[foodID].name_;
+        var name = this.body.foodTypes[foodID].name_;
         
-        var numServings = (1.0) * (howmuch/(body.foodTypes[foodID].servingSize_));
+        var numServings = (1.0) * (howmuch/(this.body.foodTypes[foodID].servingSize_));
         // add this. ?
-        RAG += 1000.0*numServings*(body.foodTypes[foodID].RAG_); // in milligrams
-        SAG += 1000.0*numServings*(body.foodTypes[foodID].SAG_); // in milligrams
-        protein += 1000.0*numServings*(body.foodTypes[foodID].protein_); // in milligrams
-        fat += 1000.0*numServings*(body.foodTypes[foodID].fat_); // in milligrams
+        this.RAG += 1000.0*numServings*(this.body.foodTypes[foodID].this.RAG_); // in milligrams
+        this.SAG += 1000.0*numServings*(this.body.foodTypes[foodID].this.SAG_); // in milligrams
+        this.protein += 1000.0*numServings*(this.body.foodTypes[foodID].this.protein_); // in milligrams
+        this.fat += 1000.0*numServings*(this.body.foodTypes[foodID].this.fat_); // in milligrams
         
-        if( (RAG > 0) || (SAG > 0) || (protein > 0) || (fat > 0) )
-            stomachEmpty = false;
+        if( (this.RAG > 0) || (this.SAG > 0) || (this.protein > 0) || (this.fat > 0) )
+            this.stomachEmpty = false;
         
         SimCtl.time_stamp();
-        Console.log("Adding " + howmuch + " grams of " + name + " to stomach" + std::endl);
+        console.log("Adding " + howmuch + " grams of " + name + " to stomach" + std::endl);
         
     }
 

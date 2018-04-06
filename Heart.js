@@ -1,4 +1,8 @@
-class Heart {
+import "Blood.js";
+import "Stomach.js";
+import "Intestine.js";
+
+export class Heart {
 	constructor(myBody){
 		this.body = mybody;
 		this.lactateOxidized_ = 0;
@@ -14,27 +18,27 @@ class Heart {
 
 	processTick(){
 
-    	var basalAbsorption = (1.0) * (basalGlucoseAbsorbed__(SimCtl.myEngine()))/1000.0;
+    	var basalAbsorption = (1.0) * (this.basalGlucoseAbsorbed__(SimCtl.myEngine()))/1000.0;
     
-    	body.blood.removeGlucose(basalAbsorption);
+    	this.body.blood.removeGlucose(basalAbsorption);
     
-    	oxidationPerTick = basalAbsorption;
+    	var oxidationPerTick = basalAbsorption;
 
     	// Absorption via GLUT4
     
 
-    	var bgl = (1.0) * (body.blood.getBGL());
-    	var scale = (1.0) * (1.0 - body.insulinResistance_) * (body.blood.insulinLevel) * (body.bodyWeight_);
-    	var g = (scale * Glut4VMAX_*bgl/(bgl + Glut4Km_);
+    	var bgl = (1.0) * (this.body.blood.getBGL());
+    	var scale = (1.0) * (1.0 - this.body.insulinResistance_) * (this.body.blood.insulinLevel) * (this.body.bodyWeight_);
+    	var g = (scale * this.Glut4VMAX_*bgl/(bgl + this.Glut4Km_);
     
-    	body.blood.removeGlucose(g);
+    	this.body.blood.removeGlucose(g);
 
     	oxidationPerTick += g;
 	}
 	
-setParams() {
-	    for( var itr = body.metabolicParameters[body.bodyState][HEART].begin();
-	        itr != body.metabolicParameters[body.bodyState][HEART].end(); itr = itr.next())
+	/*void setParams() {
+	    for( var itr = this.body.metabolicParameters[this.body.bodyState][HEART].begin();
+	        itr != this.body.metabolicParameters[this.body.bodyState][HEART].end(); itr = itr.next())
 	    {
 
 	        if(itr.first.compare("lactateOxidized_") == 0)
@@ -57,5 +61,5 @@ setParams() {
 	            Glut4VMAX_ = itr.second;
 	        }
 	    }
-	}
+	}*/
 }

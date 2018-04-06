@@ -1,6 +1,6 @@
+import "Blood.js";
 
-
-Brain{
+class Brain{
     constructor(myBody)
     {
         // 6 micromol per kg per minute = 6*180.1559/1000 mg per kg per minute = 1.08 mg per kg per minute
@@ -27,21 +27,21 @@ Brain{
     {
         //static std::poisson_distribution<int> glucoseOxidized__(1000.0*glucoseOxidized_);
         
-        var g = (1.0)* ((glucoseOxidized__(SimCtl::myEngine()))/1000.0);
-        oxidationThisTick = g;
-        body.blood.removeGlucose(g + glucoseToAlanine_);
-        body.blood.alanine += glucoseToAlanine_;
+        var g = (1.0)* ((this.glucoseOxidized__(SimCtl.myEngine()))/1000.0);
+        this.oxidationThisTick = g;
+        this.body.blood.removeGlucose(g + this.glucoseToAlanine_);
+        this.body.blood.alanine += this.glucoseToAlanine_;
         
         //Brain generate glutamine from branched amino acids.
-        if( body.blood.branchedAminoAcids > bAAToGlutamine_ )
+        if( this.body.blood.branchedAminoAcids > this.bAAToGlutamine_ )
         {
-            body.blood.branchedAminoAcids -= bAAToGlutamine_;
-            body.blood.glutamine += bAAToGlutamine_;
+            this.body.blood.branchedAminoAcids -= this.bAAToGlutamine_;
+            this.body.blood.glutamine += bAAToGlutamine_;
         }
         else
         {
-            body.blood.glutamine += body.blood.branchedAminoAcids;
-            body.blood.branchedAminoAcids = 0;
+            this.body.blood.glutamine += this.body.blood.branchedAminoAcids;
+            this.body.blood.branchedAminoAcids = 0;
         }
     }
 
