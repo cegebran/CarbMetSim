@@ -413,7 +413,6 @@ class SimCtl {
     }
 
     addEvent(fireTime, type, subtype, howmuch){
-        console.log("hello");
         switch (type){
             case EventType.FOOD:
                 var e = new QElement(fireTime, type, subtype, howmuch);
@@ -433,7 +432,9 @@ class SimCtl {
 
     readEvents(completedActivitiesArray){
         for(var i = 0; i < completedActivitiesArray.length; i++){
-            this.addEvent(completedActivitiesArray[i].fireTime, completedActivitiesArray[i].type, completedActivitiesArray[i].subtype, completedActivitiesArray[i].howmuch);
+            var type = completedActivitiesArray[i].type;
+            var typeUpper = type.toUpperCase();
+            this.addEvent(completedActivitiesArray[i].fireTime, typeUpper, completedActivitiesArray[i].subtype, completedActivitiesArray[i].howmuch);
         }
     }
 
