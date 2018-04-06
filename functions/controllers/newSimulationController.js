@@ -402,7 +402,7 @@ class SimCtl {
                 body.processExerciseEvent(event_.subID, event_.howmuch)
                 break;
             case EventType.HALT:
-                // terminate program
+                console.log("HALT - Stop the simulation");
                 break;
             default:
                 break;
@@ -436,6 +436,9 @@ class SimCtl {
             var typeUpper = type.toUpperCase();
             this.addEvent(completedActivitiesArray[i].fireTime, typeUpper, completedActivitiesArray[i].subtype, completedActivitiesArray[i].howmuch);
         }
+
+        // add halt event at the end
+        this.addEvent(9999999999999999999999999, "HALT", "0", "1");
     }
 
     elapsed_days(){
