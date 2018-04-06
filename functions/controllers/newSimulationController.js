@@ -320,10 +320,6 @@ class HumanBody {
 }
 
 // SimCtl
-var TICKS_PER_DAY = 24 * 60;
-var TICKS_PER_HOUR = 60;
-var body = new HumanBody();
-
 const EventType = {
     FOOD: 'FOOD',
     EXERCISE: 'EXERCISE',
@@ -369,6 +365,9 @@ class SimCtl {
     constructor(){
         this.ticks = 0;
         this.eventQ = new PriorityQueue();
+        this.body = new HumanBody();
+        this.TICKS_PER_DAY = 24 * 60;
+        this.TICKS_PER_HOUR = 60;
     }
 
     run_simulation(){
@@ -414,6 +413,7 @@ class SimCtl {
     }
 
     addEvent(fireTime, type, subtype, howmuch){
+        console.log("hello");
         switch (type){
             case EventType.FOOD:
                 var e = new QElement(fireTime, type, subtype, howmuch);
@@ -431,10 +431,11 @@ class SimCtl {
         }
     }
 
-    readEvents(){
-        // each activity read in we need to addEvent to add to priorityqueue
+    readEvents(completedActivitiesArray){
+        for(var i = 0; i < completedActivitiesArray.length; i++){
+            this.addEvent(completedActivitiesArray[i].fireTime, completedActivitiesArray[i].type, completedActivitiesArray[i].subtype, completedActivitiesArray[i].howmuch);
+        }
     }
-
 
     elapsed_days(){
         return(this.ticks/TICKS_PER_DAY);
@@ -657,7 +658,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
         i++;
     }
 
-    console.log(completedActivitiesArray);
+    simCtl.readEvents(completedActivitiesArray);
 }
 
 function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, secondSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1){
