@@ -11,12 +11,6 @@ block content
             option(value=activitytype._id) #{activitytype.name}
 
     div.form-group
-      label(for='subTypeExerciseFood') Food/Exercise Activity Types:
-      select#subTypeExerciseFood.form-control(type='select', placeholder='' name='foodExerciseActivity' required='false' )
-        for allActivitytype in allActivityTypes
-            option(value=allActivitytype._id) #{allActivitytype.name}
-
-    div.form-group
       label(for='foodActivitytype') Food Activity Types:
       select#foodActivitytype.form-control(type='select', placeholder='' name='foodActivityType' required='false' )
         for foodActivityType in foodActivityTypes
