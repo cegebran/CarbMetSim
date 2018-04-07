@@ -709,7 +709,8 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
         var retObj = simCtl.run_simulation(simulationPassedObject, ticksCt);
         ticksCt = retObj.ticks1;
         simulationPassedObject = retObj.simulationPassedObject1;
-        res.render('loginfirstmsg', {result: "One needs to Sign In first before logging a new Activity."});
+        var resultString = ticksCt + " / " + 99999999999999999999;
+        res.render('simulationRunningDisplay.pug', {result: resultString});
     }
     
 }
