@@ -85,10 +85,6 @@ block content
         select#minute.form-control(type='select', placeholder='', name='minute', required='true')
           for mTime in minutes
             option(value=mTime._id) #{mTime.name}
-        label(id="timeSep2") : 
-        select#second.form-control(type='select', placeholder='', name='second', required='true')
-          for sTime in seconds
-            option(value=sTime._id) #{sTime.name}
         select#amPm.form-control(type='select', placeholder='', name='amPm', required='true')
           for amPmSel in amPms
             option(value=amPmSel._id) #{amPmSel.name}
