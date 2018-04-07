@@ -163,102 +163,72 @@ for(var i = 0; i < 60; i++){
     minutesArray.push(newObj);
 }
 
+function timeCalculation(year, month, day, hour, minute, amPm){
+    var yearInt = parseInt(year);
+    var monthInt = parseInt(month);
+    var dayInt = parseInt(day);
+    var hourInt = parseInt(hour);
+    var minuteInt = parseInt(minute);
+
+    var yearTicks = yearInt * 525600;
+    yearTicks = yearTicks - YEAR_CUTOFF;
+    var monthTicks;
+    if(monthInt == 1){
+        monthTicks = 0;
+    }else if(monthInt == 2){
+        monthTicks = 31 * 1440;
+    }else if(monthInt == 3){
+        monthTicks = 59 * 1440;
+    }else if(monthInt == 4){
+        monthTicks = 90 * 1440;
+    }else if(monthInt == 5){
+        monthTicks = 120 * 1440;
+    }else if(monthInt == 6){
+        monthTicks = 151 * 1440;
+    }else if(monthInt == 7){
+        monthTicks = 181 * 1440;
+    }else if(monthInt == 8){
+        monthTicks = 212 * 1440;
+    }else if(monthInt == 9){
+        monthTicks = 243 * 1440;
+    }else if(monthInt == 10){
+        monthTicks = 273 * 1440;
+    }else if(monthInt == 11){
+        monthTicks = 304 * 1440;
+    }else{
+        monthTicks = 334 * 1440;
+    }
+
+    var daysBefore = dayInt - 1;
+    var dayTicks = daysBefore * 1440;
+
+    var hourConv;
+    if(amPm == "AM"){
+        if(hourInt == 12){
+            hourConv = 0;
+        }else{
+            hourConv = hourInt;
+        }
+    }else{
+        if(hourInt == 12){
+            hourConv = 12;
+        }else{
+            hourConv = hourInt + 12;
+        }
+    }
+
+    var hourConvMinus = hourConv - 1;
+    var hourTicks = hourConvMinus * 60;
+
+    var minuteMinus = minuteInt - 1;
+    var minuteTicks = minuteMinus;
+
+    var totalReturn = yearTicks + monthTicks + dayTicks + hourTicks + minuteTicks;
+    return totalReturn;
+}
+
 var errorsArray = [];
-
-function startDateCheck(date, start){
-    splitActivityDate = date.split("-");
-    splitStartDate = start.split("-");
-    var valueToReturn = false;
-
-    if(splitStartDate[0] <= splitActivityDate[0]){
-        if(splitStartDate[0] == splitActivityDate[0]){
-            if(splitStartDate[1] <= splitActivityDate[1]){
-                if(splitStartDate[1] == splitActivityDate[1]){
-                    if(splitStartDate[2] <= splitActivityDate[2]){
-                        valueToReturn = true;
-                    }
-                }else{
-                    valueToReturn = true;
-                }
-            }
-        }else{
-            valueToReturn = true;
-        }
-    }
-    return valueToReturn;
-}
-
-function endDateCheck(date, end){
-    splitActivityDate = date.split("-");
-    splitEndDate = end.split("-");
-    var valueToReturn = false;
-
-    if(splitActivityDate[0] <= splitEndDate[0]){
-        if(splitActivityDate[0] == splitEndDate[0]){
-            if(splitActivityDate[1] <= splitEndDate[1]){
-                if(splitActivityDate[1] == splitEndDate[1]){
-                    if(splitActivityDate[2] <= splitEndDate[2]){
-                        valueToReturn = true;
-                    }
-                }else{
-                    valueToReturn = true;
-                }
-            }
-        }else{
-            valueToReturn = true;
-        }
-    }
-    return valueToReturn;
-}
-
-function startTimeCheck(time, start){
-    splitActivityTime = time.split(":");
-    splitStartTime = start.split(":");
-    var valueToReturn = false;
-
-    if(splitStartTime[0] <= splitActivityTime[0]){
-        if(splitStartTime[0] == splitActivityTime[0]){
-            if(splitStartTime[1] <= splitActivityTime[1]){
-                if(splitStartTime[1] == splitActivityTime[1]){
-                    if(splitStartTime[2] <= splitActivityTime[2]){
-                        valueToReturn = true;
-                    }
-                }else{
-                    valueToReturn = true;
-                }
-            }
-        }else{
-            valueToReturn = true;
-        }
-    }
-    return valueToReturn;
-}
-
-function endTimeCheck(time, end){
-    splitActivityTime = time.split(":");
-    splitEndTime = end.split(":");
-    var valueToReturn = false;
-
-    if(splitActivityTime[0] <= splitEndTime[0]){
-        if(splitActivityTime[0] == splitEndTime[0]){
-            if(splitActivityTime[1] <= splitEndTime[1]){
-                if(splitActivityTime[1] == splitEndTime[1]){
-                    if(splitActivityTime[2] <= splitEndTime[2]){
-                        valueToReturn = true;
-                    }
-                }else{
-                    valueToReturn = true;
-                }
-            }
-        }else{
-            valueToReturn = true;
-        }
-    }
-    return valueToReturn;
-}
-
 var activitiesAllArrayFromDatabase = [];
-
 var foodSubtypesArray = [];
 var exerciseSubtypesArray =[];
 
@@ -285,7 +255,7 @@ exports.query_get = function(req, res) {
                 var foodSubtypesPassedArray = [];
                 var exerciseSubtypesPassedArray = [];
 
-                var foodStartName = "Food Activity Selection";
+                var foodStartName = "All Food Activities";
                 var foodStartId = "0";
                 var newObjFoodStart = {name: foodStartName, _id: foodStartId}
                 foodSubtypesPassedArray.push(newObjFoodStart);
@@ -305,7 +275,7 @@ exports.query_get = function(req, res) {
                         exerciseSubtypesArray.push(item);                                              
                     });
 
-                    var exStartName = "Exercise Activity Selection";
+                    var exStartName = "All Exercise Activities";
                     var exStartId = "0";
                     var newObjExerciseStart = {name: exStartName, _id: exStartId}
                     exerciseSubtypesPassedArray.push(newObjExerciseStart);
@@ -327,5 +297,38 @@ exports.query_get = function(req, res) {
 };
 
 exports.query_post = function(req, res) {
+    var activityType = req.body.activity;
+    var foodActivityType = req.body.foodActivityType;
+    var exerciseActivityType = req.body.exerciseActivity;
+    var startMonth = req.body.startMonthSelection0;
+    var startDay = req.body.startDaySelection0;
+    var startYear = req.body.startYearSelection0;
+    var startHour = req.body.startHourSelection0;
+    var startMinute = req.body.startMinuteSelection0;
+    var startAmPm = req.body.startAmPmSelection0;
+    var endMonth = req.body.endMonthSelection0;
+    var endDay = req.body.endDaySelection0;
+    var endYear = req.body.endYearSelection0;
+    var endHour = req.body.endHourSelection0;
+    var endMinute = req.body.endMinuteSelection0;
+    var endAmPm = req.body.endAmPmSelection0;
 
+    var startTimeValue = timeCalculation(startYear, startMonth, startDay, startHour, startMinute, startAmPm);
+    var endTimeValue = timeCalculation(endYear, endMonth, endDay, endHour, endMinute, endAmPm);
+
+    if(activityType == "Food"){
+        if(foodActivityType == 0){  // all food activities
+
+        }else{  // specific food activity
+
+        }
+    }else if(activityType == "Exercise"){
+        if(exerciseActivityType == 0){  // all exercise activities
+
+        }else{  // specific exercise activity
+
+        }
+    }else{  // all activities
+
+    }
 };
