@@ -517,18 +517,30 @@ exports.new_activity_post = function(req, res) {
                         var foodRAG = req.body.newFoodRAG;
                         var foodSAG = req.body.newFoodSAG;
                         writeNewFoodType(totalFoodTypesinDb_1, foodType, foodServingSize, foodFat, foodProtein, foodRAG, foodSAG);
+                        foodType = "+ New Food";
                     }
                     var foodQty = req.body.foodQtyInput;
-                    writeNewActivity(totalActivitiesInDb_1, activity, foodType, foodQty, month, day, year, hour, minute, amPm);
+
+                    if(foodType == "+ New Food"){
+                        writeNewActivity(totalActivitiesInDb_1, activity, totalFoodTypesinDb_1, foodQty, month, day, year, hour, minute, amPm);
+                    }else{
+                        writeNewActivity(totalActivitiesInDb_1, activity, foodType, foodQty, month, day, year, hour, minute, amPm);
+                    }
                 }else if(activity = "Exercise"){
                     exerciseType = req.body.exercise_type;
                     if(exerciseType == "+ New Exercise"){
                         exerciseType = req.body.newExerciseName;
                         var exerciseIntensity = req.body.newExerciseIntensity;
-                        writeNewExerciseType(totalExerciseTypesinDb_1, exerciseType, exerciseIntensity)
+                        writeNewExerciseType(totalExerciseTypesinDb_1, exerciseType, exerciseIntensity);
+                        exerciseType = "+ New Exercise";
                     }
                     var exerciseQty = req.body.exerciseQtyInput;
-                    writeNewActivity(totalActivitiesInDb_1, activity, exerciseType, exerciseQty, month, day, year, hour, minute, amPm);
+
+                    if(exerciseType == "+ New Exercise"){
+                        writeNewActivity(totalActivitiesInDb_1, activity, totalExerciseTypesinDb_1, exerciseQty, month, day, year, hour, minute, amPm);
+                    }else{
+                        writeNewActivity(totalActivitiesInDb_1, activity, exerciseType, exerciseQty, month, day, year, hour, minute, amPm);
+                    }
                 }
     
                 res.render('newActivity', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
