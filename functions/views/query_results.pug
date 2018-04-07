@@ -25,7 +25,7 @@ block content
             th Date
             th Time Of Day
     tbody
-        each activity in activity_list
+        each activity in activitiesToDisplayArray
             tr 
                 td
                     basefont #{activity.maintype}
@@ -37,12 +37,3 @@ block content
                     basefont #{activity.date}
                 td
                     basefont #{activity.timeofday}
-
-    div.group
-        label= queryEntry
-    div.group
-        label
-    div.group
-        label= mean
-    div.group
-        label= variance
