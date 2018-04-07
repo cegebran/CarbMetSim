@@ -5,25 +5,25 @@ block content
 
   form(method='POST' action='')
     div.form-group
-      label(for='activitytype') Activity Type:
-      select#activitytype.form-control(type='select', placeholder='' name='activity' required='false' )
+      label(id='activitytype') Activity Type:
+      select#activitytypeSel.form-control(type='select', placeholder='', name='activity', required='true', onchange='activityTypeChange(this.id)')
         for activitytype in activityTypes
             option(value=activitytype._id) #{activitytype.name}
 
     div.form-group
-      label(for='foodActivitytype') Food Activity Types:
-      select#foodActivitytype.form-control(type='select', placeholder='' name='foodActivityType' required='false' )
+      label(id='foodActivitytype') Food Activity Types:
+      select#foodActivitytypeSel.form-control(type='select', placeholder='' name='foodActivityType' required='false' )
         for foodActivityType in foodActivityTypes
             option(value=foodActivityType._id) #{foodActivityType.name}
 
     div.form-group
-      label(for='exerciseActivitytype') Exercise Activity Types:
-      select#exerciseActivitytype.form-control(type='select', placeholder='' name='exerciseActivity' required='false' )
+      label(id='exerciseActivitytype') Exercise Activity Types:
+      select#exerciseActivitytypeSel.form-control(type='select', placeholder='' name='exerciseActivity' required='false' )
         for exerciseActivitytype in exerciseActivityTypes
             option(value=exerciseActivitytype._id) #{exerciseActivitytype.name}
 
     div.form-group
-      label(for='start_date') Start Date:
+      label(id='start_date') Start Date:
       div.form-inline(id='startDateInLine0')
         select#startMonth0.form-control(type='select', placeholder='', name='startMonthSelection0', required='true')
           for month in months
@@ -52,7 +52,7 @@ block content
             option(value=amPmSel._id) #{amPmSel.name}
 
     div.form-group
-      label(for='end_date') End Date:
+      label(id='end_date') End Date:
       div.form-inline(id='endDateInLine0')
         select#endMonth0.form-control(type='select', placeholder='', name='endMonthSelection0', required='true')
           for month in months
@@ -81,6 +81,34 @@ block content
             option(value=amPmSel._id) #{amPmSel.name}
 
     button.btn.btn-primary(type='submit') Submit
+
+    script.
+      document.getElementById("foodActivitytype").style.display = "none";
+      document.getElementById("foodActivitytypeSel").style.display = "none";
+      document.getElementById("exerciseActivitytype").style.display = "none";
+      document.getElementById("exerciseActivitytypeSel").style.display = "none";
+
+      function activityTypeChange(id){
+        var activities = document.getElementById(id);
+        if(activities.value == "Food"){
+          document.getElementById("foodActivitytype").style.display = "block";
+          document.getElementById("foodActivitytypeSel").style.display = "block";
+          document.getElementById("exerciseActivitytype").style.display = "none";
+          document.getElementById("exerciseActivitytypeSel").style.display = "none";
+        }
+        if(activities.value == "Exercise"){
+          document.getElementById("foodActivitytype").style.display = "none";
+          document.getElementById("foodActivitytypeSel").style.display = "none";
+          document.getElementById("exerciseActivitytype").style.display = "block";
+          document.getElementById("exerciseActivitytypeSel").style.display = "block";
+        }
+        if(activities.value == "All"){
+          document.getElementById("foodActivitytype").style.display = "none";
+          document.getElementById("foodActivitytypeSel").style.display = "none";
+          document.getElementById("exerciseActivitytype").style.display = "none";
+          document.getElementById("exerciseActivitytypeSel").style.display = "none";
+        }
+      }
 
   if errors 
     ul
