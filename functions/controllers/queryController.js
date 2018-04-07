@@ -1,6 +1,9 @@
 var firebase = require('firebase');
 var async = require('async');
 
+// constants
+var YEAR_CUTOFF = 525600 * 2010;    // cannot create activity before than 2010
+
 var activityTypeArray = [
     {
         _id: "All",
@@ -163,6 +166,16 @@ for(var i = 0; i < 60; i++){
     minutesArray.push(newObj);
 }
 
+function dateCompiler(year, month, day){
+    var date = month + "/" + day + "/" + year;
+    return date;
+}
+
+function timeCompiler(hour, minute, amPm){
+    var time = hour + ":" + minute + ":00 " + amPm;
+    return time;
+}
+
 function timeCalculation(year, month, day, hour, minute, amPm){
     var yearInt = parseInt(year);
     var monthInt = parseInt(month);
@@ -316,19 +329,51 @@ exports.query_post = function(req, res) {
     var startTimeValue = timeCalculation(startYear, startMonth, startDay, startHour, startMinute, startAmPm);
     var endTimeValue = timeCalculation(endYear, endMonth, endDay, endHour, endMinute, endAmPm);
 
+    var activitiesToDisplayArray = [];
+
     if(activityType == "Food"){
+        console.log(foodSubtypesArray);
         if(foodActivityType == 0){  // all food activities
-
+            for(var f = 0; f < activitiesAllArrayFromDatabase.length; f++){
+                if(activitiesAllArrayFromDatabase[f].activity_type == "Food"){
+                    var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[f].year, activitiesAllArrayFromDatabase[f].month, activitiesAllArrayFromDatabase[f].day, activitiesAllArrayFromDatabase[f].hour, activitiesAllArrayFromDatabase[f].minute, activitiesAllArrayFromDatabase[f].amPm);
+                    if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                        var mainType = "Food";
+                        var amount = activitiesAllArrayFromDatabase[f].quantity;
+                        var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[f].year, activitiesAllArrayFromDatabase[f].month, activitiesAllArrayFromDatabase[f].day);
+                        var compiledTimeString = timeCompiler(activitiesAllArrayFromDatabase[f].hour, activitiesAllArrayFromDatabase[f].minute, activitiesAllArrayFromDatabase[f].amPm);
+                        var subtype = "";
+                        for(var foodCt = 0; foodCt < foodSubtypesArray.length; foodCt++){
+                            if(foodSubtypesArray[foodCt]._id == activitiesAllArrayFromDatabase[f].subtype){
+                                subtype = foodSubtypesArray[foodCt].food_name;
+                            }
+                        }
+                        var newActivityObj = {maintype: mainType, type: subtype, value: amount, date: compiledDateString, timeofday: compiledTimeString, timeValue: dateTimeCalculation};
+                        activitiesToDisplayArray.push(newActivityObj);
+                    }
+                }
+            }
         }else{  // specific food activity
-
+            for(var fs = 0; fs < activitiesAllArrayFromDatabase.length; fs++){
+                
+            }
         }
     }else if(activityType == "Exercise"){
         if(exerciseActivityType == 0){  // all exercise activities
-
+            for(var e = 0; e < activitiesAllArrayFromDatabase.length; e++){
+                
+            }
         }else{  // specific exercise activity
-
+            for(var es = 0; es < activitiesAllArrayFromDatabase.length; e++){
+                
+            }
         }
     }else{  // all activities
-
+        for(var a = 0; a < activitiesAllArrayFromDatabase.length; a++){
+                
+        }
     }
+
+    activitiesToDisplayArray.sort(function(a, b){return a.timeValue - b.timeValue});
+    res.render('query_results', {activitiesToDisplayArray: activitiesToDisplayArray});
 };
