@@ -82,7 +82,7 @@ var monthArray = [
     }
 ];
 
-function writeNewActivity(totalActivitiesInDb_1, activity, subtype, quantity, month, day, year, hour, minute, second, amPm){
+function writeNewActivity(totalActivitiesInDb_1, activity, subtype, quantity, month, day, year, hour, minute, amPm){
     var userId = firebase.auth().currentUser.uid;
     var timestampRecorded = Date.now();
     var activityEntry = {
@@ -95,7 +95,6 @@ function writeNewActivity(totalActivitiesInDb_1, activity, subtype, quantity, mo
         year: year,
         hour: hour,
         minute: minute,
-        second: second,
         amPm: amPm
     };
 
@@ -182,7 +181,7 @@ exports.new_activity_get = function(req, res) {
     var yearID = "Year";
     var yearObj = {name: yearString, _id: yearID};
     yearArray.push(yearObj);
-    for(var i = 2018; i > 1989; i--){
+    for(var i = 2018; i > 2009; i--){
         var kaString = i;
         var kaID = i;
         var newObj = {name: kaString, _id: kaID};
@@ -194,7 +193,7 @@ exports.new_activity_get = function(req, res) {
     var hourID = "Hour";
     var hourObj = {name: hourString, _id: hourID};
     hourArray.push(hourObj);
-    for(var i = 0; i < 13; i++){
+    for(var i = 1; i < 13; i++){
         var kaString;
         var kaID;
         if(i < 10){
@@ -225,25 +224,6 @@ exports.new_activity_get = function(req, res) {
         }
         var newObj = {name: kaString, _id: kaID};
         minutesArray.push(newObj);
-    }
-
-    var secondsArray = [];
-    var secString = "Second";
-    var secID = "Second";
-    var secObj = {name: secString, _id: secID};
-    secondsArray.push(secObj);
-    for(var i = 0; i < 60; i++){
-        var kaString;
-        var kaID;
-        if(i < 10){
-            kaString = "0" + i;
-            kaID = "0" + i;
-        }else{
-            kaString = i;
-            kaID = i;
-        }
-        var newObj = {name: kaString, _id: kaID};
-        secondsArray.push(newObj);
     }
 
     if( firebase.auth().currentUser ) {
@@ -329,7 +309,7 @@ exports.new_activity_get = function(req, res) {
         
                 exerciseActivitiesArray = exerciseKeyDataArray;
         
-                res.render('newActivity', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, seconds: secondsArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
+                res.render('newActivity', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
             });
         });
     } else {
@@ -374,7 +354,7 @@ exports.new_activity_post = function(req, res) {
     var yearID = "Year";
     var yearObj = {name: yearString, _id: yearID};
     yearArray.push(yearObj);
-    for(var i = 2018; i > 1989; i--){
+    for(var i = 2018; i > 2009; i--){
         var kaString = i;
         var kaID = i;
         var newObj = {name: kaString, _id: kaID};
@@ -386,7 +366,7 @@ exports.new_activity_post = function(req, res) {
     var hourID = "Hour";
     var hourObj = {name: hourString, _id: hourID};
     hourArray.push(hourObj);
-    for(var i = 0; i < 13; i++){
+    for(var i = 1; i < 13; i++){
         var kaString;
         var kaID;
         if(i < 10){
@@ -417,25 +397,6 @@ exports.new_activity_post = function(req, res) {
         }
         var newObj = {name: kaString, _id: kaID};
         minutesArray.push(newObj);
-    }
-
-    var secondsArray = [];
-    var secString = "Second";
-    var secID = "Second";
-    var secObj = {name: secString, _id: secID};
-    secondsArray.push(secObj);
-    for(var i = 0; i < 60; i++){
-        var kaString;
-        var kaID;
-        if(i < 10){
-            kaString = "0" + i;
-            kaID = "0" + i;
-        }else{
-            kaString = i;
-            kaID = i;
-        }
-        var newObj = {name: kaString, _id: kaID};
-        secondsArray.push(newObj);
     }
 
     var foodKeyArray = [];
@@ -541,7 +502,6 @@ exports.new_activity_post = function(req, res) {
                 var year = req.body.year;
                 var hour = req.body.hour;
                 var minute = req.body.minute;
-                var second = req.body.second;
                 var amPm = req.body.amPm;
 
                 var foodType;
@@ -559,7 +519,7 @@ exports.new_activity_post = function(req, res) {
                         writeNewFoodType(totalFoodTypesinDb_1, foodType, foodServingSize, foodFat, foodProtein, foodRAG, foodSAG);
                     }
                     var foodQty = req.body.foodQtyInput;
-                    writeNewActivity(totalActivitiesInDb_1, activity, foodType, foodQty, month, day, year, hour, minute, second, amPm);
+                    writeNewActivity(totalActivitiesInDb_1, activity, foodType, foodQty, month, day, year, hour, minute, amPm);
                 }else if(activity = "Exercise"){
                     exerciseType = req.body.exercise_type;
                     if(exerciseType == "+ New Exercise"){
@@ -568,10 +528,10 @@ exports.new_activity_post = function(req, res) {
                         writeNewExerciseType(totalExerciseTypesinDb_1, exerciseType, exerciseIntensity)
                     }
                     var exerciseQty = req.body.exerciseQtyInput;
-                    writeNewActivity(totalActivitiesInDb_1, activity, exerciseType, exerciseQty, month, day, year, hour, minute, second, amPm);
+                    writeNewActivity(totalActivitiesInDb_1, activity, exerciseType, exerciseQty, month, day, year, hour, minute, amPm);
                 }
     
-                res.render('newActivity', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, seconds: secondsArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
+                res.render('newActivity', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
             });
         });
     });
