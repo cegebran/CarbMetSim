@@ -332,7 +332,6 @@ exports.query_post = function(req, res) {
     var activitiesToDisplayArray = [];
 
     if(activityType == "Food"){
-        console.log(foodSubtypesArray);
         if(foodActivityType == 0){  // all food activities
             for(var f = 0; f < activitiesAllArrayFromDatabase.length; f++){
                 if(activitiesAllArrayFromDatabase[f].activity_type == "Food"){
@@ -355,7 +354,25 @@ exports.query_post = function(req, res) {
             }
         }else{  // specific food activity
             for(var fs = 0; fs < activitiesAllArrayFromDatabase.length; fs++){
-                
+                if(activitiesAllArrayFromDatabase[fs].activity_type == "Food"){
+                    if(activitiesAllArrayFromDatabase[fs].subtype == foodActivityType){
+                        var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[fs].year, activitiesAllArrayFromDatabase[fs].month, activitiesAllArrayFromDatabase[fs].day, activitiesAllArrayFromDatabase[fs].hour, activitiesAllArrayFromDatabase[fs].minute, activitiesAllArrayFromDatabase[fs].amPm);
+                        if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                            var mainType = "Food";
+                            var amount = activitiesAllArrayFromDatabase[fs].quantity;
+                            var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[fs].year, activitiesAllArrayFromDatabase[fs].month, activitiesAllArrayFromDatabase[fs].day);
+                            var compiledTimeString = timeCompiler(activitiesAllArrayFromDatabase[fs].hour, activitiesAllArrayFromDatabase[fs].minute, activitiesAllArrayFromDatabase[fs].amPm);
+                            var subtype = "";
+                            for(var foodCt = 0; foodCt < foodSubtypesArray.length; foodCt++){
+                                if(foodSubtypesArray[foodCt]._id == activitiesAllArrayFromDatabase[fs].subtype){
+                                    subtype = foodSubtypesArray[foodCt].food_name;
+                                }
+                            }
+                            var newActivityObj = {maintype: mainType, type: subtype, value: amount, date: compiledDateString, timeofday: compiledTimeString, timeValue: dateTimeCalculation};
+                            activitiesToDisplayArray.push(newActivityObj);
+                        }
+                    }
+                }
             }
         }
     }else if(activityType == "Exercise"){
@@ -380,13 +397,64 @@ exports.query_post = function(req, res) {
                 }
             }
         }else{  // specific exercise activity
-            for(var es = 0; es < activitiesAllArrayFromDatabase.length; e++){
-                
+            for(var es = 0; es < activitiesAllArrayFromDatabase.length; es++){
+                if(activitiesAllArrayFromDatabase[es].activity_type == "Exercise"){
+                    if(activitiesAllArrayFromDatabase[es].subtype == exerciseActivityType){
+                        var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[es].year, activitiesAllArrayFromDatabase[es].month, activitiesAllArrayFromDatabase[es].day, activitiesAllArrayFromDatabase[es].hour, activitiesAllArrayFromDatabase[es].minute, activitiesAllArrayFromDatabase[es].amPm);
+                        if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                            var mainType = "Exercise";
+                            var amount = activitiesAllArrayFromDatabase[es].quantity;
+                            var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[es].year, activitiesAllArrayFromDatabase[es].month, activitiesAllArrayFromDatabase[es].day);
+                            var compiledTimeString = timeCompiler(activitiesAllArrayFromDatabase[es].hour, activitiesAllArrayFromDatabase[es].minute, activitiesAllArrayFromDatabase[es].amPm);
+                            var subtype = "";
+                            for(var exerciseCount = 0; exerciseCount < exerciseSubtypesArray.length; exerciseCount++){
+                                if(exerciseSubtypesArray[exerciseCount]._id == activitiesAllArrayFromDatabase[es].subtype){
+                                    subtype = exerciseSubtypesArray[exerciseCount].exercise_activity;
+                                }
+                            }
+                            var newActivityObj = {maintype: mainType, type: subtype, value: amount, date: compiledDateString, timeofday: compiledTimeString, timeValue: dateTimeCalculation};
+                            activitiesToDisplayArray.push(newActivityObj);
+                        }
+                    }
+                }
             }
         }
     }else{  // all activities
         for(var a = 0; a < activitiesAllArrayFromDatabase.length; a++){
-                
+            if(activitiesAllArrayFromDatabase[a].activity_type == "Exercise"){
+                var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[a].year, activitiesAllArrayFromDatabase[a].month, activitiesAllArrayFromDatabase[a].day, activitiesAllArrayFromDatabase[a].hour, activitiesAllArrayFromDatabase[a].minute, activitiesAllArrayFromDatabase[a].amPm);
+                if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                    var mainType = "Exercise";
+                    var amount = activitiesAllArrayFromDatabase[a].quantity;
+                    var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[a].year, activitiesAllArrayFromDatabase[a].month, activitiesAllArrayFromDatabase[a].day);
+                    var compiledTimeString = timeCompiler(activitiesAllArrayFromDatabase[a].hour, activitiesAllArrayFromDatabase[a].minute, activitiesAllArrayFromDatabase[a].amPm);
+                    var subtype = "";
+                    for(var exerciseCount = 0; exerciseCount < exerciseSubtypesArray.length; exerciseCount++){
+                        if(exerciseSubtypesArray[exerciseCount]._id == activitiesAllArrayFromDatabase[a].subtype){
+                            subtype = exerciseSubtypesArray[exerciseCount].exercise_activity;
+                        }
+                    }
+                    var newActivityObj = {maintype: mainType, type: subtype, value: amount, date: compiledDateString, timeofday: compiledTimeString, timeValue: dateTimeCalculation};
+                    activitiesToDisplayArray.push(newActivityObj);
+                }
+            }
+            if(activitiesAllArrayFromDatabase[a].activity_type == "Food"){
+                var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[a].year, activitiesAllArrayFromDatabase[a].month, activitiesAllArrayFromDatabase[a].day, activitiesAllArrayFromDatabase[a].hour, activitiesAllArrayFromDatabase[a].minute, activitiesAllArrayFromDatabase[a].amPm);
+                if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                    var mainType = "Food";
+                    var amount = activitiesAllArrayFromDatabase[a].quantity;
+                    var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[a].year, activitiesAllArrayFromDatabase[a].month, activitiesAllArrayFromDatabase[a].day);
+                    var compiledTimeString = timeCompiler(activitiesAllArrayFromDatabase[a].hour, activitiesAllArrayFromDatabase[a].minute, activitiesAllArrayFromDatabase[a].amPm);
+                    var subtype = "";
+                    for(var foodCt = 0; foodCt < foodSubtypesArray.length; foodCt++){
+                        if(foodSubtypesArray[foodCt]._id == activitiesAllArrayFromDatabase[a].subtype){
+                            subtype = foodSubtypesArray[foodCt].food_name;
+                        }
+                    }
+                    var newActivityObj = {maintype: mainType, type: subtype, value: amount, date: compiledDateString, timeofday: compiledTimeString, timeValue: dateTimeCalculation};
+                    activitiesToDisplayArray.push(newActivityObj);
+                }
+            }
         }
     }
 
