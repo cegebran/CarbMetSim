@@ -361,7 +361,23 @@ exports.query_post = function(req, res) {
     }else if(activityType == "Exercise"){
         if(exerciseActivityType == 0){  // all exercise activities
             for(var e = 0; e < activitiesAllArrayFromDatabase.length; e++){
-                
+                if(activitiesAllArrayFromDatabase[e].activity_type == "Exercise"){
+                    var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[e].year, activitiesAllArrayFromDatabase[e].month, activitiesAllArrayFromDatabase[e].day, activitiesAllArrayFromDatabase[e].hour, activitiesAllArrayFromDatabase[e].minute, activitiesAllArrayFromDatabase[e].amPm);
+                    if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                        var mainType = "Exercise";
+                        var amount = activitiesAllArrayFromDatabase[e].quantity;
+                        var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[e].year, activitiesAllArrayFromDatabase[e].month, activitiesAllArrayFromDatabase[e].day);
+                        var compiledTimeString = timeCompiler(activitiesAllArrayFromDatabase[e].hour, activitiesAllArrayFromDatabase[e].minute, activitiesAllArrayFromDatabase[e].amPm);
+                        var subtype = "";
+                        for(var exerciseCount = 0; exerciseCount < exerciseSubtypesArray.length; exerciseCount++){
+                            if(exerciseSubtypesArray[exerciseCount]._id == activitiesAllArrayFromDatabase[e].subtype){
+                                subtype = exerciseSubtypesArray[exerciseCount].exercise_activity;
+                            }
+                        }
+                        var newActivityObj = {maintype: mainType, type: subtype, value: amount, date: compiledDateString, timeofday: compiledTimeString, timeValue: dateTimeCalculation};
+                        activitiesToDisplayArray.push(newActivityObj);
+                    }
+                }
             }
         }else{  // specific exercise activity
             for(var es = 0; es < activitiesAllArrayFromDatabase.length; e++){
@@ -375,5 +391,9 @@ exports.query_post = function(req, res) {
     }
 
     activitiesToDisplayArray.sort(function(a, b){return a.timeValue - b.timeValue});
-    res.render('query_results', {activitiesToDisplayArray: activitiesToDisplayArray});
+    res.render('query_results', {activitiesArray: activitiesToDisplayArray});
+    activitiesToDisplayArray = [];
+    activitiesAllArrayFromDatabase = [];
+    foodSubtypesArray = [];
+    exerciseSubtypesArray =[];
 };
