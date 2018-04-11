@@ -641,55 +641,57 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
     var i = 1;
 
     while(activity_type0[i] != null){
-        var activityType = activity_type0[i];
-        if(activityType == "Food"){
-            var foodType = food_type0[i];
-            if(foodType == "+ New Food"){
-                var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
-                var activityTypeValue = activity_type0[i];
-                var subTypeValue = nextFoodTypeID;
-                var foodQtyInput = foodQtyInput0[i];
+        if(deleted[i] != "DELETED"){
+            var activityType = activity_type0[i];
+            if(activityType == "Food"){
+                var foodType = food_type0[i];
+                if(foodType == "+ New Food"){
+                    var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
+                    var activityTypeValue = activity_type0[i];
+                    var subTypeValue = nextFoodTypeID;
+                    var foodQtyInput = foodQtyInput0[i];
 
-                var newActivityObj = {fireTime: time, type: activityTypeValue, subtype: subTypeValue, howmuch: foodQtyInput};
-                completedActivitiesArray.push(newActivityObj);
+                    var newActivityObj = {fireTime: time, type: activityTypeValue, subtype: subTypeValue, howmuch: foodQtyInput};
+                    completedActivitiesArray.push(newActivityObj);
 
-                nextFoodTypeID++;
-            }else if(foodType == "Select Food"){
+                    nextFoodTypeID++;
+                }else if(foodType == "Select Food"){
+                    // no selection made, do not add to simulation
+                }else{
+                    var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
+                    var activityTypeValue = activity_type0[i];
+                    var subTypeValue = foodType;
+                    var foodQtyInput = foodQtyInput0[i];
+
+                    var newActivityObj = {fireTime: time, type: activityTypeValue, subtype: subTypeValue, howmuch: foodQtyInput};
+                    completedActivitiesArray.push(newActivityObj);
+                }
+            }else if(activityType == "Exercise"){
+                var exerciseType = exercise_type0[i];
+                if(exerciseType == "+ New Exercise"){
+
+                    var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
+                    var activityTypeValue = activity_type0[i];
+                    var subTypeValue = nextExerciseTypeID;
+                    var exerciseQtyInput = exerciseQtyInput0[i];
+
+                    var newActivityObj = {fireTime: time, type: activityTypeValue, subtype: subTypeValue, howmuch: exerciseQtyInput};
+                    completedActivitiesArray.push(newActivityObj);
+                    nextExerciseTypeID++;
+                }else if(exerciseType == "Select Exercise"){
                 // no selection made, do not add to simulation
+                }else{
+                    var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
+                    var activityTypeValue = activity_type0[i];
+                    var subTypeValue = exerciseType;
+                    var exerciseQtyInput = exerciseQtyInput0[i];
+
+                    var newActivityObj = {fireTime: time, type: activityTypeValue, subtype: subTypeValue, howmuch: exerciseQtyInput};
+                    completedActivitiesArray.push(newActivityObj);
+                }
             }else{
-                var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
-                var activityTypeValue = activity_type0[i];
-                var subTypeValue = foodType;
-                var foodQtyInput = foodQtyInput0[i];
-
-                var newActivityObj = {fireTime: time, type: activityTypeValue, subtype: subTypeValue, howmuch: foodQtyInput};
-                completedActivitiesArray.push(newActivityObj);
-            }
-        }else if(activityType == "Exercise"){
-            var exerciseType = exercise_type0[i];
-            if(exerciseType == "+ New Exercise"){
-
-                var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
-                var activityTypeValue = activity_type0[i];
-                var subTypeValue = nextExerciseTypeID;
-                var exerciseQtyInput = exerciseQtyInput0[i];
-
-                var newActivityObj = {fireTime: time, type: activityTypeValue, subtype: subTypeValue, howmuch: exerciseQtyInput};
-                completedActivitiesArray.push(newActivityObj);
-                nextExerciseTypeID++;
-            }else if(exerciseType == "Select Exercise"){
                 // no selection made, do not add to simulation
-            }else{
-                var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
-                var activityTypeValue = activity_type0[i];
-                var subTypeValue = exerciseType;
-                var exerciseQtyInput = exerciseQtyInput0[i];
-
-                var newActivityObj = {fireTime: time, type: activityTypeValue, subtype: subTypeValue, howmuch: exerciseQtyInput};
-                completedActivitiesArray.push(newActivityObj);
             }
-        }else{
-            // no selection made, do not add to simulation
         }
         i++;
     }
