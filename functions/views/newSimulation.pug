@@ -72,6 +72,7 @@ block content
 
                 label(for='qtyEx', id='exerciseQtyLabel0') Count: 
                 input(type='text', name='exerciseQtyInput0', id='exerciseQtyInputID0')
+                input(type='text', name='deleted0', id='deletedID0')
 
         button.btn.btn-primary(type='button', id='newDuplicateSetBtn', onclick='duplicate()') +
         br()
@@ -114,6 +115,7 @@ block content
             document.getElementById("dateInLine0").style.display = "none";
             document.getElementById("timeInLine0").style.display = "none";
             document.getElementById("deleteEntry0").style.display = "none";
+            document.getElementById("deletedID0").style.display = "none";
 
             var i = 0;
 
@@ -309,6 +311,12 @@ block content
                 break3Original.id = "break3" + i
                 p.parentNode.appendChild(break3Original);
 
+                var deletedIDOriginal = document.getElementById("deletedID0");
+                var deletedIDClone = deletedIDOriginal.cloneNode(true);
+                deletedIDClone.id = "deletedID" + i
+                deletedIDClone.value = "";
+                p.parentNode.appendChild(deletedIDClone);
+
                 document.getElementById("activityLabel" + i).style.display = "block";
                 document.getElementById("activity" + i).style.display = "block";
                 document.getElementById("food" + i).style.display = "none";
@@ -345,6 +353,7 @@ block content
                 document.getElementById("break1" + i).style.display = "block";
                 document.getElementById("break2" + i).style.display = "block";
                 document.getElementById("break3" + i).style.display = "block";
+                document.getElementById("deletedID" + i).style.display = "none";
             }
 
             function activityTypeChange(id){
@@ -674,9 +683,7 @@ block content
                 document.getElementById("break1" + index).style.display = "none";
                 document.getElementById("break2" + index).style.display = "none";
                 document.getElementById("break3" + index).style.display = "none";
-
-                var activitySelect = document.getElementById("activity" + index);
-                activitySelect.value = "0";
+                document.getElementById("deletedID" + index).value = "DELETED";
             }
 
     if errors
