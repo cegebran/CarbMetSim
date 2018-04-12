@@ -6,23 +6,33 @@ block content
   form(method='POST' action='')
     div.form-group
       label(for='food_name') Food Name:
-      input#value.form-control(type='text', placeholder='' name='food_name' required='true' value=(''))
+      input#value.form-control(type='text', placeholder='', name='food_name', required='true', value=(''))
     div.form-group
       label(for='servingSize') Servings:
-      input#value.form-control(type='text', placeholder='' name='servingSize' required='true' value=(''))
+      input#value.form-control(type='text', placeholder='', name='servingSize', required='true', value=(''), onkeypress="return isNumberKey(event)")
     div.form-group
       label(for='RAG') Readily Available Glucose:
-      input#value.form-control(type='text', placeholder='' name='RAG' required='true' value=(''))
+      input#value.form-control(type='text', placeholder='', name='RAG', required='true', value=(''), onkeypress="return isNumberKey(event)")
     div.form-group
       label(for='SAG') Slowly Available Glucose:
-      input#value.form-control(type='text', placeholder='' name='SAG' required='true' value=(''))
+      input#value.form-control(type='text', placeholder='', name='SAG', required='true', value=(''), onkeypress="return isNumberKey(event)")
     div.form-group
       label(for='protein') Protein:
-      input#value.form-control(type='text', placeholder='' name='protein' required='true' value=(''))
+      input#value.form-control(type='text', placeholder='', name='protein', required='true', value=(''), onkeypress="return isNumberKey(event)")
     div.form-group
       label(for='fat') Fat:
-      input#value.form-control(type='text', placeholder='' name='fat' required='true' value=(''))
+      input#value.form-control(type='text', placeholder='', name='fat', required='true', value=(''), onkeypress="return isNumberKey(event)")
     button.btn.btn-primary(type='submit') Submit
+
+    script.
+      function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57)){
+          return false;
+        }else{
+          return true;
+        }
+      }
 
   if errors
     ul
