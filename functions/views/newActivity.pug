@@ -29,23 +29,23 @@ block content
       div.form-inline(id='foodServingSizeInputSection')
         label(for='newFoodServingSize', id="newFoodServingSizeLabel") Serving Size: 
         br()
-        input(type='text', name='newFoodServingSize', id="newFoodServingSizeInput")
+        input(type='text', name='newFoodServingSize', id="newFoodServingSizeInput", onkeypress="return isNumberKey(event)")
       div.form-inline(id='foodFatInputSection')
         label(for='newFoodFat', id="newFoodFatLabel") Fat: 
         br()
-        input(type='text', name='newFoodFat', id="newFoodFatInput")
+        input(type='text', name='newFoodFat', id="newFoodFatInput", onkeypress="return isNumberKey(event)")
       div.form-inline(id='foodProteinInputSection')
         label(for='newFoodProtein', id="newFoodProteinLabel") Protein: 
         br()
-        input(type='text', name='newFoodProtein', id="newFoodProteinInput")
+        input(type='text', name='newFoodProtein', id="newFoodProteinInput", onkeypress="return isNumberKey(event)")
       div.form-inline(id='foodRAGInputSection')
         label(for='newFoodRAG', id="newFoodRAGLabel") Readily Available Glucose (RAG): 
         br()
-        input(type='text', name='newFoodRAG', id="newFoodRAGInput")
+        input(type='text', name='newFoodRAG', id="newFoodRAGInput", onkeypress="return isNumberKey(event)")
       div.form-inline(id='foodSAGInputSection')
         label(for='newFoodSAG', id="newFoodSAGLabel") Slowly Available Glucose (SAG): 
         br()
-        input(type='text', name='newFoodSAG', id="newFoodSAGInput")
+        input(type='text', name='newFoodSAG', id="newFoodSAGInput", onkeypress="return isNumberKey(event)")
 
       label(id='newExerciseTitle') Create New Exercise Type:
       div.form-inline(id='exerciseNameInputSection')
@@ -55,7 +55,7 @@ block content
       div.form-inline(id='exerciseIntensityInputSection')
         label(for='newExerciseIntensity', id="newExerciseIntensityLabel") Intensity: 
         br()
-        input(type='text', name='newExerciseIntensity', id="newExerciseIntensityInput")
+        input(type='text', name='newExerciseIntensity', id="newExerciseIntensityInput", onkeypress="return isNumberKey(event)")
 
       br(id='br3')
       br(id='br4')
@@ -93,11 +93,11 @@ block content
       div.form-inline(id='quantitySectionFood')
         label(for='qtyFood', id="foodQtyLabel") Servings: 
         br()
-        input(type='text', name='foodQtyInput', id="foodQtyInputID")
+        input(type='text', name='foodQtyInput', id="foodQtyInputID", onkeypress="return isNumberKey(event)")
       div.form-inline(id='quantitySectionExercise')
         label(for='qtyEx', id="exerciseQtyLabel") Count: 
         br()
-        input(type='text', name='exerciseQtyInput', id="exerciseQtyInputID")
+        input(type='text', name='exerciseQtyInput', id="exerciseQtyInputID", onkeypress="return isNumberKey(event)")
       br(id='br9')
       br(id='br10')
       button.btn.btn-primary(type='submit', id="submitButton") Submit  
@@ -284,6 +284,15 @@ block content
         document.getElementById("newExerciseTitle").style.display = "none";
         document.getElementById("exerciseNameInputSection").style.display = "none";
         document.getElementById("exerciseIntensityInputSection").style.display = "none";
+      }
+
+      function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57)){
+          return false;
+        }else{
+          return true;
+        }
       }
 
   if errors
