@@ -487,72 +487,6 @@ var activityTypesArray = [
     }
 ];
 
-var amPmArray = [
-    {
-        _id: "AM",
-        name: "AM"
-    },
-    {
-        _id: "PM",
-        name: "PM"
-    }
-];
-
-var monthArray = [
-    {
-        _id: "Month",
-        name: "Month"
-    },
-    {
-        _id: "01",
-        name: "January"
-    },
-    {
-        _id: "02",
-        name: "February"
-    },
-    {
-        _id: "03",
-        name: "March"
-    },
-    {
-        _id: "04",
-        name: "April"
-    },
-    {
-        _id: "05",
-        name: "May"
-    },
-    {
-        _id: "06",
-        name: "June"
-    },
-    {
-        _id: "07",
-        name: "July"
-    },
-    {
-        _id: "08",
-        name: "August"
-    },
-    {
-        _id: "09",
-        name: "September"
-    },
-    {
-        _id: "10",
-        name: "October"
-    },
-    {
-        _id: "11",
-        name: "November"
-    },
-    {
-        _id: "12",
-        name: "December"
-    }
-];
-
 function timeCalculation(year, month, day, hour, minute, amPm){
     var yearInt = parseInt(year);
     var monthInt = parseInt(month);
@@ -617,7 +551,7 @@ function timeCalculation(year, month, day, hour, minute, amPm){
     return totalReturn;
 }
 
-function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, deleted, req, res){
+function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, req, res){
     var nextActivityTypeID = totalActivitiesInDb_1;
     var nextFoodTypeID = totalFoodTypesinDb_1;
     var nextExerciseTypeID = totalExerciseTypesinDb_1;
@@ -716,7 +650,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
     
 }
 
-function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, deleted){
+function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted){
     var nextActivityTypeID = totalActivitiesInDb_1;
     var nextFoodTypeID = totalFoodTypesinDb_1;
     var nextExerciseTypeID = totalExerciseTypesinDb_1;
@@ -742,25 +676,19 @@ function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_ty
                     var newFoodSAG = newFoodSAG0[i];
                     writeFoodSubtypeData(nextFoodTypeID, newFoodName, newFoodServingSize, newFoodRAG, newFoodSAG, newFoodProtein, newFoodFat);
                     var foodQtyInput = foodQtyInput0[i];
-                    var monthSelection = monthSelection0[i];
-                    var daySelection = daySelection0[i];
-                    var yearSelection = yearSelection0[i];
-                    var hourSelection = hourSelection0[i];
-                    var minuteSelection = minuteSelection0[i];
-                    var amPmSelection = amPmSelection0[i];
-                    writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextFoodTypeID, foodQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, amPmSelection)
+                    var daySelection = dayInput0[i];
+                    var hourSelection = hourSelect0[i];
+                    var minuteSelection = minuteSelect0[i];
+                    writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextFoodTypeID, foodQtyInput, daySelection, hourSelection, minuteSelection)
                     nextFoodTypeID++;
                 }else if(foodType == "Select Food"){
                     // no selection made, do not add anything to database
                 }else{
                     var foodQtyInput = foodQtyInput0[i];
-                    var monthSelection = monthSelection0[i];
-                    var daySelection = daySelection0[i];
-                    var yearSelection = yearSelection0[i];
-                    var hourSelection = hourSelection0[i];
-                    var minuteSelection = minuteSelection0[i];
-                    var amPmSelection = amPmSelection0[i];
-                    writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, foodType, foodQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, amPmSelection)
+                    var daySelection = dayInput0[i];
+                    var hourSelection = hourSelect0[i];
+                    var minuteSelection = minuteSelect0[i];
+                    writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, foodType, foodQtyInput, daySelection, hourSelection, minuteSelection)
                 }
             }else if(activityType == "Exercise"){
                 var exerciseType = exercise_type0[i];
@@ -769,25 +697,19 @@ function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_ty
                     var newExerciseIntensity = newExerciseIntensity0[i];
                     writeExerciseSubtypeData(nextExerciseTypeID, newExerciseName, newExerciseIntensity);
                     var exerciseQtyInput = exerciseQtyInput0[i];
-                    var monthSelection = monthSelection0[i];
-                    var daySelection = daySelection0[i];
-                    var yearSelection = yearSelection0[i];
-                    var hourSelection = hourSelection0[i];
-                    var minuteSelection = minuteSelection0[i];
-                    var amPmSelection = amPmSelection0[i];
-                    writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextExerciseTypeID, exerciseQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, amPmSelection)
+                    var daySelection = dayInput0[i];
+                    var hourSelection = hourSelect0[i];
+                    var minuteSelection = minuteSelect0[i];
+                    writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, nextExerciseTypeID, exerciseQtyInput, daySelection, hourSelection, minuteSelection)
                     nextExerciseTypeID++;
                 }else if(exerciseType == "Select Exercise"){
                     // no selection made, do not add anything to database
                 }else{
                     var exerciseQtyInput = exerciseQtyInput0[i];
-                    var monthSelection = monthSelection0[i];
-                    var daySelection = daySelection0[i];
-                    var yearSelection = yearSelection0[i];
-                    var hourSelection = hourSelection0[i];
-                    var minuteSelection = minuteSelection0[i];
-                    var amPmSelection = amPmSelection0[i];
-                    writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, exerciseType, exerciseQtyInput, monthSelection, daySelection, yearSelection, hourSelection, minuteSelection, amPmSelection)
+                    var daySelection = dayInput0[i];
+                    var hourSelection = hourSelect0[i];
+                    var minuteSelection = minuteSelect0[i];
+                    writeNewActivitySequenceElement(newActivitySequenceKey, i, activityType, exerciseType, exerciseQtyInput, daySelection, hourSelection, minuteSelection)
                 }
             }else{
                 // no selection made, do not add anything to database
@@ -835,7 +757,7 @@ function writeExerciseSubtypeData(totalExerciseSubtypesPlus, exercise_activity, 
     return firebase.database().ref().update(exerciseSubtype);
 }
 
-function writeNewActivitySequenceElement(newActivitySequenceKey, totalActivitiesInDb_1, activity, subtype, quantity, month, day, year, hour, minute, amPm){
+function writeNewActivitySequenceElement(newActivitySequenceKey, totalActivitiesInDb_1, activity, subtype, quantity, day, hour, minute){
     var userId = firebase.auth().currentUser.uid;
     var timestampRecorded = Date.now();
     var activitySequenceElement = {
@@ -843,12 +765,9 @@ function writeNewActivitySequenceElement(newActivitySequenceKey, totalActivities
         activity_type: activity,
         subtype: subtype,
         quantity: quantity,
-        month: month,
         day: day,
-        year: year,
         hour: hour,
         minute: minute,
-        amPm: amPm
     };
 
     var newActivitySequenceElementKey = firebase.database().ref().child(newActivitySequenceKey).push().key;    // single quotes around newActivity...
@@ -859,55 +778,12 @@ function writeNewActivitySequenceElement(newActivitySequenceKey, totalActivities
 }
 
 exports.new_simulation_get = function(req, res) {
-    var dayArray31 = [];
-    var dayArray30 = [];
-    var dayArray28 = [];
-    var dayString = "Day";
-    var dayID = "Day";
-    var dayObj = {name: dayString, _id: dayID};
-    dayArray31.push(dayObj);
-    dayArray30.push(dayObj);
-    dayArray28.push(dayObj);
-    for(var i = 1; i < 32; i++){
-        var kaString;
-        var kaID;
-        if(i < 10){
-            kaString = "0" + i;
-            kaID = "0" + i;
-        }else{
-            kaString = i;
-            kaID = i;
-        }
-        var newObj = {name: kaString, _id: kaID};
-        if(i < 32){
-            dayArray31.push(newObj);
-        }
-        if(i < 31){
-            dayArray30.push(newObj);
-        }
-        if(i < 29){
-            dayArray28.push(newObj);
-        }
-    }
-
-    var yearArray = [];
-    var yearString = "Year";
-    var yearID = "Year";
-    var yearObj = {name: yearString, _id: yearID};
-    yearArray.push(yearObj);
-    for(var i = 2018; i > 2009; i--){
-        var kaString = i;
-        var kaID = i;
-        var newObj = {name: kaString, _id: kaID};
-        yearArray.push(newObj);
-    }
-
     var hourArray = [];
     var hourString = "Hour";
     var hourID = "Hour";
     var hourObj = {name: hourString, _id: hourID};
     hourArray.push(hourObj);
-    for(var i = 1; i < 13; i++){
+    for(var i = 0; i < 24; i++){
         var kaString;
         var kaID;
         if(i < 10){
@@ -1023,7 +899,7 @@ exports.new_simulation_get = function(req, res) {
         
                 exerciseActivitiesArray = exerciseKeyDataArray;
         
-                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
+                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray});
             });
         });
     } else {
@@ -1032,55 +908,12 @@ exports.new_simulation_get = function(req, res) {
 };
 
 exports.new_simulation_post = function(req, res) {
-    var dayArray31 = [];
-    var dayArray30 = [];
-    var dayArray28 = [];
-    var dayString = "Day";
-    var dayID = "Day";
-    var dayObj = {name: dayString, _id: dayID};
-    dayArray31.push(dayObj);
-    dayArray30.push(dayObj);
-    dayArray28.push(dayObj);
-    for(var i = 1; i < 32; i++){
-        var kaString;
-        var kaID;
-        if(i < 10){
-            kaString = "0" + i;
-            kaID = "0" + i;
-        }else{
-            kaString = i;
-            kaID = i;
-        }
-        var newObj = {name: kaString, _id: kaID};
-        if(i < 32){
-            dayArray31.push(newObj);
-        }
-        if(i < 31){
-            dayArray30.push(newObj);
-        }
-        if(i < 29){
-            dayArray28.push(newObj);
-        }
-    }
-
-    var yearArray = [];
-    var yearString = "Year";
-    var yearID = "Year";
-    var yearObj = {name: yearString, _id: yearID};
-    yearArray.push(yearObj);
-    for(var i = 2018; i > 2009; i--){
-        var kaString = i;
-        var kaID = i;
-        var newObj = {name: kaString, _id: kaID};
-        yearArray.push(newObj);
-    }
-
     var hourArray = [];
     var hourString = "Hour";
     var hourID = "Hour";
     var hourObj = {name: hourString, _id: hourID};
     hourArray.push(hourObj);
-    for(var i = 1; i < 13; i++){
+    for(var i = 0; i < 24; i++){
         var kaString;
         var kaID;
         if(i < 10){
@@ -1221,22 +1054,18 @@ exports.new_simulation_post = function(req, res) {
                 var newFoodSAG0 = req.body.newFoodSAG0;
                 var newExerciseName0 = req.body.newExerciseName0;
                 var newExerciseIntensity0 = req.body.newExerciseIntensity0;
-                var monthSelection0 = req.body.monthSelection0;
-                var daySelection0 = req.body.daySelection0;
-                var yearSelection0 = req.body.yearSelection0;
-                var hourSelection0 = req.body.hourSelection0;
-                var minuteSelection0 = req.body.minuteSelection0;
-                var amPmSelection0 = req.body.amPmSelection0;
                 var foodQtyInput0 = req.body.foodQtyInput0;
                 var exerciseQtyInput0 = req.body.exerciseQtyInput0;
-
                 var deleted = req.body.deleted0;
+                var dayInput0 = req.body.dayNumberInput0;
+                var hourSelect0 = req.body.hourSelect0;
+                var minuteSelect0 = req.body.minuteSelect0;
+                
+                writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted);
 
-                writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, deleted);
+                //runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, req, res);
 
-                //runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, monthSelection0, daySelection0, yearSelection0, hourSelection0, minuteSelection0, amPmSelection0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, deleted, req, res);
-
-                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray});
+                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray});
             });
         });
     });
