@@ -487,67 +487,15 @@ var activityTypesArray = [
     }
 ];
 
-function timeCalculation(year, month, day, hour, minute, amPm){
-    var yearInt = parseInt(year);
-    var monthInt = parseInt(month);
-    var dayInt = parseInt(day);
-    var hourInt = parseInt(hour);
-    var minuteInt = parseInt(minute);
+function timeCalculation(dayInput0, hourSelect0, minuteSelect0){
+    var dayInt = parseInt(dayInput0);
+    var hourInt = parseInt(hourSelect0);
+    var minuteInt = parseInt(minuteSelect0);
+    var totalReturn = 0;
 
-    var yearTicks = yearInt * 525600;
-    yearTicks = yearTicks - YEAR_CUTOFF;
-    var monthTicks;
-    if(monthInt == 1){
-        monthTicks = 0;
-    }else if(monthInt == 2){
-        monthTicks = 31 * 1440;
-    }else if(monthInt == 3){
-        monthTicks = 59 * 1440;
-    }else if(monthInt == 4){
-        monthTicks = 90 * 1440;
-    }else if(monthInt == 5){
-        monthTicks = 120 * 1440;
-    }else if(monthInt == 6){
-        monthTicks = 151 * 1440;
-    }else if(monthInt == 7){
-        monthTicks = 181 * 1440;
-    }else if(monthInt == 8){
-        monthTicks = 212 * 1440;
-    }else if(monthInt == 9){
-        monthTicks = 243 * 1440;
-    }else if(monthInt == 10){
-        monthTicks = 273 * 1440;
-    }else if(monthInt == 11){
-        monthTicks = 304 * 1440;
-    }else{
-        monthTicks = 334 * 1440;
-    }
-
-    var daysBefore = dayInt - 1;
-    var dayTicks = daysBefore * 1440;
-
-    var hourConv;
-    if(amPm == "AM"){
-        if(hourInt == 12){
-            hourConv = 0;
-        }else{
-            hourConv = hourInt;
-        }
-    }else{
-        if(hourInt == 12){
-            hourConv = 12;
-        }else{
-            hourConv = hourInt + 12;
-        }
-    }
-
-    var hourConvMinus = hourConv - 1;
-    var hourTicks = hourConvMinus * 60;
-
-    var minuteMinus = minuteInt - 1;
-    var minuteTicks = minuteMinus;
-
-    var totalReturn = yearTicks + monthTicks + dayTicks + hourTicks + minuteTicks;
+    var dayTotal = dayInt * 1440;
+    var hourTotal = hourInt * 60;
+    totalReturn = dayTotal + hourTotal + minuteInt;
     return totalReturn;
 }
 
@@ -560,18 +508,6 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
 
     var completedActivitiesArray = [];
 
-    for(var ai = 0; ai < activityDbArray.length; ai++){
-        var time = timeCalculation(activityDbArray[ai].year, activityDbArray[ai].month, activityDbArray[ai].day, activityDbArray[ai].hour, activityDbArray[ai].minute, activityDbArray[ai].amPm);
-
-        var activity_TypeValue = activityDbArray[ai].activity_type;
-        var subTypeNumberValue = activityDbArray[ai].subtype;
-        var quantityValue = activityDbArray[ai].quantity;
-
-        var newActivityObj = {fireTime: time, type: activity_TypeValue, subtype: subTypeNumberValue, howmuch: quantityValue};
-        completedActivitiesArray.push(newActivityObj);
-    }
-
-    //for each element
     var i = 1;
 
     while(activity_type0[i] != null){
@@ -580,7 +516,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
             if(activityType == "Food"){
                 var foodType = food_type0[i];
                 if(foodType == "+ New Food"){
-                    var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
+                    var time = timeCalculation(dayInput0[i], hourSelect0[i], minuteSelect0[i]);
                     var activityTypeValue = activity_type0[i];
                     var subTypeValue = nextFoodTypeID;
                     var foodQtyInput = foodQtyInput0[i];
@@ -592,7 +528,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
                 }else if(foodType == "Select Food"){
                     // no selection made, do not add to simulation
                 }else{
-                    var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
+                    var time = timeCalculation(dayInput0[i], hourSelect0[i], minuteSelect0[i]);
                     var activityTypeValue = activity_type0[i];
                     var subTypeValue = foodType;
                     var foodQtyInput = foodQtyInput0[i];
@@ -604,7 +540,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
                 var exerciseType = exercise_type0[i];
                 if(exerciseType == "+ New Exercise"){
 
-                    var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
+                    var time = timeCalculation(dayInput0[i], hourSelect0[i], minuteSelect0[i]);
                     var activityTypeValue = activity_type0[i];
                     var subTypeValue = nextExerciseTypeID;
                     var exerciseQtyInput = exerciseQtyInput0[i];
@@ -615,7 +551,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
                 }else if(exerciseType == "Select Exercise"){
                 // no selection made, do not add to simulation
                 }else{
-                    var time = timeCalculation(yearSelection0[i], monthSelection0[i], daySelection0[i], hourSelection0[i], minuteSelection0[i], amPmSelection0[i]);
+                    var time = timeCalculation(dayInput0[i], hourSelect0[i], minuteSelect0[i]);
                     var activityTypeValue = activity_type0[i];
                     var subTypeValue = exerciseType;
                     var exerciseQtyInput = exerciseQtyInput0[i];
