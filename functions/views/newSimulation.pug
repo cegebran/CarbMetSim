@@ -23,24 +23,24 @@ block content
                 label(for='newFoodName', id="newFoodNameLabel0") Name:
                 input(type='text', name='newFoodName0', id="newFoodNameInput0")
                 label(for='newFoodServingSize', id="newFoodServingSizeLabel0") Serving Size: 
-                input(type='text', name='newFoodServingSize0', id="newFoodServingSizeInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', name='newFoodServingSize0', id="newFoodServingSizeInput0", onkeypress="return isNumberKey(event)")
                 label(for='newFoodFat', id="newFoodFatLabel0") Fat: 
-                input(type='text', name='newFoodFat0', id="newFoodFatInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', name='newFoodFat0', id="newFoodFatInput0", onkeypress="return isNumberKey(event)")
                 label(for='newFoodProtein', id="newFoodProteinLabel0") Protein: 
-                input(type='text', name='newFoodProtein0', id="newFoodProteinInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', name='newFoodProtein0', id="newFoodProteinInput0", onkeypress="return isNumberKey(event)")
                 label(for='newFoodRAG', id="newFoodRAGLabel0") Readily Available Glucose (RAG): 
-                input(type='text', name='newFoodRAG0', id="newFoodRAGInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', name='newFoodRAG0', id="newFoodRAGInput0", onkeypress="return isNumberKey(event)")
                 label(for='newFoodSAG', id="newFoodSAGLabel0") Slowly Available Glucose (SAG): 
-                input(type='text', name='newFoodSAG0', id="newFoodSAGInput0",onkeypress="return isNumberKey(event)")
+                input(type='number', name='newFoodSAG0', id="newFoodSAGInput0",onkeypress="return isNumberKey(event)")
 
                 label(id='newExerciseTitle0') Create New Exercise Type:
                 label(for='newExerciseName', id="newExerciseNameLabel0") Name: 
                 input(type='text', name='newExerciseName0', id="newExerciseNameInput0")
                 label(for='newExerciseIntensity', id="newExerciseIntensityLabel0") Intensity: 
-                input(type='text', name='newExerciseIntensity0', id="newExerciseIntensityInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', name='newExerciseIntensity0', id="newExerciseIntensityInput0", onkeypress="return isNumberKey(event)")
 
                 label(id='dayNumberLabel0') Day: 
-                input(type='text', name='dayNumberInput0', id='dayNumberInput0', onkeypress="return isNumberKey(event)")
+                input(type='number', name='dayNumberInput0', id='dayNumberInput0', onkeypress="return isNumberKey(event)")
                 label(id='hourNumberLabel0') Hour: 
                 select#hour0.form-control(type='select', placeholder='', name='hourSelect0', required='false', style='width:200px')
                     for hour in hours
@@ -53,10 +53,10 @@ block content
                 button.btn.btn-primary(type='button', id='deleteEntry0', onclick='deleteEntry(this.id)') Delete Entry
 
                 label(for='qtyFood', id="foodQtyLabel0") Servings: 
-                input(type='text', name='foodQtyInput0', id='foodQtyInputID0', onkeypress="return isNumberKey(event)")
+                input(type='number', name='foodQtyInput0', id='foodQtyInputID0', onkeypress="return isNumberKey(event)")
 
                 label(for='qtyEx', id='exerciseQtyLabel0') Count: 
-                input(type='text', name='exerciseQtyInput0', id='exerciseQtyInputID0', onkeypress="return isNumberKey(event)")
+                input(type='number', name='exerciseQtyInput0', id='exerciseQtyInputID0', onkeypress="return isNumberKey(event)")
                 input(type='text', name='deleted0', id='deletedID0')
 
         button.btn.btn-primary(type='button', id='newDuplicateSetBtn', onclick='duplicate()') +
