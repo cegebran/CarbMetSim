@@ -9,7 +9,7 @@ html(lang='en')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
 
     style.
-      .sidenav {
+      .menuPopoutPanel {
         height: 100%;
         width: 0;
         position: fixed;
@@ -22,7 +22,7 @@ html(lang='en')
         padding-top: 60px;
       }
 
-      .sidenav a {
+      .menuPopoutPanel a {
         padding: 6px 6px 6px 30px;
         white-space: nowrap;
         text-decoration: none;
@@ -32,11 +32,11 @@ html(lang='en')
         transition: 0.3s;
       }
 
-      .sidenav a:hover {
+      .menuPopoutPanel a:hover {
         color: #f1f1f1;
       }
 
-      .sidenav .closeButton {
+      .menuPopoutPanel .buttonClosePopout {
         position: absolute;
         top: 0;
         right: 25px;
@@ -51,13 +51,13 @@ html(lang='en')
       }
 
       @media screen and (max-height: 450px) {
-        .sidenav {padding-top: 15px;}
-        .sidenav a {font-size: 18px;}
+        .menuPopoutPanel {padding-top: 15px;}
+        .menuPopoutPanel a {font-size: 18px;}
       }
 
   body
-    div(id='sideNavigationWindow' class='sidenav')
-      a(href='javascript:void(0)' class='closeButton' onclick='closeNavigationMenu()') x
+    div(id='menuPopoutPaneligationWindow' class='menuPopoutPanel')
+      a(href='javascript:void(0)' class='buttonClosePopout.buttonClosePopout' onclick='closeNavigationMenu()') x
       a(href='/login' onclick='closeNavigationMenu()') Login/Logout
       a(href='/signup' onclick='closeNavigationMenu()') Signup
       a(href='/home' onclick='closeNavigationMenu()') Home
@@ -73,12 +73,12 @@ html(lang='en')
       
     script.
       function openNavigationMenu() {
-        document.getElementById("sideNavigationWindow").style.width = "270px";
+        document.getElementById("menuPopoutPaneligationWindow").style.width = "270px";
         document.getElementById("mainContentWindow").style.marginLeft = "270px";
       }
 
       function closeNavigationMenu() {
-        document.getElementById("sideNavigationWindow").style.width = "0";
+        document.getElementById("menuPopoutPaneligationWindow").style.width = "0";
         document.getElementById("mainContentWindow").style.marginLeft= "0";
         sleep(1);
       }
