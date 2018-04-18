@@ -50,7 +50,6 @@ class HaltEvent extends Event {
 }
 
 class SimCtl {
-
     constructor(){
         this.ticks = 0;
         this.eventQ = new PriorityQueue();
@@ -116,7 +115,7 @@ class SimCtl {
         }
     }
 
-    readEvents(){
+    readEvents(file){
         jQuery.get(file, function(data){
         console.log("READING EVENTS FILE");
         console.log("-------------------------------");
@@ -130,15 +129,11 @@ class SimCtl {
             var properties = lines[line].split(':');
             event.type = properties[0];
             event.subtype = properties[1];
-            
-            for(var propertyLine = 0; properties[3] < 4; propertyLine++){
-                var subProperties = properties[3].split(" ");
-                event.howmuch = subProperties[0];
-                event.day = subProperties[1];
-                event.hour = subProperties[2];
-                event.minutes = subProperties[3];
-                event.fireTime = event.day * TICKS_PER_DAY + event.hour * TICKS_PER_HOUR + event.minutes;
-            }
+            event.howmuch = properties[2];
+            event.day = properties[3];
+            event.hour = properties[4];
+            event.minutes = properties[5];
+            event.fire = event.fireTime = event.day * TICKS_PER_DAY + event.hour * TICKS_PER_HOUR + event.minutes;
     
             eventArray[lineNum] = event;
             
