@@ -1,7 +1,6 @@
 // Import statements should be seen
 // Import from the body event should be seen
-
-export class AdiposeTissue{
+class AdiposeTissue{
 	// Learn how to write the private variables
 
 
@@ -10,7 +9,7 @@ export class AdiposeTissue{
     	this.glucoseAbsorbed_ = 0;
         this.bAAToGlutamine_ = 0;
         this.lipolysisRate_ = 0;
-        this.fat = (body.fatFraction_)*(body.bodyWeight_)*1000.0;
+        this.fat = (this.body.fatFraction_)*(this.body.bodyWeight_)*1000.0;
 	}
 
 	processTick(){
@@ -37,7 +36,7 @@ export class AdiposeTissue{
 	}
 
 	setParams(){
-		for(var [key, value] of this.body.metabolicParameters.get(body.bodyState.state).get(BodyOrgan.ADIPOSE_TISSUE.value).entries()) {
+		for(var [key, value] of this.body.metabolicParameters.get(this.body.bodyState.state).get(BodyOrgan.ADIPOSE_TISSUE.value).entries()) {
     		switch (key) {
     			case "glucoseOxidized_" : { this.glucoseAbsorbed = value; break; }
     			case "glucoseToAlanine_" : { this.lipolysisRate_ = value; break; }
@@ -60,6 +59,7 @@ export class AdiposeTissue{
     	this.body.bodyWeight_ -= this.fat/1000.0;
         this.fat -= this.kcal/9.0;
         this.body.bodyWeight_ += this.fat/1000.0;
+        console.log(kcal);
     }
 
       addFat(newFatInMG) {

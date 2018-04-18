@@ -34,7 +34,76 @@ const BodyOrgan = {
    // var foodTypes = new Map();
     /*var exerciseTypes = new Map();
     var metabolicParameters = new Map();
+
 */
+
+ function parseBodyState(s) {
+    	switch (s) {
+    	case "FED_RESTING": return 0;
+    	case "FED_EXERCISING": return 1;
+    	case "FED_POSTEXERCISE": return 2;
+    	case "POSTABSORPTIVE_RESTING": return 3;
+    	case "POSTABSORPTIVE_EXERCISING": return 4;
+    	case "POSTABSORPTIVE_POSTEXERCISE": return 5;
+    	case "ALL": return Number.MAX_SAFE_INTEGER;
+    	default: return -1;
+    	}
+    }
+    
+  function  parseBodyOrgan(s) {
+    	switch (s) {
+		case "HUMAN_BODY": return 0;
+		case "STOMACH_INTESTINE": return 1;
+		case "PORTAL_VEIN": return 2;
+		case "LIVER": return 3;
+		case "BLOOD": return 4;
+		case "MUSCLES": return 5;
+		case "BRAIN": return 6;
+		case "HEART": return 7;
+		case "ADIPOSE_TISSUE": return 8;
+		case "KIDNEY": return 9;
+		default: return -1;
+		}
+    }
+    
+   function parseBodyState(id) {
+    	switch (id) {
+    	case 0: return BodyState.FED_RESTING;
+    	case 1: return BodyState.FED_EXERCISING;
+    	case 2: return BodyState.FED_POSTEXERCISE;
+    	case 3: return BodyState.POSTABSORPTIVE_RESTING;
+    	case 4: return BodyState.POSTABSORPTIVE_EXERCISING;
+    	case 5: return BodyState.POSTABSORPTIVE_POSTEXERCISE;
+    	default: console.log("error");
+    	}
+    }
+    
+  function  parseBodyOrgan(id) {
+    	switch (id) {
+		case 0: return BodyOrgan.HUMAN_BODY;
+		case 1: return BodyOrgan.STOMACH_INTESTINE;
+		case 2: return BodyOrgan.PORTAL_VEIN;
+		case 3: return BodyOrgan.LIVER;
+		case 4: return BodyOrgan.BLOOD;
+		case 5: return BodyOrgan.MUSCLES;
+		case 6: return BodyOrgan.BRAIN;
+		case 7: return BodyOrgan.HEART;
+		case 8: return BodyOrgan.ADIPOSE_TISSUE;
+		case 9: return BodyOrgan.KIDNEY;
+		default: console.log("error");
+		}
+    }
+    
+  function  logData(bs, bo, p, v) {
+    	var state = parseBodyState(bs);
+    	var organ = parseBodyOrgan(bo);
+    	if (this.metabolicParameters.get(state) == null)
+    		this.metabolicParameters.set(state, new Map());
+    	if (this.metabolicParameters.get(state).get(organ) == null)
+    		this.metabolicParameters.get(state).set(organ, new Map());
+    	this.metabolicParameters.get(state).get(organ).set(p, v);
+    }
+    
 class HumanBody {
 	
 	
@@ -54,21 +123,21 @@ class HumanBody {
     		}
     	}
         */
-		this.stomachIntestine.setParams();
-	    this.portalVein.setParams();
-	    this.liver.setParams();
+		//this.stomachIntestine.setParams();
+	    //this.portalVein.setParams();
+	    //this.liver.setParams();
 	    this.adiposeTissue.setParams();
-	    this.brain.setParams();
-	    this.heart.setParams();
-	    this.muscles.setParams();
-	    this.blood.setParams();
-	    this.kidney.setParams();
+	    //this.brain.setParams();
+	    //this.heart.setParams();
+	    //this.muscles.setParams();
+	    //this.blood.setParams();
+	    //this.kidney.setParams();
 	}
     
 	constructor() {
       // this.foodTypes = new Map();
       // this.exerciseTypes = new Map();
-      // this.metabolicParameters = new Map();
+      this.metabolicParameters = new Map();
 	//	 this.stomachIntestine = new StomachIntestine(this);
 	  // this.portalVein = new PortalVein(this);
 	   // this.liver = new Liver(this);
@@ -82,7 +151,7 @@ class HumanBody {
 	    this.bodyState = BodyState.POSTABSORPTIVE_RESTING;
 	    this.bodyWeight_ = 65; //kg
 	    this.fatFraction_ = 0.2;
-	   // this.adiposeTissue = new AdiposeTissue(this);
+	   this.adiposeTissue = new AdiposeTissue(this);
 	    //this.muscles = new Muscles(this);
 	    
 	    this.currExercise = 0;
@@ -253,7 +322,7 @@ class HumanBody {
         var lines = data.split('\n');
         var lineNum = 0;
         var foodArray = [];
-        var food = new FoodType();
+        var food = new HumanBody.FoodType();
         //for loop to seperate each new line of text file
         for(var line = 0; line < lines.length; line++){
             var properties = lines[line].split(' ');
@@ -274,6 +343,9 @@ class HumanBody {
         }
     });
     }
+
+
+    
     // XXX: Original param (const char* file)/*
     /*readFoodFile(filename) {
     	var BufferedReader =   Java.type("java.io.BufferedReader");
@@ -316,7 +388,7 @@ class HumanBody {
         var lines = data.split('\n');
         var lineNum = 0;
         var exerciseArray = [];
-        var exercise = new ExerciseType();
+        var exercise = new HumanBody.ExerciseType();
         //for loop to seperate each new line of text file
         for(var line = 0; line < lines.length; line++){
             var properties = lines[line].split(' ');
@@ -425,12 +497,35 @@ class HumanBody {
     	var state = parseBodyState(bs);
     	var organ = parseBodyOrgan(bo);
     	if (this.metabolicParameters.get(state) == null)
-    		this.metabolicParameters.put(state, new Map());
+    		this.metabolicParameters.set(state, new Map());
     	if (this.metabolicParameters.get(state).get(organ) == null)
-    		this.metabolicParameters.get(state).put(organ, new Map());
-    	this.metabolicParameters.get(state).get(organ).put(p, v);
+    		this.metabolicParameters.get(state).set(organ, new Map());
+    	this.metabolicParameters.get(state).get(organ).set(p, v);
     }
     
+    readParams(file){
+        jQuery.get(file, function(data){
+        console.log("READING Param FILE");
+        console.log("-------------------------------");
+        var lines = data.split('\n');
+        var lineNum = 0;
+        //for loop to seperate each new line of text file
+        for(var line = 0; line < lines.length; line++){
+            var properties = lines[line].split(' ');
+          //  if(properties[0] === "ALL"){ // Need to check the parameters
+                for (var m = 0; m < BodyState.NUM_STATES; ++m) {
+                        logData(m,parseBodyOrgan(properties[1]),properties[2],Number.prototype.valueOf(properties[3]));
+                }
+            //}//else{
+            //logData(parseBodyState(properties[0]),parseBodyOrgan(properties[1]),properties[2],(properties[3]));
+        //}
+            
+            console.log("-------------------------------");
+        }
+    });  
+        console.log("th" + this.metabolicParameters)
+    }
+    /*
     // XXX: Original param (const char* file)
     readParams(filename) {
         var BufferedReader =   Java.type("java.io.BufferedReader");
@@ -454,7 +549,7 @@ class HumanBody {
     		}
     	
     }
-    
+    */
     stomachEmpty() {
     	var oldState = this.bodyState;
          
