@@ -15,14 +15,17 @@ const EventType = {
     INSULIN_LONG: 'INSULIN_LONG'
 }
 
-class Event {
-    constructor(fireTime, the_type) {
-        this.fireTime_ = fireTime;
-        this.eventType_ = the_type;
-        this.cost0 = fireTime;
-        this.cost1 = 0; // possibly redundant and can delete
+class Event{
+    constructor(){
+        this.type = "";
+        this.subtype = "";
+        this.howmuch = "";
+        this.day = 0;
+        this.hour = 0;
+        this.minutes = 0;
+        this.fireTime = 0;
     }
-}
+};
 
 class FoodEvent extends Event {
     constructor (fireTime, quantity, foodID) {
@@ -114,19 +117,37 @@ class SimCtl {
     }
 
     readEvents(){
-        /*var rawFile = new XMLHttpRequest();
-        rawFile.open("GET", file, false);
-        rawFile.onreadystatechange = function(){
-            if(rawFile.readyState === 4){
-                if(rawFile.status === 200 || rawFile.status == 0){
-                    var allText = rawFile.responseText;
-
-                    // add stuff here!!!
-
-                }
+        jQuery.get(file, function(data){
+        console.log("READING EVENTS FILE");
+        console.log("-------------------------------");
+        var lines = data.split('\n');
+        var lineNum = 0;
+        var eventArray = [];
+        var event = new Event();
+        //for loop to seperate each new line of text file
+        //type, subtype, howmuch, day, hour, minutes, fireTime
+        for(var line = 0; line < lines.length; line++){
+            var properties = lines[line].split(':');
+            event.type = properties[0];
+            event.subtype = properties[1];
+            
+            for(var propertyLine = 0; properties[3] < 4; propertyLine++){
+                var subProperties = properties[3].split(" ");
+                event.howmuch = subProperties[0];
+                event.day = subProperties[1];
+                event.hour = subProperties[2];
+                event.minutes = subProperties[3];
+                event.fireTime = event.day * TICKS_PER_DAY + event.hour * TICKS_PER_HOUR + event.minutes;
             }
+    
+            eventArray[lineNum] = event;
+            
+            console.log("event: " + "type: " + eventArray[lineNum].type + " subtype: " +  eventArray[lineNum].subtype + " firetime: " + eventArray[lineNum].fireTime);
+            lineNum++;
+            
+            console.log("-------------------------------");
         }
-        rawFile.send(null);*/
+    });
     }
 
 
