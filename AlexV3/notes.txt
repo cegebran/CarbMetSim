@@ -1,0 +1,21 @@
+1.AdiposeTissue - check
+2.Blood - check
+3.Brain - Check
+4.Heart - Check
+5.Intestine - Check
+6.Stomach - Check
+7. Kidneys - Check
+8.Liver - Check
+9.Muscles - Check
+10.PortalVein - Check
+
+SimCtl - Check
+HumanBody - Check
+priQ - Check
+
+
+
+
+HumanBody process_tick() - needs more work
+
+glycolysisPerTick - need to implement this
