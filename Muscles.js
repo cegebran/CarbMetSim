@@ -12,7 +12,7 @@ export class Muscles{
         // Frayn Chapter 9
         this.glycogen = this.glycogenMax_;
         this.glucose = 0;
-        this.volume_ = 1;
+        this.volume_ = 10;
         
         
         this.baaToGlutamine_ = 0;
@@ -98,8 +98,14 @@ export class Muscles{
         //static std.poisson_distribution<int> Glut4VMAX__ (1000.0*Glut4VMAX_);
         //static std.poisson_distribution<int> baaToGlutamine__ (1000.0*baaToGlutamine_);
         
+        var glucoseAbsorbedPerTick = 0;
+        var glycogenSynthesizedPerTick = 0;
+        var glycogenBreakdownPerTick = 0;
+        var glycogenOxidizedPerTick = 0;
+        var oxidationPerTick = 0;
+
         var x; // to hold the random samples
-        var currEnergyNeed =(1.0) * (body.currentEnergyExpenditure());
+        var currEnergyNeed = (1.0) * (body.currentEnergyExpenditure());
 
         if( body.isExercising() )
         {
@@ -113,40 +119,34 @@ export class Muscles{
     	{
     		var g = (1.0) * (oxidationPerTick - this.glucose);
     		this.glucose = 0;
-           		body.blood.removeGlucose(g);
+           	body.blood.removeGlucose(g);
+            glucoseAbsorbedPerTick += g;
     	}
             
             var glycogenShare;
-            var fatShare;
             var intensity = (1.0) * (body.exerciseTypes[body.currExercise].intensity_);
             if( intensity >= 6.0 )
             {
                 glycogenShare = 0.3; // for MET 6 and above, 30% of energy comes from glycogen
-                fatShare = 0.4;
             }
             else
             {
                     if( intensity < 3.0 )
                     {
                         glycogenShare = 0;
-                        fatShare = 0.9;
                     }
                     else
                     {
                         glycogenShare = 0.3*(intensity - 3.0 )/3.0;
-                        fatShare = 0.9 -0.5*(intensity - 3.0)/3.0;
                     }
             }
             x = (1.0) * (rand__(SimCtl.myEngine()));
             glycogenOxidizedPerTick = glycogenShare*(x/100.0)*1000.0*currEnergyNeed/4.0; // in milligrams
-            x = (1.0) * (rand__(SimCtl.myEngine()));
-            var energyFromFat = fatShare*(x/100.0)*currEnergyNeed; // in kcal
-
             //added this declaration
             var glycolysisPerTick;
 
             this.glycogen -= glycogenOxidizedPerTick;
-            this.body.adiposeTissue.consumeFat(energyFromFat);
+            glycogenBreakdownPerTick += glycogenOxidizedPerTick;
             
             // do glycolysis
             
@@ -164,16 +164,24 @@ export class Muscles{
                 glycolysisPerTick = this.glycolysisMax_*(body.bodyWeight);
             
             this.glycogen -= glycolysisPerTick;
+            glycogenBreakdownPerTick += glycolysisPerTick;
             body.blood.lactate += glycolysisPerTick;
+
+            var kcalgenerated = (1.0) * ((oxidationPerTick + glycogenOxidizedPerTick)*0.004 + glycolysisPerTick*0.004/15.0);
+            
+            if( kcalgenerated < currEnergyNeed )
+                body.adiposeTissue.consumeFat(currEnergyNeed - kcalgenerated);
         }
         else
         {
+            // basal absorption
             x = (1.0) * (basalAbsorption__(SimCtl.myEngine()));
             x = x*(body.bodyWeight)/1000.0;
             
             body.blood.removeGlucose(x);
-            this.glycogen += (1.0 - this.glucoseOxidationFraction_)*x;
-    	    oxidationPerTick = this.glucoseOxidationFraction_*x;
+            glucoseAbsorbedPerTick = x;
+            glucose += x;
+
             // Absorption via GLUT4
             
             var bgl = (1.0)* (body.blood.getBGL());
@@ -190,15 +198,8 @@ export class Muscles{
                 g = scale*x*diff/(diff + this.Glut4Km_);
 
                 body.blood.removeGlucose(g);
-                this.glycogen += (1.0 - this.glucoseOxidationFraction_)*g;
-    	        oxidationPerTick += this.glucoseOxidationFraction_*g;
-            }
-
-            if(this.glycogen > this.glycogenMax_)
-            {
-                this.glucose += this.glycogen - this.glycogenMax_;
-                oxidationPerTick += this.glycogen - this.glycogenMax_;
-                this.glycogen = this.glycogenMax_;
+                glucoseAbsorbedPerTick += g;
+                glucose += g;
             }
             
             // glycolysis
@@ -234,21 +235,40 @@ export class Muscles{
                 {
                     glycogen -= g;
                     body.blood.lactate += g;
+                    glycogenBreakdownPerTick += glycogen;
                 }
                 else
                 {
                     body.blood.lactate += glycogen;
                     glycolysisPerTick = glycolysisPerTick - g + glycogen;
+                    glycogenBreakdownPerTick += glycogen;
                     glycogen = 0;
                 }
             }
             
-    	glycogenOxidizedPerTick = 0;
+    	   // oxidation
+            oxidationPerTick = 0.5*glucose;
+            glucose *= 0.5;
 
-            // consume fat for 90% of the energy needs during resting state
-            x = (1.0) * (rand__(SimCtl.myEngine()));
-            double energyFromFat = 0.9*(x/100.0)*currEnergyNeed; // in kcal
-            body.adiposeTissue.consumeFat(energyFromFat);
+            // glycogen synthesis
+            if( glucose > 0 )
+            {
+                //g = (1.0 - body.insulinResistance_)*glucose;
+                g = glucose;
+
+                if( glycogen + g > glycogenMax_ )
+                    g = glycogenMax_ - glycogen;
+            
+                glycogen += g;
+                glycogenSynthesizedPerTick += g;
+                glucose -= g; 
+            }
+            
+            // consume fat for the remaining energy needs during resting state
+            var kcalgenerated = oxidationPerTick*0.004 + glycolysisPerTick*0.004/15.0;
+            // oxidation produces 15 times more energy than glycolysis 
+            if( kcalgenerated < currEnergyNeed )
+               body.adiposeTissue.consumeFat(currEnergyNeed-kcalgenerated);
         }
         
         if( glycogen < 0 )
@@ -275,9 +295,22 @@ export class Muscles{
         }
     */
         
-        //SimCtl.time_stamp();
-        //cout << " Muscle. glycogen "<< glycogen << " glucose " << glucose <<  endl;
-        
+        SimCtl.time_stamp();
+        console.log( " Muscles:: GlucoseAbsorbed " + glucoseAbsorbedPerTick + endl);
+        SimCtl.time_stamp();
+        console.log( " Muscles:: GlycogenSynthesis " + glycogenSynthesizedPerTick + endl);
+        SimCtl.time_stamp();
+        console.log( " Muscles:: GlycogenBreakdown " + glycogenBreakdownPerTick + endl);
+        SimCtl.time_stamp();
+        console.log( " Muscles:: glycogen " + glycogen + endl);
+        SimCtl.time_stamp();
+        console.log( " Muscles:: Oxidation " + oxidationPerTick + endl);
+        SimCtl.time_stamp();
+        console.log( " Muscles:: GlycogenOxidation " + glycogenOxidizedPerTick + endl);
+        SimCtl.time_stamp();
+        console.log( " Muscles:: Glycolysis " + glycolysisPerTick + endl);
+        SimCtl.time_stamp();
+        console.log( " Muscles:: Glucose " + glucose + endl);
     }
 
     /*void setParams()
