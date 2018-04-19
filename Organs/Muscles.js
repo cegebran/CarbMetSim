@@ -273,7 +273,7 @@ export class Muscles{
         
         if( glycogen < 0 )
         {
-        	SimCtl.time_stamp();
+        	this.body.time_stamp();
             console.log( "Glycogen went negative\n");
             //
             //exit(-1);
@@ -295,21 +295,21 @@ export class Muscles{
         }
     */
         
-        SimCtl.time_stamp();
+        this.body.time_stamp();
         console.log( " Muscles:: GlucoseAbsorbed " + glucoseAbsorbedPerTick + endl);
-        SimCtl.time_stamp();
+        this.body.time_stamp();
         console.log( " Muscles:: GlycogenSynthesis " + glycogenSynthesizedPerTick + endl);
-        SimCtl.time_stamp();
+        this.body.time_stamp();
         console.log( " Muscles:: GlycogenBreakdown " + glycogenBreakdownPerTick + endl);
-        SimCtl.time_stamp();
+        this.body.time_stamp();
         console.log( " Muscles:: glycogen " + glycogen + endl);
-        SimCtl.time_stamp();
+        this.body.time_stamp();
         console.log( " Muscles:: Oxidation " + oxidationPerTick + endl);
-        SimCtl.time_stamp();
+        this.body.time_stamp();
         console.log( " Muscles:: GlycogenOxidation " + glycogenOxidizedPerTick + endl);
-        SimCtl.time_stamp();
+        this.body.time_stamp();
         console.log( " Muscles:: Glycolysis " + glycolysisPerTick + endl);
-        SimCtl.time_stamp();
+        this.body.time_stamp();
         console.log( " Muscles:: Glucose " + glucose + endl);
     }
 

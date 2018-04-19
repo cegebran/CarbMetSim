@@ -14,7 +14,7 @@
             this.body.blood.removeGlucose(glucoseFromBlood);
             this.glucose += glucoseFromBlood;
             
-            //SimCtl.time_stamp();
+            //this.body.time_stamp();
         }
         
         setParams() {
@@ -27,8 +27,8 @@
         
         getConcentration() {
         	var gl = this.glucose/this.fluidVolume_;
-            //SimCtl.time_stamp();
-            //System.out.println("GL in Portal Vein: " + gl);
+            //this.body.time_stamp();
+            //console.log("GL in Portal Vein: " + gl);
          
             return gl;
         }
@@ -53,7 +53,7 @@
         addAminoAcids(aa) {
         	this.branchedAA += 0.15*aa;
             this.unbranchedAA += 0.85*aa;
-            //SimCtl.time_stamp();
+            //this.body.time_stamp();
             console.log(" PortalVein: bAA " + this.branchedAA + ", uAA " + this.unbranchedAA);
         }
         

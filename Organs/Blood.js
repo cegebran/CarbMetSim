@@ -46,7 +46,7 @@ class Blood {
         for(var i = 0; i < (Blood.MAXAGE-Blood.HUNDREDDAYS); i++) {
         	var j = start_bin = i;
         	if (j < 0) {
-        		this.SimCtlObject.time_stamp();
+        		this.body.time_stamp();
         		console.log(" RBC bin value negative " + j);
         		System.exit(-1);
         	}
@@ -65,7 +65,7 @@ class Blood {
             AgeBins[i].glycatedRBCs += newly_glycated;
             //System.out.println("bin: " + i + ", RBCs " + AgeBins[i].RBCs + ", Glycated RBCs " + AgeBins[i].glycatedRBCs);
         }
-        this.SimCtlObject.time_stamp();
+        this.body.time_stamp();
         console.log("New HbA1c: " + currentHbA1c());
     }
 
@@ -79,7 +79,7 @@ class Blood {
         this.rbcBirthRate_ = 144.0*60*24; // in millions per minute
         this.glycationProbSlope_ = 0.085/10000.0;
         this.glycationProbConst_ = 0;
-        //this.SimCtlObject = new SimCtl();
+        //this.body = new SimCtl();
         // all contents are in units of milligrams of glucose
         this.glucose = 5000.0; //5000.0; //15000.0;
         this.fluidVolume_ = 50.0; // in deciliters
@@ -155,14 +155,14 @@ class Blood {
 	        this.avgBGLOneDaySum = 0;
 	        this.avgBGLOneDayCount = 0;
 	        updateRBCs();
-	        SimCtlObject.time_stamp();
+	        body.time_stamp();
 	        console.log(" Blood::avgBGL " + this.avgBGLOneDay);
 	    }
 	    
 	    this.avgBGLOneDaySum += bgl;
 	    this.avgBGLOneDayCount++;
 	    
-	    //SimCtlObject.time_stamp();
+	    //body.time_stamp();
 	    console.log("Blood:: bgl " + this.getBGL());
 	    
 	    //BUKET NEW: For the calculation of Incremental AUC

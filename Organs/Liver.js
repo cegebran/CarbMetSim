@@ -51,7 +51,7 @@ class Liver {
             var g = x * diff/(diff + this.Glut2Km_);
             
             if( g > this.body.portalVein.getGlucose() ) {
-                //System.out.println("Trying to absorb more glucose from portal vein than what is present there! " + g + " " + body.portalVein.getGlucose());
+                //console.log("Trying to absorb more glucose from portal vein than what is present there! " + g + " " + body.portalVein.getGlucose());
                 g = this.body.portalVein.getGlucose();
             }
             
@@ -84,7 +84,7 @@ class Liver {
        
         this.glucose -= toGlycogen;
         
-        //System.out.println("After glycogen synthesis in liver, liver glycogen " + glycogen + " mg, live glucose " + glucose + " mg");
+        //console.log("After glycogen synthesis in liver, liver glycogen " + glycogen + " mg, live glucose " + glucose + " mg");
         
         //glycogen breakdown (depends on insulin and glucose level)
         
@@ -125,7 +125,7 @@ class Liver {
         //Gluconeogenesis will occur even in the presence of high insulin in proportion to lactate concentration. High lactate concentration (e.g. due to high glycolytic activity) would cause gluconeogenesis to happen even if insulin concentration is high. But then Gluconeogenesis would contribute to glycogen store of the liver (rather than generating glucose).
         x = poissonProcess.sample(x*this.gngFromLactateRate_);
         this.glycogen += this.body.blood.gngFromHighLactate(x);
-        //System.out.println("After GNG , liver glucose " + glucose + " mg, liver glycogen " + glycogen + " mg, blood glucose " + body.blood.glucose + " mg, blood lactate " + body.blood.lactate + " mg");
+        //console.log("After GNG , liver glucose " + glucose + " mg, liver glycogen " + glycogen + " mg, blood glucose " + body.blood.glucose + " mg, blood lactate " + body.blood.lactate + " mg");
               
         console.log(this.body.portalVein.releaseAminoAcids());
         
@@ -144,10 +144,10 @@ class Liver {
             }
             this.glucose -= g;
             this.body.blood.addGlucose(g);
-            SimCtl.time_stamp();
+            this.body.time_stamp();
             console.log("Liver released glucose " + g);
         }
-        //SimCtl.time_stamp();
+        //this.body.time_stamp();
          console.log(" Liver:: " + this.glycogen + " " + this.glucose + " " + this.glucose/this.fluidVolume_);
     }
     
@@ -186,7 +186,7 @@ Liver.PortalVein  = class {
             this.body.blood.removeGlucose(glucoseFromBlood);
             this.glucose += glucoseFromBlood;
             
-            //SimCtl.time_stamp();
+            //this.body.time_stamp();
         }
         
         setParams() {
@@ -199,8 +199,8 @@ Liver.PortalVein  = class {
         
         getConcentration() {
         	var gl = this.glucose/this.fluidVolume_;
-            //SimCtl.time_stamp();
-            //System.out.println("GL in Portal Vein: " + gl);
+            //this.body.time_stamp();
+            //console.log("GL in Portal Vein: " + gl);
          
             return gl;
         }
@@ -225,8 +225,8 @@ Liver.PortalVein  = class {
         addAminoAcids(aa) {
         	this.branchedAA += 0.15*aa;
             this.unbranchedAA += 0.85*aa;
-            //SimCtl.time_stamp();
-            //System.out.println(" PortalVein: bAA " + branchedAA + ", uAA " + unbranchedAA);
+            //this.body.time_stamp();
+            //console.log(" PortalVein: bAA " + branchedAA + ", uAA " + unbranchedAA);
         }
         
         releaseAminoAcids() {

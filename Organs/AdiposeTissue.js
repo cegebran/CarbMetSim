@@ -32,7 +32,7 @@ class AdiposeTissue{
         //System.out.println("Total Glucose Absorbed by Adipose Tissue " + totalGlucoseAbsorption);
         //System.out.println("Glucose_Consumed_in_a_Minute_by_AdiposeTissue " + glucoseConsumedINaMinute);
         
-        //SimCtl.time_stamp();
+        //this.body.time_stamp();
         console.log(" BodyWeight: " + this.body.bodyWeight_);
 	}
 
