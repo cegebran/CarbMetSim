@@ -9,6 +9,7 @@ var newFoodSubtype_controller = require('../controllers/newFoodSubtypeController
 var newExerciseSubtype_controller = require('../controllers/newExerciseSubtypeController');
 var newActivity_controller = require('../controllers/newActivityController');
 var newSimulation_controller = require('../controllers/newSimulationController');
+var simuationResultsQuery_controller = require('../controllers/simulationResultsQueryController');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -32,5 +33,7 @@ router.get('/newActivity',newActivity_controller.new_activity_get);
 router.post('/newActivity',newActivity_controller.new_activity_post);
 router.get('/newSimulation',newSimulation_controller.new_simulation_get);
 router.post('/newSimulation',newSimulation_controller.new_simulation_post);
+router.get('/simulationResultsQuery',simuationResultsQuery_controller.querySimulation_get);
+router.post('/simulationResultsQuery',simuationResultsQuery_controller.querySimulation_post);
 
 module.exports = router;
