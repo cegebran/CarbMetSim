@@ -119,8 +119,8 @@ class Blood {
 	    var x; // 
 	    var scale = (1.0 - this.body.insulinResistance_)*(this.body.blood.insulin);
 	    
-	    x = poissonProcess.sample(100.0*this.glycolysisMin_);
-	    x = x*(this.body.bodyWeight_)/100.0;
+	    x = poissonProcess.sample(1000.0*this.glycolysisMin_);
+	    x = x*(this.body.bodyWeight_)/1000.0;
 	    
 	    if( x > this.glycolysisMax_*(this.body.bodyWeight_))
 	        x = this.glycolysisMax_*(this.body.bodyWeight_);
