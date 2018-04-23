@@ -179,7 +179,7 @@ class Intestine{
             }
         
             // Active transport first
-            activeAbsorption = (1.0)*(basalAbsorption__(SimCtl.myEngine()))/1000.0;
+            activeAbsorption = (1.0)*(poissonProcess.sample(1000.0 * this.sglt1Rate_))/1000.0;
             
             if(activeAbsorption >= this.glucoseInLumen)
             {
@@ -201,7 +201,7 @@ class Intestine{
                 {
                     // glucose concentration in lumen decides the number of GLUT2s available for transport.
                     // so, Vmax depends on glucose concentration in lumen
-                    x = (1.0)*(this.Glut2VMAX_In__(SimCtl.myEngine()))/1000.0;
+                    x = (1.0)*((poissonProcess.sample(1000.0*Glut2VMAX_In_)))/1000.0;
                     var effectiveVmax = (1.0) *(x*glLumen/this.peakGlucoseConcentrationInLumen);
         
                     if (effectiveVmax > this.Glut2VMAX_In_)
@@ -228,7 +228,7 @@ class Intestine{
         
         if(diff > 0)
         {
-            x = (1.0)*((this.Glut2VMAX_Out__(SimCtl.myEngine()))/1000.0);
+            x = (1.0)*(poissonProcess.sample(1000.0*Glut2VMAX_Out_)/1000.0);
             this.toPortalVeinPerTick = x*diff/(diff + this.Glut2Km_Out_);
             
             if(this.toPortalVeinPerTick > this.glucoseInEnterocytes )
@@ -244,7 +244,7 @@ class Intestine{
         
         var scale = (1.0)*((1.0 - this.body.insulinResistance_)*(this.body.blood.insulin));
         
-        x = (1.0)*(this.glycolysisMin__(SimCtl.myEngine()));
+        x = (1.0)*(poissonProcess.sample(1000.0*this.glycolysisMin_));
         x *= this.body.bodyWeight_/1000.0;
         if(x > this.glycolysisMax_*(this.body.bodyWeight_))
             x = this.glycolysisMax_*(this.body.bodyWeight_);
@@ -269,7 +269,7 @@ class Intestine{
         x = this.body.portalVein.getConcentration();
         glPortalVein = (10.0/180.1559)*x;
 
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Intestine:: glLumen: " + glLumen + " glEntero " + glEnterocytes + " glPortal " + glPortalVein + ", activeAbsorption " + activeAbsorption + " passiveAbsorption " + passiveAbsorption));
     }
 
