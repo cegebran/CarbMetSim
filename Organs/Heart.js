@@ -14,7 +14,7 @@ class Heart {
     }
     
     processTick() {
-        var basalGlucoseAbsorbed__ = poissonProcess.sample(1000.0*basalGlucoseAbsorbed_);
+        var basalGlucoseAbsorbed__ = poissonProcess.sample(1000.0*this.basalGlucoseAbsorbed_);
         
         var basalAbsorption = basalGlucoseAbsorbed__ / 1000;
 
@@ -30,7 +30,7 @@ class Heart {
         
         this.oxidationPerTick += g;
         
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Heart:: Oxidation " + this.oxidationPerTick);
         /*
         if( this.body.blood.lactate >= this.lactateOxidized_ ) {
