@@ -1,37 +1,35 @@
-// Check the import statements
-// Import statement from enums 
-
-
 class Brain{
-
 	constructor(myBody){
 		this.glucoseOxidized_ = 1.08;
         this.glucoseToAlanine_ = 0;
         this.bAAToGlutamine_ = 0;
         this.body = myBody;
+        this.oxidationPerTick;
 	}
 
-
-
     processTick() {
-        this.body.bodyWeight_ = 10;
-        this.body.blood.removeGlucose((this.glucoseOxidized_ *(this.body.bodyWeight_))+this.glucoseToAlanine_);
-        this.body.blood.alanine += this.glucoseToAlanine_;
-        //totalGlucoseAbsorption += (glucoseOxidized_+glucoseToAlanine_)
+        var glucoseOxidized__ = poissonProcess.sample(1000.0 * glucoseOxidized_);
+        
+        var g = (glucoseOxidized__)/1000;
+        this.oxidationPerTick = g;
+        this.body.blood.removeGlucose(g + glucoseToAlanine_);
+        this.body.blood.alanine += glucoseToAlanine_;
         
         //Brain generate glutamine from branched amino acids.
         if( this.body.blood.branchedAminoAcids > this.bAAToGlutamine_ ) {
             this.body.blood.branchedAminoAcids -= this.bAAToGlutamine_;
             this.body.blood.glutamine += this.bAAToGlutamine_;
         } else {
-            this.body.blood.glutamine += this.body.blood.branchedAminoAcids;
+            this.body.blood.glutamine += 
+            this.body.blood.branchedAminoAcids;
             this.body.blood.branchedAminoAcids = 0;
         }
+        
+        body.time_stamp();
         console.log("Brain Oxidation" + this.bAAToGlutamine_ );
     }
 
     setParams(){
-
     	for(var [key, value] of this.body.metabolicParameters.get(this.body.bodyState.state).get(BodyOrgan.BRAIN.value).entries()) {
     		switch (key) {
     			case "glucoseOxidized_" : { this.glucoseOxidized_ = value; break; }
