@@ -1,7 +1,4 @@
-//package sim;
 //import java.util.Map.Entry;
-
-//import enums.BodyOrgan;
 
 class Heart {
 
@@ -13,28 +10,35 @@ class Heart {
         
         this.Glut4Km_ = 5*180.1559/10.0; //mg/dl equivalent of 5 mmol/l
         this.Glut4VMAX_ = 0; //mg per kg per minute
+        this.oxidationPerTick;
     }
     
     processTick() {
+        var basalGlucoseAbsorbed__ = poissonProcess.sample(1000.0*basalGlucoseAbsorbed_);
         
-        var basalAbsorption = this.basalGlucoseAbsorbed_;
+        var basalAbsorption = basalGlucoseAbsorbed__ / 1000;
+
         this.body.blood.removeGlucose(basalAbsorption);
         
+        this.oxidationPerTick = basalAbsorption;
         
         var bgl = this.body.blood.getBGL();
         var scale = (1.0 - this.body.insulinResistance_)*(this.body.blood.insulin)*(this.body.bodyWeight_);
         var g = scale*this.Glut4VMAX_*bgl/(bgl + this.Glut4Km_);
         
         this.body.blood.removeGlucose(g);
-
+        
+        this.oxidationPerTick += g;
+        
+        body.time_stamp();
+        console.log("Heart:: Oxidation " + this.oxidationPerTick);
+        /*
         if( this.body.blood.lactate >= this.lactateOxidized_ ) {
             this.body.blood.lactate -= this.lactateOxidized_;
         } else {
             this.body.blood.lactate = 0;
         }
-
-        console.log("Working");
-        
+        */        
     }
     setParams() {
     for(var [key, value] of this.body.metabolicParameters.get(this.body.bodyState.state).get(BodyOrgan.ADIPOSE_TISSUE.value).entries()) {
