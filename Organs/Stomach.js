@@ -55,10 +55,10 @@ export class Stomach{
     		return;
 
         //static std::poisson_distribution<int> geConstant__ (1000.0*geConstant_);
-                          
-        static std::poisson_distribution<int> geConstant__ (1000.0*geConstant_);
+        this.geConstant= poissonProcess.sample(1000.0*this.geConstant_)/1000.0              
+       
 
-        this.geConstant = (double)(geConstant__(SimCtl::myEngine()))/1000.0;
+         
         
                           
         //var geConstant = (1.0) * ((this.geConstant__(SimCtl.myEngine()))/1000.0);
@@ -71,7 +71,7 @@ export class Stomach{
 
         var geBolus = (1.0) * (this.geConstant + geSlope*totalFood);
 
-        body.time_stamp();
+        this.body.time_stamp();
     	console.log("Gastric Emptying:: Total Food " + totalFood + " Calorific Density " + calorificDensity
     	+ " geSlopeMin " + geSlopeMin + " geSlope " + geSlope + " geConstant " + this.geConstant 
     	+ " Bolus " + geBolus + endl);
@@ -97,7 +97,7 @@ export class Stomach{
             	this.body.stomachEmpty();
         	}
         
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Stomach : SAG " + this.SAG + " RAG " + this.RAG +  " protein " + this.protein + " fat " + this.fat + endl); 
     }
 
@@ -143,3 +143,4 @@ export class Stomach{
     }
     */
 }
+
