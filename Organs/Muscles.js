@@ -91,12 +91,12 @@ export class Muscles{
         // (the number is abt 20 micromol per kg per minute in post-prandial state (insulin dependent number)). 
         //For now, we will assume that all this glucose is consumed via glycolysis.
         //20 micromol per kg per minute is 20*180.1559/1000 mg = 3.603 mg.
-        
-        //static std.poisson_distribution<int> rand__ (100);
-        //static std.poisson_distribution<int> glycolysisMin__ (1000.0*glycolysisMin_);
-        //static std.poisson_distribution<int> basalAbsorption__ (1000.0*basalGlucoseAbsorbed_);
-        //static std.poisson_distribution<int> Glut4VMAX__ (1000.0*Glut4VMAX_);
-        //static std.poisson_distribution<int> baaToGlutamine__ (1000.0*baaToGlutamine_);
+
+        var rand__ = poissonProcess.sample(100);
+        var glycolysisMin__ = poissonProcess.sample(1000.0*glycolysisMin_);
+        var basalAbsorption__ = poissonProcess.sample(1000.0*basalGlucoseAbsorbed_);
+        var Glut4VMAX__ = poissonProcess.sample(1000.0*Glut4VMAX_);
+        var baaToGlutamine__ = poissonProcess.sample(1000.0*baaToGlutamine_);
         
         var glucoseAbsorbedPerTick = 0;
         var glycogenSynthesizedPerTick = 0;

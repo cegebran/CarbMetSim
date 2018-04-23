@@ -39,6 +39,15 @@ class Liver {
     	// every thing is stochastic
         var x; // to hold the random samples
         x = this.body.bodyWeight_;
+        //poisson_distribution variables
+
+        var glycogenToGlucose__ = poissonProcess.sample(1000.0*glycogenToGlucose_);
+        var glucoseToGlycogen__ = poissonProcess.sample(1000.0*glucoseToGlycogen_);
+        var glycolysisMin__ = poissonProcess.sample(1000.0*glycolysisMin_);
+        var gngRate__ = poissonProcess.sample(1000.0*gluconeogenesisRate_);
+        var gngFromLactateRate__ = poissonProcess.sample(1000.0*gngFromLactateRate_);
+        var Glut2VMAX__ = poissonProcess.sample(1000.0*Glut2VMAX_);
+
         // Now do the real work
         
         var glInPortalVein = this.body.portalVein.getConcentration();
