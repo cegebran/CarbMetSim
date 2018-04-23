@@ -8,7 +8,7 @@ class Brain{
 	}
 
     processTick() {
-        var glucoseOxidized__ = poissonProcess.sample(1000.0 * glucoseOxidized_);
+        var glucoseOxidized__ = poissonProcess.sample(1000.0 * this.glucoseOxidized_);
         
         var g = (glucoseOxidized__)/1000;
         this.oxidationPerTick = g;
