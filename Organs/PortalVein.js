@@ -14,7 +14,8 @@
             this.body.blood.removeGlucose(glucoseFromBlood);
             this.glucose += glucoseFromBlood;
             
-            //this.body.time_stamp();
+            this.body.time_stamp();
+            console.log("PortalVein:: " + this.glucose + " " + this.glucose /this.fluidVolume_ + " " + this.branchedAA + " " + this.unbranchedAA);
         }
         
         setParams() {
