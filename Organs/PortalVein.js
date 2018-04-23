@@ -1,7 +1,7 @@
  class PortalVein {
     	
         constructor(body_) {
-        	this.body = body_;
+        	   this.body = body_;
             this.glucose = 0; //mg
             this.branchedAA = 0;	//mg
             this.unbranchedAA = 0; //mg
