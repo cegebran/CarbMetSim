@@ -90,13 +90,15 @@ class ExerciseType{
 class HumanBody{
     constructor(){
         // *****all commented out lines need to be uncommented when add each class for different organs*****
+        this.bodyWeight_ = 65; //kg
 
         this.eventQ = new PriorityQueue();
-        this.stomach = new Stomach(this);
         this.portalVein = new PortalVein(this);
         this.muscles = new Muscles(this);
         this.liver = new Liver(this);
         this.blood = new Blood(this);
+        this.stomach = new Stomach(this);
+        this.intestine = new Intestine(this);
         this.brain = new Brain(this);
         this.heart = new Heart(this);
         this.adiposeTissue = new AdiposeTissue(this);
@@ -105,7 +107,6 @@ class HumanBody{
         this.insulinResistance_ = 0;
         this.insulinPeakLevel_ = 1.0;
         this.bodyState = BodyState.POSTABSORPTIVE_RESTING;
-        this.bodyWeight_ = 65; //kg
         this.fatFraction = 0.2;
 
         //this.adiposeTissue = new AdiposeTissue(this);
@@ -136,15 +137,18 @@ class HumanBody{
     }
     
     processTick(){
-        this.portalVein.processTick();
-        this.stomach.processTick();
-        this.liver.processTick();
-        //this.adiposeTissue.processTick();
         this.brain.processTick();
-        this.heart.processTick();
-        this.muscles.processTick();
+        this.liver.processTick();
         this.kidneys.processTick();
         this.blood.processTick();
+        this.heart.processTick();
+        this.portalVein.processTick();
+        this.intestine.processTick();
+       // console.log(this.stomach.processTick());
+        this.adiposeTissue.processTick();
+        
+       
+        this.muscles.processTick();
 
         // dont worry about time_stamp yet, will be read from real-time database
         console.log(" bgl " + this.blood.getBGL() + " weight "  + this.bodyWeight_);

@@ -14,7 +14,6 @@ class Chyme{
         this.RAG = "";
         this.SAG = "";
         this.ts = 0;
-        this.chyme = [];
     }
 }
 
@@ -57,6 +56,8 @@ class Intestine{
         
         this.glycolysisPerTick = 0;
         this.toPortalVeinPerTick = 0;
+        this.chyme = Array.apply(null, Array(40)).map(function () { return new Chyme(); });
+
     }
 
     addChyme(rag, sag, proteinInChyme, fat)
@@ -75,7 +76,7 @@ class Intestine{
         this.body.adiposeTissue.addFat(fat);
     }
     
-    function erf(x){
+    erf(x){
         // erf(x) = 2/sqrt(pi) * integrate(from=0, to=x, e^-(t^2) ) dt
         // with using Taylor expansion, 
         //        = 2/sqrt(pi) * sigma(n=0 to +inf, ((-1)^n * x^(2n+1))/(n! * (2n+1)))
@@ -92,55 +93,55 @@ class Intestine{
     }
 
     processTick(){
-        for(var i = 0; i < chyme.length; i++){
+        for(var i = 0; i < this.chyme.length; i++){
             var RAGConsumed = 0;
             var t = this.body.ticks - this.chyme[i].ts;
             
             if(t === 0){
-                RAGConsumed = this.chyme[i].origRAG * 0.5 * (1 + this.erf((t = this.RAG_Mean_) / (RAG_StdDev_ * Math.sqrt(2))));
+                RAGConsumed = this.chyme[i].origRAG * 0.5 * (1 + this.erf((t = this.RAG_Mean_) / (this.RAG_StdDev_ * Math.sqrt(2))));
             }
             else{
-                RAGConsumed = chyme[i].origRAG * 0.5 * (this.erf((t - this.RAG_Mean_) / (this.RAG_StdDev_ * Math.sqrt(2))) - this.erf((t - 1 - this.RAG_Mean_) / (this.RAG_StfDev * Math.sqrt(2))));
+                RAGConsumed = this.chyme[i].origRAG * 0.5 * (this.erf((t - this.RAG_Mean_) / (this.RAG_StdDev_ * Math.sqrt(2))) - this.erf((t - 1 - this.RAG_Mean_) / (this.RAG_StfDev * Math.sqrt(2))));
             }
             
-            if(chyme[i].RAG < RAGConsumed){
-                RAGConsumed = chyme[i].RAG;
+            if(this.chyme[i].RAG < RAGConsumed){
+                RAGConsumed = this.chyme[i].RAG;
             }
             
-            if(chyme[i].RAG < 0.01 * (chyme[i].origRAG)){
-                RAGConsumed = chyme[i].RAG;
+            if(this.chyme[i].RAG < 0.01 * (this.chyme[i].origRAG)){
+                RAGConsumed = this.chyme[i].RAG;
             }
                 
                 
-            chyme[i].RAG -= RAGConsumed;
+            this.chyme[i].RAG -= RAGConsumed;
             this.glucoseInLumen += RAGConsumed;
                 
             var SAGConsumed = 0;
                 
             if(t === 0){
-                SAGConsumed = chyme[i].origSAG * 0.5 * (1 + this.erf((t - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))));
+                SAGConsumed = this.chyme[i].origSAG * 0.5 * (1 + this.erf((t - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))));
             }
 
             else{
-                SAGConsumed = chyme[i].origSAG * 0.5 * (this.erf((t - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))) - this.erf((t - 1 - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))));
+                SAGConsumed = this.chyme[i].origSAG * 0.5 * (this.erf((t - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))) - this.erf((t - 1 - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))));
             }
 
-            if(chyme[i].SAG < SAGConsumed){
-                SAGConsumed = chyme[i].SAG;
+            if(this.chyme[i].SAG < SAGConsumed){
+                SAGConsumed = this.chyme[i].SAG;
             }
             
-            if(chyme[i].SAG < 0.01 * chyme[i].origSAG){
-                SAGConsumed = chyme[i].SAG;
+            if(this.chyme[i].SAG < 0.01 * this.chyme[i].origSAG){
+                SAGConsumed = this.chyme[i].SAG;
             }
             
-            chyme[i].SAG -= SAGConsumed;
+            this.chyme[i].SAG -= SAGConsumed;
             this.glucoseInLumen += SAGConsumed;
             
             this.body.time_stamp();
-            console.log("Chyme:: RAG " + chyme[i].RAG + "SAG " + chyme[i].SAG + " origRAG " + chyme[i].origRAG + " origSAG " + chyme[i].origSAG + " glucoseInLumen " + this.glucoseInLumen + " RAGConsumed " + this.RAGConsumed + " SAGConsumed " + this.SAGConsumed);
+            console.log("Chyme:: RAG " + this.chyme[i].RAG + "SAG " + this.chyme[i].SAG + " origRAG " + this.chyme[i].origRAG + " origSAG " + this.chyme[i].origSAG + " glucoseInLumen " + this.glucoseInLumen + " RAGConsumed " + this.RAGConsumed + " SAGConsumed " + this.SAGConsumed);
             
-            if(chyme[i].RAG === 0 && chyme[i].SAG === 0){
-                chyme.pop[i];
+            if(this.chyme[i].RAG === 0 && this.chyme[i].SAG === 0){
+                this.chyme.pop[i];
             }
         }
         
@@ -249,9 +250,9 @@ class Intestine{
         if(x > this.glycolysisMax_*(this.body.bodyWeight_))
             x = this.glycolysisMax_*(this.body.bodyWeight_);
         
-        glycolysisPerTick = x + scale * ((this.glycolysisMax_*(this.body.bodyWeight_)) - x);
+        this.glycolysisPerTick = x + scale * ((this.glycolysisMax_*(this.body.bodyWeight_)) - x);
         
-        if( glycolysisPerTick > this.glucoseInEnterocytes){
+        if( this.glycolysisPerTick > this.glucoseInEnterocytes){
             this.body.blood.removeGlucose(this.glycolysisPerTick - this.glucoseInEnterocytes);
             this.glucoseInEnterocytes = 0;
         }
@@ -270,7 +271,7 @@ class Intestine{
         glPortalVein = (10.0/180.1559)*x;
 
         this.body.time_stamp();
-        console.log("Intestine:: glLumen: " + glLumen + " glEntero " + glEnterocytes + " glPortal " + glPortalVein + ", activeAbsorption " + activeAbsorption + " passiveAbsorption " + passiveAbsorption));
+        console.log("Intestine:: glLumen: " + glLumen + " glEntero " + glEnterocytes + " glPortal " + glPortalVein + ", activeAbsorption " + activeAbsorption + " passiveAbsorption " + passiveAbsorption);
     }
 
     //The BCAAs, leucine, isoleucine, and valine, represent 3 of the 20 amino acids that are used in the formation of proteins. Thus, on average, the BCAA content of food proteins is about 15% of the total amino acid content."Interrelationship between Physical Activity and Branched-Chain Amino Acids"
@@ -283,11 +284,10 @@ class Intestine{
 
     absorbAminoAcids()
     {
-        //static std::poisson_distribution<int> this.aminoAcidsAbsorptionRate__(1000.0*this.aminoAcidsAbsorptionRate_);
-        //static std::poisson_distribution<int> this.glutamineOxidationRate__(1000.0*this.glutamineOxidationRate_);
+     
+        var absorbedAA = (1.0) * poissonProcess.sample(this.aminoAcidsAbsorptionRate_)/1000.0;
         
-        var absorbedAA = (1.0) * (this.aminoAcidsAbsorptionRate__(SimCtl.myEngine()))/1000.0;
-        
+
         if(this.protein < absorbedAA )
         {
             absorbedAA = this.protein;
@@ -297,7 +297,7 @@ class Intestine{
         this.protein -= absorbedAA;
         
         //Glutamine is oxidized
-        var g = (1.0) * (this.glutamineOxidationRate__(SimCtl.myEngine()))/1000.0;
+        var g = (1.0) * poissonProcess.sample(this.glutamineOxidationRate_*1000)/1000;
         if( this.body.blood.glutamine < g )
         {
                 this.body.blood.alanine += this.glutamineToAlanineFraction_*(this.body.blood.glutamine);

@@ -14,7 +14,7 @@ class Brain{
         this.oxidationPerTick = g;
         this.body.blood.removeGlucose(g + this.glucoseToAlanine_);
         this.body.blood.alanine += this.glucoseToAlanine_;
-        
+
         //Brain generate glutamine from branched amino acids.
         if( this.body.blood.branchedAminoAcids > this.bAAToGlutamine_ ) {
             this.body.blood.branchedAminoAcids -= this.bAAToGlutamine_;

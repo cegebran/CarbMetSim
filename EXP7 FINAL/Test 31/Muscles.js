@@ -113,7 +113,7 @@ class Muscles {
             {
                 x = poissonProcess.sample(100.0*this.Glut4VMAX_);
                 x = x*(this.body.bodyWeight_)/100.0;
-                g = scale*x*diff/(diff + Glut4Km_);
+                g = scale*x*diff/(diff + this.Glut4Km_);
 
                 this.body.blood.removeGlucose(g);
                 x = this.glycogen;
@@ -181,6 +181,7 @@ class Muscles {
             this.body.blood.glutamine += this.body.blood.branchedAminoAcids;
             this.body.blood.branchedAminoAcids = 0;
         }
+        console.log("Muscles Working");
         
     }
    
