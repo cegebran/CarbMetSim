@@ -18,7 +18,7 @@ class Heart {
     
     processTick() {
         
-        var basalAbsorption = poissonProcess(this.basalGlucoseAbsorbed_);
+        var basalAbsorption = poissonProcess.sample(this.basalGlucoseAbsorbed_);
         this.body.blood.removeGlucose(basalAbsorption);
         
         //var lactateOxidized__ = poissonProcess(1000 * this.lactateOxidized_);
@@ -46,7 +46,7 @@ class Heart {
             this.body.blood.lactate = 0;
         }
         */
-        console.log("Heart:: Oxidation " + oxidationPerTick);
+        console.log("Heart:: Oxidation " + this.oxidationPerTick);
         
     }
     setParams() {
