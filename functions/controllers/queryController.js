@@ -6,8 +6,8 @@ var YEAR_CUTOFF = 525600 * 2010;    // cannot create activity before than 2010
 
 var activityTypeArray = [
     {
-        _id: "All",
-        name: "All Activities"
+        _id: "All Activity Types",
+        name: "All Activity Types"
     },
     {
         _id: "Food",
@@ -16,6 +16,17 @@ var activityTypeArray = [
     {
         _id: "Exercise",
         name: "Exercise Activities"
+    }
+];
+
+var allTimeRangeArray = [
+    {
+        _id: "All-Time",
+        name: "All-Time"
+    },
+    {
+        _id: "Select Date and Time Range",
+        name: "Select Date and Time Range"
     }
 ];
 
@@ -300,7 +311,7 @@ exports.query_get = function(req, res) {
                         exerciseSubtypesPassedArray.push(newObj);
                     }
 
-                    res.render('query', {activityTypes: activityTypeArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray, foodActivityTypes: foodSubtypesPassedArray, exerciseActivityTypes: exerciseSubtypesPassedArray});
+                    res.render('query', {activityTypes: activityTypeArray, hours: hourArray, minutes: minutesArray, amPms: amPmArray, months: monthArray, days31: dayArray31, days30: dayArray30, days28: dayArray28, years: yearArray, foodActivityTypes: foodSubtypesPassedArray, exerciseActivityTypes: exerciseSubtypesPassedArray, allTimeRanges: allTimeRangeArray});
                 });
             });
         });
@@ -325,9 +336,15 @@ exports.query_post = function(req, res) {
     var endHour = req.body.endHourSelection0;
     var endMinute = req.body.endMinuteSelection0;
     var endAmPm = req.body.endAmPmSelection0;
+    
+    var allTimeRange = req.body.allTimeRangeSelect;
 
-    var startTimeValue = timeCalculation(startYear, startMonth, startDay, startHour, startMinute, startAmPm);
-    var endTimeValue = timeCalculation(endYear, endMonth, endDay, endHour, endMinute, endAmPm);
+    var startTimeValue = 0;
+    var endTimeValue = 0;
+    if(allTimeRange == "Select Date and Time Range"){
+        startTimeValue = timeCalculation(startYear, startMonth, startDay, startHour, startMinute, startAmPm);
+        endTimeValue = timeCalculation(endYear, endMonth, endDay, endHour, endMinute, endAmPm);
+    }
 
     var activitiesToDisplayArray = [];
 
@@ -336,7 +353,7 @@ exports.query_post = function(req, res) {
             for(var f = 0; f < activitiesAllArrayFromDatabase.length; f++){
                 if(activitiesAllArrayFromDatabase[f].activity_type == "Food"){
                     var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[f].year, activitiesAllArrayFromDatabase[f].month, activitiesAllArrayFromDatabase[f].day, activitiesAllArrayFromDatabase[f].hour, activitiesAllArrayFromDatabase[f].minute, activitiesAllArrayFromDatabase[f].amPm);
-                    if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                    if((allTimeRange == "All-Time") || ((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue))){
                         var mainType = "Food";
                         var amount = activitiesAllArrayFromDatabase[f].quantity;
                         var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[f].year, activitiesAllArrayFromDatabase[f].month, activitiesAllArrayFromDatabase[f].day);
@@ -357,7 +374,7 @@ exports.query_post = function(req, res) {
                 if(activitiesAllArrayFromDatabase[fs].activity_type == "Food"){
                     if(activitiesAllArrayFromDatabase[fs].subtype == foodActivityType){
                         var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[fs].year, activitiesAllArrayFromDatabase[fs].month, activitiesAllArrayFromDatabase[fs].day, activitiesAllArrayFromDatabase[fs].hour, activitiesAllArrayFromDatabase[fs].minute, activitiesAllArrayFromDatabase[fs].amPm);
-                        if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                        if((allTimeRange == "All-Time") || ((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue))){
                             var mainType = "Food";
                             var amount = activitiesAllArrayFromDatabase[fs].quantity;
                             var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[fs].year, activitiesAllArrayFromDatabase[fs].month, activitiesAllArrayFromDatabase[fs].day);
@@ -380,7 +397,7 @@ exports.query_post = function(req, res) {
             for(var e = 0; e < activitiesAllArrayFromDatabase.length; e++){
                 if(activitiesAllArrayFromDatabase[e].activity_type == "Exercise"){
                     var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[e].year, activitiesAllArrayFromDatabase[e].month, activitiesAllArrayFromDatabase[e].day, activitiesAllArrayFromDatabase[e].hour, activitiesAllArrayFromDatabase[e].minute, activitiesAllArrayFromDatabase[e].amPm);
-                    if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                    if((allTimeRange == "All-Time") || ((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue))){
                         var mainType = "Exercise";
                         var amount = activitiesAllArrayFromDatabase[e].quantity;
                         var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[e].year, activitiesAllArrayFromDatabase[e].month, activitiesAllArrayFromDatabase[e].day);
@@ -401,7 +418,7 @@ exports.query_post = function(req, res) {
                 if(activitiesAllArrayFromDatabase[es].activity_type == "Exercise"){
                     if(activitiesAllArrayFromDatabase[es].subtype == exerciseActivityType){
                         var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[es].year, activitiesAllArrayFromDatabase[es].month, activitiesAllArrayFromDatabase[es].day, activitiesAllArrayFromDatabase[es].hour, activitiesAllArrayFromDatabase[es].minute, activitiesAllArrayFromDatabase[es].amPm);
-                        if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                        if((allTimeRange == "All-Time") || ((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue))){
                             var mainType = "Exercise";
                             var amount = activitiesAllArrayFromDatabase[es].quantity;
                             var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[es].year, activitiesAllArrayFromDatabase[es].month, activitiesAllArrayFromDatabase[es].day);
@@ -423,7 +440,7 @@ exports.query_post = function(req, res) {
         for(var a = 0; a < activitiesAllArrayFromDatabase.length; a++){
             if(activitiesAllArrayFromDatabase[a].activity_type == "Exercise"){
                 var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[a].year, activitiesAllArrayFromDatabase[a].month, activitiesAllArrayFromDatabase[a].day, activitiesAllArrayFromDatabase[a].hour, activitiesAllArrayFromDatabase[a].minute, activitiesAllArrayFromDatabase[a].amPm);
-                if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                if((allTimeRange == "All-Time") || ((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue))){
                     var mainType = "Exercise";
                     var amount = activitiesAllArrayFromDatabase[a].quantity;
                     var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[a].year, activitiesAllArrayFromDatabase[a].month, activitiesAllArrayFromDatabase[a].day);
@@ -440,7 +457,7 @@ exports.query_post = function(req, res) {
             }
             if(activitiesAllArrayFromDatabase[a].activity_type == "Food"){
                 var dateTimeCalculation = timeCalculation(activitiesAllArrayFromDatabase[a].year, activitiesAllArrayFromDatabase[a].month, activitiesAllArrayFromDatabase[a].day, activitiesAllArrayFromDatabase[a].hour, activitiesAllArrayFromDatabase[a].minute, activitiesAllArrayFromDatabase[a].amPm);
-                if((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue)){
+                if((allTimeRange == "All-Time") || ((dateTimeCalculation >= startTimeValue) && (dateTimeCalculation <= endTimeValue))){
                     var mainType = "Food";
                     var amount = activitiesAllArrayFromDatabase[a].quantity;
                     var compiledDateString = dateCompiler(activitiesAllArrayFromDatabase[a].year, activitiesAllArrayFromDatabase[a].month, activitiesAllArrayFromDatabase[a].day);
