@@ -12,18 +12,18 @@ class RBCBin {
     }
 }
 
-class Blood {
-
-	////////////////////================================================================================
+class Blood {	////////////////////================================================================================
 	//private RBCBin[] AgeBins = new RBCBin[MAXAGE+1];// Aging Bins
     /////////////////////==========================================================================
     currentHbA1c() {
     	var rbcs = 0;
         var glycated_rbcs = 0;
+        
         for(var i = 0; i <= Blood.MAXAGE; i++) {
             rbcs += AgeBins[i].RBCs;
             glycated_rbcs += AgeBins[i].glycatedRBCs;
         }
+        
         if(rbcs == 0) {
             console.log("Error in Bloody::currentHbA1c");
             System.exit(1);
@@ -38,7 +38,8 @@ class Blood {
         //New RBCs take birth
         AgeBins[bin0].RBCs = this.rbcBirthRate_;
         AgeBins[bin0].glycatedRBCs = 0;
-        //System.out.println("New RBCs: " + AgeBins[bin0].RBCs);
+        
+        //console.log("New RBCs: " + AgeBins[bin0].RBCs);
         // Old (100 to 120 days old) RBCs die
         var start_bin = this.bin0 + Blood.HUNDREDDAYS;
         if( start_bin > Blood.MAXAGE ) start_bin -= (Blood.MAXAGE + 1);
@@ -46,16 +47,18 @@ class Blood {
         for(var i = 0; i < (Blood.MAXAGE-Blood.HUNDREDDAYS); i++) {
         	var j = start_bin = i;
         	if (j < 0) {
-        		this.SimCtlObject.time_stamp();
+        		this.body.time_stamp();
         		console.log(" RBC bin value negative " + j);
-        		System.exit(-1);
+        		break;
+                //System.exit(-1);
         	}
         	if (j > Blood.MAXAGE) j -= (Blood.MAXAGE + 1);
-            var kill_rate = (i)/((Blood.MAXAGE-Blood.HUNDREDDAYS));
+            var kill_rate = (i)/(Blood.MAXAGE-Blood.HUNDREDDAYS);
             AgeBins[j].RBCs *= (1.0 - kill_rate);
             AgeBins[j].glycatedRBCs *= (1.0 - kill_rate);
-            //System.out.println("bin: " + (start_bin + i) + ", RBCs " + AgeBins[start_bin + i].RBCs + ", Glycated RBCs " + AgeBins[start_bin + i].glycatedRBCs);
+            //console.log("bin: " + (start_bin + i) + ", RBCs " + AgeBins[start_bin + i].RBCs + ", Glycated RBCs " + AgeBins[start_bin + i].glycatedRBCs);
         }
+        
         //glycate the RBCs
         var glycation_prob = this.avgBGLOneDay * this.glycationProbSlope_ + this.glycationProbConst_;
         //System.out.println("RBCs glycate");
@@ -65,21 +68,21 @@ class Blood {
             AgeBins[i].glycatedRBCs += newly_glycated;
             //System.out.println("bin: " + i + ", RBCs " + AgeBins[i].RBCs + ", Glycated RBCs " + AgeBins[i].glycatedRBCs);
         }
-        this.SimCtlObject.time_stamp();
-        console.log("New HbA1c: " + currentHbA1c());
+        this.body.time_stamp();
+        console.log("New HbA1c: " + this.currentHbA1c());
     }
 
     
         // Constructor
     constructor(myBody) {
     	this.body = myBody;
-    	var num = 120;
-    	this.AgeBins = Array.apply(null, Array(num)).map(function () { return new RBCBin(); });
+    	//var num = 120;
+    	//this.AgeBins = Array.apply(null, Array(num)).map(function () { return new RBCBin(); });
         this.bin0 = 1;
         this.rbcBirthRate_ = 144.0*60*24; // in millions per minute
         this.glycationProbSlope_ = 0.085/10000.0;
         this.glycationProbConst_ = 0;
-        //this.SimCtlObject = new SimCtl();
+        
         // all contents are in units of milligrams of glucose
         this.glucose = 5000.0; //5000.0; //15000.0;
         this.fluidVolume_ = 50.0; // in deciliters
@@ -91,9 +94,12 @@ class Blood {
         this.glutamine = 0;
         this.insulin = 0;
         
+        
         //Gerich: insulin dependent: 1 to 5 micromol per kg per minute
         this.glycolysisMin_ = 0.1801559;
         this.glycolysisMax_ = 5*this.glycolysisMin_;
+        
+        this.glycolysisToLactate_ = 1;
         
         this.normalGlucoseLevel_ = 100; //mg/dl
         this.highGlucoseLevel_ = 200; //mg/dl
@@ -113,10 +119,16 @@ class Blood {
         this.avgBGLOneDay = 0;
         this.avgBGLOneDaySum = 0;
         this.avgBGLOneDayCount = 0;
+        
+        this.glycolysisPerTick;
     }
     
     processTick() {
-	    var x; // 
+	    var x; 
+        
+        var glycolysisMin__ = poissonProcess.sample(1000.0 * this.glycolysisMin_);
+        
+        
 	    var scale = (1.0 - this.body.insulinResistance_)*(this.body.blood.insulin);
 	    
 	    x = poissonProcess.sample((100.0*this.glycolysisMin_)/100);
@@ -127,10 +139,11 @@ class Blood {
 	    
 	    var toGlycolysis = x + scale * ( (this.glycolysisMax_*(this.body.bodyWeight_)) - x);
 	    
-	    if( toGlycolysis > this.glucose) toGlycolysis = this.glucose;
+	    if(toGlycolysis > this.glucose) toGlycolysis = this.glucose;
 	    
 	    this.glucose -= toGlycolysis;
-	    this.body.blood.lactate += toGlycolysis;
+        this.glycolysisPerTick = toGlycolysis;
+	    this.body.blood.lactate += glycolysisToLactate_ * toGlycolysis;
 	    //System.out.println("Glycolysis in blood, blood glucose " + glucose + " mg, lactate " + lactate + " mg")
 	    
 	    var bgl = this.glucose/this.fluidVolume_;
@@ -154,16 +167,19 @@ class Blood {
 	        this.avgBGLOneDay = this.avgBGLOneDaySum/this.avgBGLOneDayCount;
 	        this.avgBGLOneDaySum = 0;
 	        this.avgBGLOneDayCount = 0;
-	        updateRBCs();
-	        SimCtlObject.time_stamp();
+	        this.updateRBCs();
+	        body.time_stamp();
 	        console.log(" Blood::avgBGL " + this.avgBGLOneDay);
 	    }
 	    
 	    this.avgBGLOneDaySum += bgl;
 	    this.avgBGLOneDayCount++;
 	    
-	    //SimCtlObject.time_stamp();
-	    console.log("Blood:: bgl " + this.getBGL());
+	    body.time_stamp();
+	    console.log("Blood:: glycolysis " + this.glycolysisPertick);
+        
+        body.time_stamp();
+        console.log("Blood:: insulinLevel " + this.insulin);
 	    
 	    //BUKET NEW: For the calculation of Incremental AUC
 	    //if(glcs > 100 && SimCtl::ticks < 120){
@@ -192,8 +208,8 @@ class Blood {
     	 this.glucose -= howmuch;
     	//System.out.println("Glucose consumed " + howmuch + " ,glucose left " + glucose);
 	    if (this.getBGL() <= this.minGlucoseLevel_) {
-	        SimCtl.time_stamp();
-	        console.log(" bgl dips to: " + getBGL());
+	        body.time_stamp();
+	        console.log(" bgl dips to: " + this.getBGL());
 	        System.exit(-1);
 	    }
     }
