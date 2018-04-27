@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h1 Edit Activity Subtype
+
+    form(method='POST' action='' onsubmit="return validateForm()")
+        div.form-group(id='editActivityForm')
+            label(id='activityMainTypeLabel') Activity Main Type:
+            select#activityMainTypeSelect.form-control(type='select', placeholder='', name='activityMainTypeSelect', required='false')
+                for mainType in mainTypes
+                    option(value=mainType._id) #{mainType.name}
+
+
+        script.
