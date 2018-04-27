@@ -10,6 +10,8 @@ var newExerciseSubtype_controller = require('../controllers/newExerciseSubtypeCo
 var newActivity_controller = require('../controllers/newActivityController');
 var newSimulation_controller = require('../controllers/newSimulationController');
 var simuationResultsQuery_controller = require('../controllers/simulationResultsQueryController');
+var editActivitySubtype_controller = require('../controllers/editActivitySubtypeController');
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -35,5 +37,7 @@ router.get('/newSimulation',newSimulation_controller.new_simulation_get);
 router.post('/newSimulation',newSimulation_controller.new_simulation_post);
 router.get('/simulationResultsQuery',simuationResultsQuery_controller.querySimulation_get);
 router.post('/simulationResultsQuery',simuationResultsQuery_controller.querySimulation_post);
+router.get('/editActivitySubtype',editActivitySubtype_controller.editSubtype_get);
+router.post('/editActivitySubtype',editActivitySubtype_controller.editSubtype_post);
 
 module.exports = router;
