@@ -29,23 +29,23 @@ block content
       div.form-inline(id='foodServingSizeInputSection')
         label(for='newFoodServingSize', id="newFoodServingSizeLabel") Serving Size: 
         br()
-        input(type='text', name='newFoodServingSize', id="newFoodServingSizeInput", onkeypress="return isNumberKey(event)")
+        input(type='number', min='0', name='newFoodServingSize', id="newFoodServingSizeInput", onkeypress="return isNumberKey(event)")
       div.form-inline(id='foodFatInputSection')
         label(for='newFoodFat', id="newFoodFatLabel") Fat: 
         br()
-        input(type='text', name='newFoodFat', id="newFoodFatInput", onkeypress="return isNumberKey(event)")
+        input(type='number', min='0', name='newFoodFat', id="newFoodFatInput", onkeypress="return isNumberKey(event)")
       div.form-inline(id='foodProteinInputSection')
         label(for='newFoodProtein', id="newFoodProteinLabel") Protein: 
         br()
-        input(type='text', name='newFoodProtein', id="newFoodProteinInput", onkeypress="return isNumberKey(event)")
+        input(type='number', min='0', name='newFoodProtein', id="newFoodProteinInput", onkeypress="return isNumberKey(event)")
       div.form-inline(id='foodRAGInputSection')
         label(for='newFoodRAG', id="newFoodRAGLabel") Readily Available Glucose (RAG): 
         br()
-        input(type='text', name='newFoodRAG', id="newFoodRAGInput", onkeypress="return isNumberKey(event)")
+        input(type='number', min='0', name='newFoodRAG', id="newFoodRAGInput", onkeypress="return isNumberKey(event)")
       div.form-inline(id='foodSAGInputSection')
         label(for='newFoodSAG', id="newFoodSAGLabel") Slowly Available Glucose (SAG): 
         br()
-        input(type='text', name='newFoodSAG', id="newFoodSAGInput", onkeypress="return isNumberKey(event)")
+        input(type='number', min='0', name='newFoodSAG', id="newFoodSAGInput", onkeypress="return isNumberKey(event)")
 
       label(id='newExerciseTitle') Create New Exercise Type:
       div.form-inline(id='exerciseNameInputSection')
@@ -55,7 +55,7 @@ block content
       div.form-inline(id='exerciseIntensityInputSection')
         label(for='newExerciseIntensity', id="newExerciseIntensityLabel") Intensity: 
         br()
-        input(type='text', name='newExerciseIntensity', id="newExerciseIntensityInput", onkeypress="return isNumberKey(event)")
+        input(type='number', min='0', name='newExerciseIntensity', id="newExerciseIntensityInput", onkeypress="return isNumberKey(event)")
 
       br(id='br3')
       br(id='br4')
