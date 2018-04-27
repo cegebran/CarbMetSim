@@ -93,11 +93,11 @@ block content
       div.form-inline(id='quantitySectionFood')
         label(for='qtyFood', id="foodQtyLabel") Servings: 
         br()
-        input(type='text', name='foodQtyInput', id="foodQtyInputID", onkeypress="return isNumberKey(event)")
+        input(type='number', min='0', name='foodQtyInput', id="foodQtyInputID", onkeypress="return isNumberKey(event)")
       div.form-inline(id='quantitySectionExercise')
         label(for='qtyEx', id="exerciseQtyLabel") Count: 
         br()
-        input(type='text', name='exerciseQtyInput', id="exerciseQtyInputID", onkeypress="return isNumberKey(event)")
+        input(type='number', min='0', name='exerciseQtyInput', id="exerciseQtyInputID", onkeypress="return isNumberKey(event)")
       br(id='br9')
       br(id='br10')
       button.btn.btn-primary(type='submit', id="submitButton") Submit  
