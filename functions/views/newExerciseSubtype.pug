@@ -9,7 +9,7 @@ block content
       input#value.form-control(type='text', placeholder='', name='exercise_activity', required='true', value=(''))
     div.form-group
       label(for='intensity') Intensity:
-      input#value.form-control(type='number', placeholder='', name='intensity', required='true' value=(''), onkeypress='return isNumberKey(event)')
+      input#value.form-control(type='number', min='0', placeholder='', name='intensity', required='true' value=(''), onkeypress='return isNumberKey(event)')
     button.btn.btn-primary(type='submit') Submit
 
     script.
