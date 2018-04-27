@@ -23,21 +23,21 @@ block content
                 label(for='newFoodName', id="newFoodNameLabel0") Name:
                 input(type='text', name='newFoodName0', id="newFoodNameInput0")
                 label(for='newFoodServingSize', id="newFoodServingSizeLabel0") Serving Size: 
-                input(type='number', name='newFoodServingSize0', id="newFoodServingSizeInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', min='0', name='newFoodServingSize0', id="newFoodServingSizeInput0", onkeypress="return isNumberKey(event)")
                 label(for='newFoodFat', id="newFoodFatLabel0") Fat: 
-                input(type='number', name='newFoodFat0', id="newFoodFatInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', min='0', name='newFoodFat0', id="newFoodFatInput0", onkeypress="return isNumberKey(event)")
                 label(for='newFoodProtein', id="newFoodProteinLabel0") Protein: 
-                input(type='number', name='newFoodProtein0', id="newFoodProteinInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', min='0', name='newFoodProtein0', id="newFoodProteinInput0", onkeypress="return isNumberKey(event)")
                 label(for='newFoodRAG', id="newFoodRAGLabel0") Readily Available Glucose (RAG): 
-                input(type='number', name='newFoodRAG0', id="newFoodRAGInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', min='0', name='newFoodRAG0', id="newFoodRAGInput0", onkeypress="return isNumberKey(event)")
                 label(for='newFoodSAG', id="newFoodSAGLabel0") Slowly Available Glucose (SAG): 
-                input(type='number', name='newFoodSAG0', id="newFoodSAGInput0",onkeypress="return isNumberKey(event)")
+                input(type='number', min='0', name='newFoodSAG0', id="newFoodSAGInput0",onkeypress="return isNumberKey(event)")
 
                 label(id='newExerciseTitle0') Create New Exercise Type:
                 label(for='newExerciseName', id="newExerciseNameLabel0") Name: 
                 input(type='text', name='newExerciseName0', id="newExerciseNameInput0")
                 label(for='newExerciseIntensity', id="newExerciseIntensityLabel0") Intensity: 
-                input(type='number', name='newExerciseIntensity0', id="newExerciseIntensityInput0", onkeypress="return isNumberKey(event)")
+                input(type='number', min='0', name='newExerciseIntensity0', id="newExerciseIntensityInput0", onkeypress="return isNumberKey(event)")
 
                 label(id='dayNumberLabel0') Date (Day:Hour:Minute) : 
                 div.form-inline(id='dayInLine0')
