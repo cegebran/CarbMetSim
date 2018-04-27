@@ -39,27 +39,44 @@ block content
                 label(for='newExerciseIntensity', id="newExerciseIntensityLabel0") Intensity: 
                 input(type='number', name='newExerciseIntensity0', id="newExerciseIntensityInput0", onkeypress="return isNumberKey(event)")
 
-                label(id='dayNumberLabel0') Day: 
-                input(type='number', name='dayNumberInput0', id='dayNumberInput0', onkeypress="return isNumberKey(event)")
-                label(id='hourNumberLabel0') Hour: 
-                select#hour0.form-control(type='select', placeholder='', name='hourSelect0', required='false', style='width:200px')
-                    for hour in hours
-                        option(value=hour._id) #{hour.name}
-                label(id='minuteNumberLabel0') Minute: 
-                select#minute0.form-control(type='select', placeholder='', name='minuteSelect0', required='false', style='width:200px')
-                    for minute in minutes
-                        option(value=minute._id) #{minute.name}
+                label(id='dayNumberLabel0') Date (Day:Hour:Minute) : 
+                div.form-inline(id='dayInLine0')
+                    input(type='number', min='0', name='dayNumberInput0', id='dayNumberInput0', onkeypress="return isNumberKey(event)", oninput='dayChange(this.value, this)')
+                    label(id='firstSplit') :
+                    select#hour0.form-control(type='select', placeholder='', name='hourSelect0', required='false', style='width:200px', onchange='hourChange(this.value, this)')
+                        for hour in hours
+                            option(value=hour._id) #{hour.name}
+                    label(id='firstSplit1') :
+                    select#minute0.form-control(type='select', placeholder='', name='minuteSelect0', required='false', style='width:200px', onchange='minuteChange(this.value, this)')
+                        for minute in minutes
+                            option(value=minute._id) #{minute.name}
 
                 button.btn.btn-primary(type='button', id='deleteEntry0', onclick='deleteEntry(this.id)') Delete Entry
 
                 label(for='qtyFood', id="foodQtyLabel0") Servings: 
-                input(type='number', name='foodQtyInput0', id='foodQtyInputID0', onkeypress="return isNumberKey(event)")
+                input(type='number', min='0', name='foodQtyInput0', id='foodQtyInputID0', onkeypress="return isNumberKey(event)")
 
                 label(for='qtyEx', id='exerciseQtyLabel0') Count: 
-                input(type='number', name='exerciseQtyInput0', id='exerciseQtyInputID0', onkeypress="return isNumberKey(event)")
+                input(type='number', min='0', name='exerciseQtyInput0', id='exerciseQtyInputID0', onkeypress="return isNumberKey(event)")
                 input(type='text', name='deleted0', id='deletedID0')
 
         button.btn.btn-primary(type='button', id='newDuplicateSetBtn', onclick='duplicate()') +
+        br()
+        br()
+        br()
+
+        label(id='endTimeLabel') Simulation End Time (Day:Hour:Minute) :
+        div.form-inline(id='simEndTime')
+            input(type='number', min='0', name='endTimeDayInput', id='endTimeDayInput', onkeypress="return isNumberKey(event)")
+            label(id='break1') :
+            select#endTimeHourSelect.form-control(type='select', placeholder='', name='endTimeHourSelect', required='false', style='width:200px')
+                for hour in hours
+                    option(value=hour._id) #{hour.name}
+            label(id='break2') :
+            select#endTimeMinuteSelect.form-control(type='select', placeholder='', name='endTimeMinuteSelect', required='false', style='width:200px')
+                for minute in minutes
+                    option(value=minute._id) #{minute.name}
+
         br()
         br()
         button.btn.btn-primary(type='submit', id='submitButton') Submit
@@ -98,11 +115,7 @@ block content
             document.getElementById("deleteEntry0").style.display = "none";
             document.getElementById("deletedID0").style.display = "none";
             document.getElementById("dayNumberLabel0").style.display = "none";
-            document.getElementById("dayNumberInput0").style.display = "none";
-            document.getElementById("hourNumberLabel0").style.display = "none";
-            document.getElementById("hour0").style.display = "none";
-            document.getElementById("minuteNumberLabel0").style.display = "none";
-            document.getElementById("minute0").style.display = "none";
+            document.getElementById("dayInLine0").style.display = "none";
 
             var i = 0;
             var deletedF_notDeletedT = [];  // false if deleted and true if still visible
@@ -110,12 +123,20 @@ block content
             var food_existing_new = [];
             var exercise_existing_new = [];
 
+            var dayArray = [];
+            var hourArray = [];
+            var minuteArray = [];
+
             function duplicate() {
                 var p = document.getElementById("duplicatedInputSet");
                 deletedF_notDeletedT.push(true);
                 food_exercise.push("");
                 food_existing_new.push("");
                 exercise_existing_new.push("");
+
+                dayArray[i] = "";
+                hourArray[i] = "Hour";
+                minuteArray[i] = "Minute";
                 i++;
 
                 var activityLabelOriginal = document.getElementById('activityLabel0');
@@ -251,30 +272,10 @@ block content
                 dayNumberLabelClone.id = "dayNumberLabel" + i
                 p.parentNode.appendChild(dayNumberLabelClone);
 
-                var dayNumberInputOriginal = document.getElementById("dayNumberInput0");
+                var dayNumberInputOriginal = document.getElementById("dayInLine0");
                 var dayNumberInputClone = dayNumberInputOriginal.cloneNode(true);
-                dayNumberInputClone.id = "dayNumberInput" + i
+                dayNumberInputClone.id = "dayInLine" + i
                 p.parentNode.appendChild(dayNumberInputClone);
-
-                var hourNumberLabelOriginal = document.getElementById("hourNumberLabel0");
-                var hourNumberLabelClone = hourNumberLabelOriginal.cloneNode(true);
-                hourNumberLabelClone.id = "hourNumberLabel" + i
-                p.parentNode.appendChild(hourNumberLabelClone);
-
-                var hourInputOriginal = document.getElementById("hour0");
-                var hourInputClone = hourInputOriginal.cloneNode(true);
-                hourInputClone.id = "hour" + i
-                p.parentNode.appendChild(hourInputClone);
-
-                var minuteLabelOriginal = document.getElementById("minuteNumberLabel0");
-                var minuteLabelClone = minuteLabelOriginal.cloneNode(true);
-                minuteLabelClone.id = "minuteNumberLabel" + i
-                p.parentNode.appendChild(minuteLabelClone);
-
-                var minuteSelectOriginal = document.getElementById("minute0");
-                var minuteSelectClone = minuteSelectOriginal.cloneNode(true);
-                minuteSelectClone.id = "minute" + i
-                p.parentNode.appendChild(minuteSelectClone);
 
                 var foodQtyLabelOriginal = document.getElementById("foodQtyLabel0");
                 var foodQtyLabelClone = foodQtyLabelOriginal.cloneNode(true);
@@ -355,12 +356,8 @@ block content
                 document.getElementById("break2" + i).style.display = "block";
                 document.getElementById("break3" + i).style.display = "block";
                 document.getElementById("deletedID" + i).style.display = "none";
-                document.getElementById("dayNumberInput" + i).style.display = "none";
+                document.getElementById("dayInLine" + i).style.display = "none";
                 document.getElementById("dayNumberLabel" + i).style.display = "none";
-                document.getElementById("hourNumberLabel"+ i).style.display = "none";
-                document.getElementById("hour"+ i).style.display = "none";
-                document.getElementById("minuteNumberLabel"+ i).style.display = "none";
-                document.getElementById("minute"+ i).style.display = "none";
             }
 
             function activityTypeChange(id){
@@ -396,12 +393,8 @@ block content
                     document.getElementById("exerciseQtyLabel" + index).style.display = "none";
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "none";
+                    document.getElementById("dayInLine" + index).style.display = "none";
                     document.getElementById("dayNumberLabel" + index).style.display = "none";
-                    document.getElementById("hourNumberLabel" + index).style.display = "none";
-                    document.getElementById("hour" + index).style.display = "none";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "none";
-                    document.getElementById("minute" + index).style.display = "none";
 
                     changeAllOfIndexToInheritBorder(index);
                 }
@@ -435,12 +428,8 @@ block content
                     document.getElementById("exerciseQtyLabel" + index).style.display = "none";
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "none";
+                    document.getElementById("dayInLine" + index).style.display = "none";
                     document.getElementById("dayNumberLabel" + index).style.display = "none";
-                    document.getElementById("hourNumberLabel" + index).style.display = "none";
-                    document.getElementById("hour" + index).style.display = "none";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "none";
-                    document.getElementById("minute" + index).style.display = "none";
 
                     changeAllOfIndexToInheritBorder(index)
                 }
@@ -472,14 +461,10 @@ block content
                     document.getElementById("foodQtyLabel" + index).style.display = "none";
                     document.getElementById("foodQtyInputID" + index).style.display = "none";
                     document.getElementById("exerciseQtyLabel" + index).style.display = "none";
-                    document.getElementById("exerciseQtyInputID" + index).style.display = "none";
+                    document.getElementById("exerciseQtyInputID" + index).styles.display = "none";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "none";
+                    document.getElementById("dayInLine" + index).style.display = "none";
                     document.getElementById("dayNumberLabel" + index).style.display = "none";
-                    document.getElementById("hourNumberLabel" + index).style.display = "none";
-                    document.getElementById("hour" + index).style.display = "none";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "none";
-                    document.getElementById("minute" + index).style.display = "none";
 
                     changeAllOfIndexToInheritBorder(index)
                 }
@@ -513,12 +498,8 @@ block content
                     document.getElementById("exerciseQtyLabel" + index).style.display = "none";
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "block";
+                    document.getElementById("dayInLine" + index).style.display = "block";
                     document.getElementById("dayNumberLabel" + index).style.display = "block";
-                    document.getElementById("hourNumberLabel" + index).style.display = "block";
-                    document.getElementById("hour" + index).style.display = "block";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "block";
-                    document.getElementById("minute" + index).style.display = "block";
 
                     changeAllOfIndexToInheritBorder(index)
                 }else if(foods.value == "Select Food"){
@@ -546,12 +527,8 @@ block content
                     document.getElementById("exerciseQtyLabel" + index).style.display = "none";
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "none";
+                    document.getElementById("dayInLine" + index).style.display = "none";
                     document.getElementById("dayNumberLabel" + index).style.display = "none";
-                    document.getElementById("hourNumberLabel" + index).style.display = "none";
-                    document.getElementById("hour" + index).style.display = "none";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "none";
-                    document.getElementById("minute" + index).style.display = "none";
 
                     changeAllOfIndexToInheritBorder(index)
                 }else{
@@ -579,12 +556,8 @@ block content
                     document.getElementById("exerciseQtyLabel" + index).style.display = "none";
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "block";
+                    document.getElementById("dayInLine" + index).style.display = "block";
                     document.getElementById("dayNumberLabel" + index).style.display = "block";
-                    document.getElementById("hourNumberLabel" + index).style.display = "block";
-                    document.getElementById("hour" + index).style.display = "block";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "block";
-                    document.getElementById("minute" + index).style.display = "block";
 
                     changeAllOfIndexToInheritBorder(index)
                 }
@@ -618,12 +591,8 @@ block content
                     document.getElementById("exerciseQtyLabel" + index).style.display = "none";
                     document.getElementById("exerciseQtyInputID" + index).style.display = "none";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "none";
+                    document.getElementById("dayInLine" + index).style.display = "none";
                     document.getElementById("dayNumberLabel" + index).style.display = "none";
-                    document.getElementById("hourNumberLabel" + index).style.display = "none";
-                    document.getElementById("hour" + index).style.display = "none";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "none";
-                    document.getElementById("minute" + index).style.display = "none";
 
                     changeAllOfIndexToInheritBorder(index)
                 }else if(exercises.value == "+ New Exercise"){
@@ -651,12 +620,8 @@ block content
                     document.getElementById("exerciseQtyLabel" + index).style.display = "block";
                     document.getElementById("exerciseQtyInputID" + index).style.display = "block";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "block";
+                    document.getElementById("dayInLine" + index).style.display = "block";
                     document.getElementById("dayNumberLabel" + index).style.display = "block";
-                    document.getElementById("hourNumberLabel" + index).style.display = "block";
-                    document.getElementById("hour" + index).style.display = "block";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "block";
-                    document.getElementById("minute" + index).style.display = "block";
 
                     changeAllOfIndexToInheritBorder(index)
                 }else{
@@ -684,12 +649,8 @@ block content
                     document.getElementById("exerciseQtyLabel" + index).style.display = "block";
                     document.getElementById("exerciseQtyInputID" + index).style.display = "block";
                     document.getElementById("deleteEntry" + index).style.display = "block";
-                    document.getElementById("dayNumberInput" + index).style.display = "block";
+                    document.getElementById("dayInLine" + index).style.display = "block";
                     document.getElementById("dayNumberLabel" + index).style.display = "block";
-                    document.getElementById("hourNumberLabel" + index).style.display = "block";
-                    document.getElementById("hour" + index).style.display = "block";
-                    document.getElementById("minuteNumberLabel" + index).style.display = "block";
-                    document.getElementById("minute" + index).style.display = "block";
 
                     changeAllOfIndexToInheritBorder(index)
                 }
@@ -733,12 +694,8 @@ block content
                 document.getElementById("break2" + index).style.display = "none";
                 document.getElementById("break3" + index).style.display = "none";
                 document.getElementById("deletedID" + index).value = "DELETED";
-                document.getElementById("dayNumberInput" + index).style.display = "none";
+                document.getElementById("dayInLine" + index).style.display = "none";
                 document.getElementById("dayNumberLabel" + index).style.display = "none";
-                document.getElementById("hourNumberLabel" + index).style.display = "none";
-                document.getElementById("hour" + index).style.display = "none";
-                document.getElementById("minuteNumberLabel" + index).style.display = "none";
-                document.getElementById("minute" + index).style.display = "none";
             }
 
             function changeAllOfIndexToInheritBorder(index){
@@ -769,12 +726,8 @@ block content
                 document.getElementById("exerciseQtyLabel" + index).style.borderColor = "inherit";
                 document.getElementById("exerciseQtyInputID" + index).style.borderColor = "inherit";
                 document.getElementById("deleteEntry" + index).style.borderColor = "inherit";
-                document.getElementById("dayNumberInput" + index).style.borderColor = "inherit";
+                document.getElementById("dayInLine" + index).style.borderColor = "inherit";
                 document.getElementById("dayNumberLabel" + index).style.borderColor = "inherit";
-                document.getElementById("hourNumberLabel" + index).style.borderColor = "inherit";
-                document.getElementById("hour" + index).style.borderColor = "inherit";
-                document.getElementById("minuteNumberLabel" + index).style.borderColor = "inherit";
-                document.getElementById("minute" + index).style.borderColor = "inherit";
             }
 
             function isNumberKey(evt) {
@@ -784,6 +737,24 @@ block content
                 }else{
                     return true;
                 }
+            }
+
+            function hourChange(value, element){
+                var parentId = element.parentNode.id;
+                var number = parseInt(parentId.substring(9));
+                hourArray[number - 1] = value;
+            }
+
+            function minuteChange(value, element){
+                var parentId = element.parentNode.id;
+                var number = parseInt(parentId.substring(9));
+                minuteArray[number - 1] = value;
+            }
+
+            function dayChange(value, element){
+                var parentId = element.parentNode.id;
+                var number = parseInt(parentId.substring(9));
+                dayArray[number - 1] = value;
             }
 
             function validateForm(){
@@ -807,6 +778,27 @@ block content
                     }
                 }
 
+                if(document.getElementById("endTimeDayInput").value == ""){
+                    issues.push("- Simulation end day must be entered");
+                    document.getElementById("endTimeDayInput").style.borderColor = "red";
+                }else{
+                    document.getElementById("endTimeDayInput").style.borderColor = "inherit";
+                }
+
+                if(document.getElementById("endTimeHourSelect").value == "Hour"){
+                    issues.push("- Simulation end hour must be selected");
+                    document.getElementById("endTimeHourSelect").style.borderColor = "red";
+                }else{
+                    document.getElementById("endTimeHourSelect").style.borderColor = "inherit";
+                }
+
+                if(document.getElementById("endTimeMinuteSelect").value == "Minute"){
+                    issues.push("- Simulation end minute must be selected");
+                    document.getElementById("endTimeMinuteSelect").style.borderColor = "red";
+                }else{
+                    document.getElementById("endTimeMinuteSelect").style.borderColor = "inherit";
+                }
+
                 while(deletedF_notDeletedT[i] != null){
                     var element = i + 1;
 
@@ -818,6 +810,27 @@ block content
                     }
 
                     if(deletedF_notDeletedT[i] == true){
+                        if(dayArray[i] == ""){
+                            issues.push("- Activity Entry #" + numberToDisplay + " is missing the day entry");
+                            document.getElementById("dayInLine" + element).childNodes[0].style.borderColor = "red";
+                        }else{
+                            document.getElementById("dayInLine" + element).childNodes[0].style.borderColor = "inherit";
+                        }
+
+                        if(hourArray[i] == "Hour"){
+                            issues.push("- Activity Entry #" + numberToDisplay + " is missing the month selection");
+                            document.getElementById("dayInLine" + element).childNodes[2].style.borderColor = "red";
+                        }else{
+                            document.getElementById("dayInLine" + element).childNodes[2].style.borderColor = "inherit";
+                        }
+
+                        if(minuteArray[i] == "Minute"){
+                            issues.push("- Activity Entry #" + numberToDisplay + " is missing the minute selection");
+                            document.getElementById("dayInLine" + element).childNodes[4].style.borderColor = "red";
+                        }else{
+                            document.getElementById("dayInLine" + element).childNodes[4].style.borderColor = "inherit";
+                        }
+
                         if(food_exercise[i] == "Exercise"){
                             document.getElementById("activity" + element).style.borderColor = "inherit";
                             if(exercise_existing_new[i] == "Select"){
@@ -845,27 +858,6 @@ block content
                                 }else{
                                     document.getElementById("exerciseQtyInputID" + element).style.borderColor = "inherit";
                                 }
-
-                                if(document.getElementById("dayNumberInput" + element).value == ""){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs a day entered");
-                                    document.getElementById("dayNumberInput" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("dayNumberInput" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("hour" + element).value == "Hour"){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs an hour entered");
-                                    document.getElementById("hour" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("hour" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("minute" + element).value == "Minute"){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs a minute entered");
-                                    document.getElementById("minute" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("minute" + element).style.borderColor = "inherit";
-                                }
                             }else if(exercise_existing_new[i] == "Already Created"){
                                 document.getElementById("exercise" + element).style.borderColor = "inherit";
                                 if(document.getElementById("exerciseQtyInputID" + element).value == ""){
@@ -873,27 +865,6 @@ block content
                                     document.getElementById("exerciseQtyInputID" + element).style.borderColor = "red";
                                 }else{
                                     document.getElementById("exerciseQtyInputID" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("dayNumberInput" + element).value == ""){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs a day entered");
-                                    document.getElementById("dayNumberInput" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("dayNumberInput" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("hour" + element).value == "Hour"){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs an hour entered");
-                                    document.getElementById("hour" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("hour" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("minute" + element).value == "Minute"){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs a minute entered");
-                                    document.getElementById("minute" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("minute" + element).style.borderColor = "inherit";
                                 }
                             }else{
                                 issues.push("- Activity Entry #" + numberToDisplay + " is not completed, (choose exericse type)");
@@ -954,27 +925,6 @@ block content
                                 }else{
                                     document.getElementById("foodQtyInputID" + element).style.borderColor = "inherit";
                                 }
-
-                                if(document.getElementById("dayNumberInput" + element).value == ""){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs a day entered");
-                                    document.getElementById("dayNumberInput" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("dayNumberInput" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("hour" + element).value == "Hour"){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs an hour entered");
-                                    document.getElementById("hour" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("hour" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("minute" + element).value == "Minute"){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs a minute entered");
-                                    document.getElementById("minute" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("minute" + element).style.borderColor = "inherit";
-                                }
                             }else if(food_existing_new[i] == "Already Created"){
                                 document.getElementById("food" + element).style.borderColor = "inherit";
                                 if(document.getElementById("foodQtyInputID" + element).value == ""){
@@ -982,27 +932,6 @@ block content
                                     document.getElementById("foodQtyInputID" + element).style.borderColor = "red";
                                 }else{
                                     document.getElementById("foodQtyInputID" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("dayNumberInput" + element).value == ""){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs a day entered");
-                                    document.getElementById("dayNumberInput" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("dayNumberInput" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("hour" + element).value == "Hour"){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs an hour entered");
-                                    document.getElementById("hour" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("hour" + element).style.borderColor = "inherit";
-                                }
-
-                                if(document.getElementById("minute" + element).value == "Minute"){
-                                    issues.push("- Activity Entry #" + numberToDisplay + " needs a minute entered");
-                                    document.getElementById("minute" + element).style.borderColor = "red";
-                                }else{
-                                    document.getElementById("minute" + element).style.borderColor = "inherit";
                                 }
                             }else{
                                 issues.push("- Activity Entry #" + numberToDisplay + " is not completed, (choose food type)");
