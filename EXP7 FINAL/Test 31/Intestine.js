@@ -1,12 +1,3 @@
-//THIS FILE IS COMPLETED BUT NEEDS TO HAVE myEngine implemented on:
-//line 173
-//line 196
-//line 222
-//line 238
-//line 277
-//line 280
-//line 291
-
 class Chyme{
     constructor(){
         this.origRAG = "";
@@ -37,9 +28,9 @@ class Intestine{
         this.fluidVolumeInLumen_ = 4; //dl
         
         //Michaelis Menten parameters for glucose transport
-        this.Glut2Km_In_ = 100*180.1559/10.0; // mg/deciliter equal to 20 mmol/l (Frayn Table 2.2.1)
+        this.Glut2Km_In_ = 20*180.1559/10.0; // mg/deciliter equal to 20 mmol/l (Frayn Table 2.2.1)
         this.Glut2VMAX_In_ = 700; //mg
-        this.Glut2Km_Out_ = 100*180.1559/10.0; // mg/deciliter equal to 20 mmol/l (Frayn Table 2.2.1)
+        this.Glut2Km_Out_ = 20*180.1559/10.0; // mg/deciliter equal to 20 mmol/l (Frayn Table 2.2.1)
         this.Glut2VMAX_Out_ = 700; //mg
         //active transport rate
         this.sglt1Rate_ = 30; //mg per minute
@@ -67,7 +58,7 @@ class Intestine{
     	c.SAG = sag;
     	c.origRAG = rag;
     	c.origSAG = sag;
-    	c.ts = body.ticks;
+    	c.ts = this.body.ticks;
     	this.chyme.push(c);
 
     	this.protein += proteinInChyme;
@@ -91,69 +82,7 @@ class Intestine{
         }  
         return 2 * sum / Math.sqrt(3.14159265358979);
     }
-
-    processTick(){
-        for(var i = 0; i < this.chyme.length; i++){
-            var RAGConsumed = 0;
-            var t = this.body.ticks - this.chyme[i].ts;
-            
-            if(t === 0){
-                RAGConsumed = this.chyme[i].origRAG * 0.5 * (1 + this.erf((t = this.RAG_Mean_) / (this.RAG_StdDev_ * Math.sqrt(2))));
-            }
-            else{
-                RAGConsumed = this.chyme[i].origRAG * 0.5 * (this.erf((t - this.RAG_Mean_) / (this.RAG_StdDev_ * Math.sqrt(2))) - this.erf((t - 1 - this.RAG_Mean_) / (this.RAG_StfDev * Math.sqrt(2))));
-            }
-            
-            if(this.chyme[i].RAG < RAGConsumed){
-                RAGConsumed = this.chyme[i].RAG;
-            }
-            
-            if(this.chyme[i].RAG < 0.01 * (this.chyme[i].origRAG)){
-                RAGConsumed = this.chyme[i].RAG;
-            }
-                
-                
-            this.chyme[i].RAG -= RAGConsumed;
-            this.glucoseInLumen += RAGConsumed;
-                
-            var SAGConsumed = 0;
-                
-            if(t === 0){
-                SAGConsumed = this.chyme[i].origSAG * 0.5 * (1 + this.erf((t - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))));
-            }
-
-            else{
-                SAGConsumed = this.chyme[i].origSAG * 0.5 * (this.erf((t - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))) - this.erf((t - 1 - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))));
-            }
-
-            if(this.chyme[i].SAG < SAGConsumed){
-                SAGConsumed = this.chyme[i].SAG;
-            }
-            
-            if(this.chyme[i].SAG < 0.01 * this.chyme[i].origSAG){
-                SAGConsumed = this.chyme[i].SAG;
-            }
-            
-            this.chyme[i].SAG -= SAGConsumed;
-            this.glucoseInLumen += SAGConsumed;
-            
-            this.body.time_stamp();
-            console.log("Chyme:: RAG " + this.chyme[i].RAG + "SAG " + this.chyme[i].SAG + " origRAG " + this.chyme[i].origRAG + " origSAG " + this.chyme[i].origSAG + " glucoseInLumen " + this.glucoseInLumen + " RAGConsumed " + this.RAGConsumed + " SAGConsumed " + this.SAGConsumed);
-            
-            if(this.chyme[i].RAG === 0 && this.chyme[i].SAG === 0){
-                this.chyme.pop[i];
-            }
-        }
-        
-        this.absorbGlucose();
-        this.absorbAminoAcids();
-        
-        this.body.time_stamp();
-        console.log("Intestine:: Glycolysis " + this.glycolysisPerTick);
-        this.body.time_stamp();
-        console.log("Intestine:: ToPortalVein " + this.toPortalVeinPerTick);
-    }
-
+    
     absorbGlucose()
     {
         var x; // to hold the random samples
@@ -164,11 +93,10 @@ class Intestine{
         var glEnterocytes = 0;
         var glPortalVein = 0;
         
-        //static std::poisson_distribution<int> basalAbsorption__ (1000.0*this.sglt1Rate_);
-        //static std::poisson_distribution<int> Glut2VMAX_In__ (1000.0*Glut2VMAX_In_);
-        //static std::poisson_distribution<int> this.Glut2VMAX_Out__ (1000.0*Glut2VMAX_Out_);
-        //static std::poisson_distribution<int> this.glycolysisMin__ (1000.0*this.glycolysisMin_); 
-        // first, absorb some glucose from intestinal lumen
+        var basalAbsorption__ = poissonProcess.sample(1000.0 * this.sglt1Rate_);
+        var Glut2VMAX_In__ = poissonProcess.sample(1000.0 * this.Glut2VMAX_In_);
+        var Glut2VMAX_Out__ = poissonProcess.sample(1000.0 * this.Glut2VMAX_Out_);
+        var glycolysisMin__ = poissonProcess.sample(1000.0 * this.glycolysisMin_);
         
         if(this.glucoseInLumen > 0)
         {
@@ -180,7 +108,7 @@ class Intestine{
             }
         
             // Active transport first
-            activeAbsorption = (1.0)*(poissonProcess.sample(1000.0 * this.sglt1Rate_))/1000.0;
+            activeAbsorption = basalAbsorption__ / 1000;
             
             if(activeAbsorption >= this.glucoseInLumen)
             {
@@ -202,7 +130,7 @@ class Intestine{
                 {
                     // glucose concentration in lumen decides the number of GLUT2s available for transport.
                     // so, Vmax depends on glucose concentration in lumen
-                    x = (1.0)*((poissonProcess.sample(1000.0*Glut2VMAX_In_)))/1000.0;
+                    x = Glut2VMAX_In__ / 1000;
                     var effectiveVmax = (1.0) *(x*glLumen/this.peakGlucoseConcentrationInLumen);
         
                     if (effectiveVmax > this.Glut2VMAX_In_)
@@ -229,14 +157,14 @@ class Intestine{
         
         if(diff > 0)
         {
-            x = (1.0)*(poissonProcess.sample(1000.0*Glut2VMAX_Out_)/1000.0);
+            x = Glut2VMAX_Out__ / 1000;
             this.toPortalVeinPerTick = x*diff/(diff + this.Glut2Km_Out_);
             
             if(this.toPortalVeinPerTick > this.glucoseInEnterocytes )
                 this.toPortalVeinPerTick = this.glucoseInEnterocytes;
             
             this.glucoseInEnterocytes -= this.toPortalVeinPerTick;
-            body.portalVein.addGlucose(this.toPortalVeinPerTick);
+            this.body.portalVein.addGlucose(this.toPortalVeinPerTick);
         }
         
         // Modeling the glucose consumption by enterocytes: glycolysis to lactate.
@@ -245,7 +173,8 @@ class Intestine{
         
         var scale = (1.0)*((1.0 - this.body.insulinResistance_)*(this.body.blood.insulin));
         
-        x = (1.0)*(poissonProcess.sample(1000.0*this.glycolysisMin_));
+        //x = (1.0)*(poissonProcess.sample(1000.0*this.glycolysisMin_));
+        x = glycolysisMin__;
         x *= this.body.bodyWeight_/1000.0;
         if(x > this.glycolysisMax_*(this.body.bodyWeight_))
             x = this.glycolysisMax_*(this.body.bodyWeight_);
@@ -273,7 +202,7 @@ class Intestine{
         this.body.time_stamp();
         console.log("Intestine:: glLumen: " + glLumen + " glEntero " + glEnterocytes + " glPortal " + glPortalVein + ", activeAbsorption " + activeAbsorption + " passiveAbsorption " + passiveAbsorption);
     }
-
+    
     //The BCAAs, leucine, isoleucine, and valine, represent 3 of the 20 amino acids that are used in the formation of proteins. Thus, on average, the BCAA content of food proteins is about 15% of the total amino acid content."Interrelationship between Physical Activity and Branched-Chain Amino Acids"
 
     //The average content of glutamine in protein is about %3.9. "The Chemistry of Food" By Jan Velisek
@@ -284,8 +213,11 @@ class Intestine{
 
     absorbAminoAcids()
     {
-     
-        var absorbedAA = (1.0) * poissonProcess.sample(this.aminoAcidsAbsorptionRate_)/1000.0;
+        var aminoAcidsAbsorptionRate__ = poissonProcess.sample(1000.0 * this.aminoAcidsAbsorptionRate_);
+        
+        var glutamineOxidationRate__ = poissonProcess.sample(1000.0 * this.glutamineOxidationRate_);
+        
+        var absorbedAA = (1.0) * poissonProcess.sample(this.aminoAcidsAbsorptionRate__)/1000.0;
         
 
         if(this.protein < absorbedAA )
@@ -297,8 +229,9 @@ class Intestine{
         this.protein -= absorbedAA;
         
         //Glutamine is oxidized
-        var g = (1.0) * poissonProcess.sample(this.glutamineOxidationRate_*1000)/1000;
-        if( this.body.blood.glutamine < g )
+        var g = (1.0) * poissonProcess.sample(this.glutamineOxidationRate__)/1000;
+        
+        if(this.body.blood.glutamine < g)
         {
                 this.body.blood.alanine += this.glutamineToAlanineFraction_*(this.body.blood.glutamine);
                 this.body.blood.glutamine = 0;
@@ -308,6 +241,68 @@ class Intestine{
             this.body.blood.glutamine -= g;
             this.body.blood.alanine += this.glutamineToAlanineFraction_*g;
         }
+    }
+
+    processTick(){
+        for(var i = 0; i < this.chyme.length; i++){
+            var RAGConsumed = 0;
+            var t = this.body.ticks - this.chyme[i].ts;
+            
+            if(t == 0){
+                RAGConsumed = this.chyme[i].origRAG * 0.5 * (1 + this.erf((t - this.RAG_Mean_) / (this.RAG_StdDev_ * Math.sqrt(2))));
+            }
+            else{
+                RAGConsumed = this.chyme[i].origRAG * 0.5 * (this.erf((t - this.RAG_Mean_) / (this.RAG_StdDev_ * Math.sqrt(2))) - this.erf((t - 1 - this.RAG_Mean_) / (this.RAG_StdDev_ * Math.sqrt(2))));
+            }
+            
+            if(this.chyme[i].RAG < RAGConsumed){
+                RAGConsumed = this.chyme[i].RAG;
+            }
+            
+            if(this.chyme[i].RAG < 0.01 * (this.chyme[i].origRAG)){
+                RAGConsumed = this.chyme[i].RAG;
+            }
+                
+                
+            this.chyme[i].RAG -= RAGConsumed;
+            this.glucoseInLumen += RAGConsumed;
+                
+            var SAGConsumed = 0;
+                
+            if(t == 0){
+                SAGConsumed = this.chyme[i].origSAG * 0.5 * (1 + this.erf((t - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))));
+            }
+
+            else{
+                SAGConsumed = this.chyme[i].origSAG * 0.5 * (this.erf((t - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))) - this.erf((t - 1 - this.SAG_Mean_) / (this.SAG_StdDev_ * Math.sqrt(2))));
+            }
+
+            if(this.chyme[i].SAG < SAGConsumed){
+                SAGConsumed = this.chyme[i].SAG;
+            }
+            
+            if(this.chyme[i].SAG < 0.01 * this.chyme[i].origSAG){
+                SAGConsumed = this.chyme[i].SAG;
+            }
+            
+            this.chyme[i].SAG -= SAGConsumed;
+            this.glucoseInLumen += SAGConsumed;
+            
+            this.body.time_stamp();
+            console.log("Chyme:: RAG " + this.chyme[i].RAG + "SAG " + this.chyme[i].SAG + " origRAG " + this.chyme[i].origRAG + " origSAG " + this.chyme[i].origSAG + " glucoseInLumen " + this.glucoseInLumen + " RAGConsumed " + RAGConsumed + " SAGConsumed " + SAGConsumed);
+            
+            if(this.chyme[i].RAG == 0 && this.chyme[i].SAG == 0){
+                this.chyme.pop[i];
+            }
+        }
+        
+        this.absorbGlucose();
+        this.absorbAminoAcids();
+        
+        this.body.time_stamp();
+        console.log("Intestine:: Glycolysis " + this.glycolysisPerTick);
+        this.body.time_stamp();
+        console.log("Intestine:: ToPortalVein " + this.toPortalVeinPerTick);
     }
 
     /*setParams()
