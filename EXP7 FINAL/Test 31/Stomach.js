@@ -1,8 +1,3 @@
-/*import "HumanBody.js";
-import "AdiposeTissue.js";
-import "Blood.js";
-import "Stomach.js";
-*/
 class Stomach{
     constructor(myBody)
     {
@@ -15,9 +10,7 @@ class Stomach{
 
         this.stomachEmpty = true;
 
-        this.geConstant = 0;
         this.geConstant_ = 100.0; // mg
-        this.geConstant__ = 0;
         this.geSlopeMin_ = 0.01; 
     }
 
@@ -55,26 +48,19 @@ class Stomach{
     		return;
 
         //static std::poisson_distribution<int> geConstant__ (1000.0*geConstant_);
-        this.geConstant= poissonProcess.sample(1000.0*this.geConstant_)/1000.0              
-       
-
-         
+        var geConstant__ = poissonProcess.sample(1000.0*this.geConstant_);
         
-                          
-        //var geConstant = (1.0) * ((this.geConstant__(SimCtl.myEngine()))/1000.0);
-        
-        
-    	var totalFood = (1.0) * (this.RAG+this.SAG+this.protein+this.fat);
+        var geConstant = geConstant__ / 1000;
+    	var totalFood = this.RAG + this.SAG + this.protein + this.fat;
     	// calorific density of the food in stomach
     	var calorificDensity = (1.0) * ((4.0*(this.RAG+this.SAG+this.protein) + 9.0*this.fat)/totalFood); 
     	var geSlope = (1.0) * (9.0 * this.geSlopeMin_/calorificDensity);
 
-        var geBolus = (1.0) * (this.geConstant + geSlope*totalFood);
+        var geBolus = geConstant + geSlope * totalFood;
 
         this.body.time_stamp();
     	console.log("Gastric Emptying:: Total Food " + totalFood + " Calorific Density " + calorificDensity
-    	+ " geSlopeMin " + geSlopeMin + " geSlope " + geSlope + " geConstant " + this.geConstant 
-    	+ " Bolus " + geBolus + endl);
+    	+ " geSlopeMin " + geSlopeMin + " geSlope " + geSlope + " geConstant " + geConstant + " Bolus " + geBolus + endl);
 
     	if(geBolus > totalFood)
     		geBolus = totalFood;
@@ -91,11 +77,11 @@ class Stomach{
 
     	this.body.intestine.addChyme(ragInBolus,sagInBolus,proteinInBolus,fatInBolus);
 
-        	if((this.RAG == 0) && (this.SAG == 0) && (this.protein == 0) && (this.fat == 0) )
-        	{
-            	this.stomachEmpty = true;
-            	this.body.stomachEmpty();
-        	}
+        if((this.RAG == 0) && (this.SAG == 0) && (this.protein == 0) && (this.fat == 0))
+        {
+            this.stomachEmpty = true;
+            this.body.stomachEmpty();
+        }
         
         this.body.time_stamp();
         console.log("Stomach : SAG " + this.SAG + " RAG " + this.RAG +  " protein " + this.protein + " fat " + this.fat + endl); 
@@ -104,25 +90,24 @@ class Stomach{
     addFood(foodID, howmuch)
     {
         // howmuch is in grams
-        
-        if( howmuch == 0 )
+        if(howmuch == 0)
             return;
+        
         //name is type string
         var name = this.body.foodTypes[foodID].name;
         
         var numServings = (1.0) * (howmuch/(this.body.foodTypes[foodID].servingSize));
-        // add this. ?
-        this.RAG += 1000.0*numServings*(this.body.foodTypes[foodID].this.RAG); // in milligrams
-        this.SAG += 1000.0*numServings*(this.body.foodTypes[foodID].this.SAG); // in milligrams
-        this.protein += 1000.0*numServings*(this.body.foodTypes[foodID].this.protein); // in milligrams
-        this.fat += 1000.0*numServings*(this.body.foodTypes[foodID].this.fat); // in milligrams
+       
+        this.RAG += 1000.0*numServings*(this.body.foodTypes[foodID].RAG); // in milligrams
+        this.SAG += 1000.0*numServings*(this.body.foodTypes[foodID].SAG); // in milligrams
+        this.protein += 1000.0*numServings*(this.body.foodTypes[foodID].protein); // in milligrams
+        this.fat += 1000.0*numServings*(this.body.foodTypes[foodID].fat); // in milligrams
         
-        if( (this.RAG > 0) || (this.SAG > 0) || (this.protein > 0) || (this.fat > 0) )
+        if((this.RAG > 0) || (this.SAG > 0) || (this.protein > 0) || (this.fat > 0))
             this.stomachEmpty = false;
         
-        body.time_stamp();
-        console.log("Adding " + howmuch + " grams of " + name + " to stomach");
-        
+        this.body.time_stamp();
+        console.log("Adding " + howmuch + " grams of " + name + " to stomach");   
     }
 
     /*
