@@ -2,9 +2,6 @@
 //import java.util.Map.Entry;
 //import org.apache.commons.math3.distribution.PoissonDistribution;
 
-//import enums.BodyOrgan;
-
-
 class RBCBin {
         constructor(){
         var RBCs = 0;
@@ -20,8 +17,9 @@ class Blood {	////////////////////==============================================
         var glycated_rbcs = 0;
         
         for(var i = 0; i <= Blood.MAXAGE; i++) {
-            rbcs += AgeBins[i].RBCs;
-            glycated_rbcs += AgeBins[i].glycatedRBCs;
+            rbcs += this.AgeBins[i].RBCs;
+            rbcs += this.AgeBins[i].glycatedRBCs;
+            glycated_rbcs += this.AgeBins[i].glycatedRBCs;
         }
         
         if(rbcs == 0) {
@@ -36,12 +34,13 @@ class Blood {	////////////////////==============================================
     	this.bin0--;
         if( this.bin0 < 0 ) this.bin0 = Blood.MAXAGE;
         //New RBCs take birth
-        AgeBins[bin0].RBCs = this.rbcBirthRate_;
-        AgeBins[bin0].glycatedRBCs = 0;
+        this.AgeBins[bin0].RBCs = this.rbcBirthRate_;
+        this.AgeBins[bin0].glycatedRBCs = 0;
         
         //console.log("New RBCs: " + AgeBins[bin0].RBCs);
         // Old (100 to 120 days old) RBCs die
         var start_bin = this.bin0 + Blood.HUNDREDDAYS;
+        
         if( start_bin > Blood.MAXAGE ) start_bin -= (Blood.MAXAGE + 1);
         //System.out.println("Old RBCs Die");
         for(var i = 0; i < (Blood.MAXAGE-Blood.HUNDREDDAYS); i++) {
@@ -53,9 +52,10 @@ class Blood {	////////////////////==============================================
                 //System.exit(-1);
         	}
         	if (j > Blood.MAXAGE) j -= (Blood.MAXAGE + 1);
+            
             var kill_rate = (i)/(Blood.MAXAGE-Blood.HUNDREDDAYS);
-            AgeBins[j].RBCs *= (1.0 - kill_rate);
-            AgeBins[j].glycatedRBCs *= (1.0 - kill_rate);
+            this.AgeBins[j].RBCs *= (1.0 - kill_rate);
+            this.AgeBins[j].glycatedRBCs *= (1.0 - kill_rate);
             //console.log("bin: " + (start_bin + i) + ", RBCs " + AgeBins[start_bin + i].RBCs + ", Glycated RBCs " + AgeBins[start_bin + i].glycatedRBCs);
         }
         
@@ -64,8 +64,8 @@ class Blood {	////////////////////==============================================
         //System.out.println("RBCs glycate");
         for(var i = 0; i <= Blood.MAXAGE; i++) {
             var newly_glycated = glycation_prob * this.AgeBins[i].RBCs;
-            AgeBins[i].RBCs -= newly_glycated;
-            AgeBins[i].glycatedRBCs += newly_glycated;
+            this.AgeBins[i].RBCs -= newly_glycated;
+            this.AgeBins[i].glycatedRBCs += newly_glycated;
             //System.out.println("bin: " + i + ", RBCs " + AgeBins[i].RBCs + ", Glycated RBCs " + AgeBins[i].glycatedRBCs);
         }
         this.body.time_stamp();
@@ -77,7 +77,7 @@ class Blood {	////////////////////==============================================
     constructor(myBody) {
     	this.body = myBody;
     	//var num = 120;
-    	//this.AgeBins = Array.apply(null, Array(num)).map(function () { return new RBCBin(); });
+    	this.AgeBins = Array.apply(null, Array(num)).map(function () { return new RBCBin(); });
         this.bin0 = 1;
         this.rbcBirthRate_ = 144.0*60*24; // in millions per minute
         this.glycationProbSlope_ = 0.085/10000.0;
@@ -131,8 +131,8 @@ class Blood {	////////////////////==============================================
         
 	    var scale = (1.0 - this.body.insulinResistance_)*(this.body.blood.insulin);
 	    
-	    x = poissonProcess.sample((100.0*this.glycolysisMin_)/100);
-	    x = x*(this.body.bodyWeight_)/100.0;
+	    x = glycolysisMin__;
+	    x = x*(this.body.bodyWeight_)/1000;
 	    
 	    if( x > this.glycolysisMax_*(this.body.bodyWeight_))
 	        x = this.glycolysisMax_*(this.body.bodyWeight_);
@@ -144,7 +144,7 @@ class Blood {	////////////////////==============================================
 	    this.glucose -= toGlycolysis;
         this.glycolysisPerTick = toGlycolysis;
 	    this.body.blood.lactate += glycolysisToLactate_ * toGlycolysis;
-	    //System.out.println("Glycolysis in blood, blood glucose " + glucose + " mg, lactate " + lactate + " mg")
+	    //console.log("Glycolysis in blood, blood glucose " + this.glucose + " mg, lactate " + this.lactate + " mg");
 	    
 	    var bgl = this.glucose/this.fluidVolume_;
 	    
@@ -168,17 +168,17 @@ class Blood {	////////////////////==============================================
 	        this.avgBGLOneDaySum = 0;
 	        this.avgBGLOneDayCount = 0;
 	        this.updateRBCs();
-	        body.time_stamp();
+	        this.body.time_stamp();
 	        console.log(" Blood::avgBGL " + this.avgBGLOneDay);
 	    }
 	    
 	    this.avgBGLOneDaySum += bgl;
 	    this.avgBGLOneDayCount++;
 	    
-	    body.time_stamp();
+	    this.body.time_stamp();
 	    console.log("Blood:: glycolysis " + this.glycolysisPertick);
         
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Blood:: insulinLevel " + this.insulin);
 	    
 	    //BUKET NEW: For the calculation of Incremental AUC
@@ -215,8 +215,9 @@ class Blood {	////////////////////==============================================
     }
     addGlucose(howmuch) {
     	this.glucose += howmuch;
-	    //SimCtl.time_stamp();
-	    //System.out.println(" BGL: " + getBGL());
+        
+        //this.body.time_stamp();
+        //console.log("BGL: " + this.getBGL());
     }
     
     
@@ -234,6 +235,7 @@ class Blood {	////////////////////==============================================
 	        return total;
 	    }
 	    var factor = (total - howmuch)/total;
+        
 	    this.gngSubstrates *= factor;
 	    this.lactate *= factor;
 	    this.alanine *= factor;
