@@ -3,10 +3,7 @@
 
 //import org.apache.commons.math3.distribution.PoissonDistribution;
 
-//import enums.BodyOrgan;
-
 class Kidney {
-    
     constructor(myBody){
     	this.body = myBody;
         
@@ -44,6 +41,8 @@ class Kidney {
         
         var glucoseExcretionRate__ = poissonProcess.sample(1000.0 * this.glucoseExcretionRate_);
         
+        var glycolysisMin__ = poissonProcess.sample(1000.0 * this.glycolysisMin_);
+        
         var gngRate__ = poissonProcess.sample(1000.0 * this.gluconeogenesisRate_);
         
         var gngFromLactateRate__ = poissonProcess.sample(1000.0 * this.gngFromLactateRate_);
@@ -60,16 +59,8 @@ class Kidney {
         var y = basalAbsorption__;
         y *= this.body.bodyWeight/1000.0;
         
-        
-        /*
-        x = poissonProcess.sample(x*this.Glut2VMAX_);
-        var y = poissonProcess.sample(x*this.Glut1Rate_);
-        */
-        
-        if(glInKidney < bgl) {
-            //BUKET NEW: In addition to increased glucose production, renal glucose uptake is increased in both the post-absorptive and postprandial
-        	//states in patientswithT2DM[45,46]. So it depends on insulin resistance. (Gerich paper)
-            
+        if(glInKidney < bgl) 
+        {    
             var diff = bgl - glInKidney;
             var g = (1 + this.body.insulinResistance_)*x*diff/(diff + this.Glut2Km_);
             // uptake increases for higher insulin resistance.
@@ -79,7 +70,7 @@ class Kidney {
             this.body.blood.removeGlucose(g);
             this.glucose += g;
             
-            body.time_stamp();
+            this.body.time_stamp();
             console.log("Kidneys removing " + g + " mg of glucose frm blood, basal " + y);
             
             this.glucoseAbsorptionPerTick = g;
@@ -98,7 +89,7 @@ class Kidney {
             this.glucose -= g;
             this.body.blood.addGlucose(g);
             
-            body.time_stamp();
+            this.body.time_stamp();
             console.log("Kidneys releasing " + g + " mg of glucose to blood");
             
             this.glucoseAbsorptionPerTick = -1 * g;
@@ -129,7 +120,7 @@ class Kidney {
         this.glucose -= toGlycolysis;
         this.body.blood.lactate += toGlycolysis;
         
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Glycolysis in kidney " + toGlycolysis + " , blood lactate " + this.body.blood.lactate + " mg");
         
         this.glycolysisPerTick = toGlycolysis;
@@ -140,8 +131,6 @@ class Kidney {
        
         scale = 1 - (this.body.blood.insulin)*(1 - (this.body.insulinResistance_));
         
-        
-        //x = poissonProcess.sample(x*this.gluconeogenesisRate_);
         x = gngRate__;
         x *= this.body.bodyWeight_/1000;
         
@@ -150,20 +139,20 @@ class Kidney {
         
         if(gng > 0){
             this.glucose += gng;
-            body.time_stamp();
+            this.body.time_stamp();
             console.log("GNG in Kidneys " + gng + "mg");
         }
         
         this.gngPerTick = gng;
 
         x = gngFromLactateRate__;
-        x *= this.body.bodyWeight/1000;
+        x *= this.body.bodyWeight_ / 1000;
         x = this.body.blood.gngFromHighLactate(x);
         
         if(x > 0){
             this.glucose += x;
             
-            body.time_stamp();
+            this.body.time_stamp();
             console.log("GNG from lactate in Kidneys " + x + "mg");
         }
         
@@ -192,21 +181,21 @@ class Kidney {
             this.excretionPerTick = x * (bgl - this.reabsorptionThreshold_);
             this.body.blood.removeGlucose(this.excretionPerTick);
             
-            body.time_stamp();
+            this.body.time_stamp();
             console.log("glucose excertion in urine " + g);
         }
         
         
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Kidneys:: GlucoseAbsorption " + this.glucoseAbsorptionPerTick);
         
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Kidneys:: Glycolysis " + this.glycolysisPerTick);
         
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Kidneys:: GNG " + this.gngPerTick);
         
-        body.time_stamp();
+        this.body.time_stamp();
         console.log("Kidneys:: Excertion " + this.excretionPerTick);
     }
     
