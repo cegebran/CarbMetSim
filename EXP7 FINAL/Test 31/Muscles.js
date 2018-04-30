@@ -4,20 +4,13 @@
 
 //import org.apache.commons.math3.distribution.PoissonDistribution;
 
-// import enums.BodyOrgan;
-// Need to import java libraries in to Js
-// Need to see line 175
-
-
 class Muscles {
-
     constructor(myBody) {
     	this.body = myBody;
     	this.glycogenMax_ = 0.4*(this.body.bodyWeight_)*15000.0; //40% of body weight is muscles
         this.glycogen = this.glycogenMax_;
         this.glucose = 0;
-        this.volume_ = 1;
-        // Frayn Chapter 9
+        this.volume_ = 10;
         
         this.bAAToGlutamine_ = 0;
         
@@ -32,157 +25,206 @@ class Muscles {
         this.Glut4VMAX_ = 20.0; //mg per kg per minute
         
         this.glucoseOxidationFraction_ = 0.5;
+        
+        this.glucoseAbsorbedPerTick;
+        this.glycogenSynthesizedPerTick;
+        this.glycogenBreakdownPerTick;
+        this.oxidationPerTick;
+        this.glycogenOxidizedPerTick;
+        this.glycolysisPerTick;
     }
     
     processTick() {
+        var rand__ = poissonProcess.sample(100);
         
-      
+        var glycolysisMin__ = poissonProcess.sample(1000.0 * this.glycolysisMin_);        
+        
+        var basalAbsorption__ = poissonProcess.sample(1000.0 * this.basalGlucoseAbsorbed_);
+        
+        var Glut4VMAX__ = poissonProcess.sample(1000.0 * this.Glut4VMAX_);
+        
+        var baaToGlutamine__ = poissonProcess.sample(1000.0 * this.bAAToGlutamine_);
+        
+        this.glucoseAbsorbedPerTick = 0;
+        this.glycogenSynthesizedPerTick = 0;
+        this.glycogenBreakdownPerTick = 0;
+        this.glycogenOxidizedPerTick = 0;
+        this.oxidationPerTick = 0;
         
         var x; // to hold the random samples
-        var totalAbsorption = 0;
-        var toGlycolysis = 0;
-        // Now do the real work
+        var currEnergyNeed = this.body.currentEnergyExpenditure();
 
         if( this.body.isExercising() ) {
-   
-            x =  poissonProcess.sample(100);
-            var glucoseConsumed = 0.1*(this.x/100.0)*1000.0*(this.body.currEnergyExpenditure)/4.0; // in milligrams
-            console.log("Muscle removing glucose from blood " + glucoseConsumed);
-            this.body.blood.removeGlucose(glucoseConsumed);
+            x =  rand__;
+            this.oxidationPerTick = .1 * (x/100) * 1000 * (currEnergyNeed/4);
+        }
+        
+        if(this.glucose >= this.oxidationPerTick){
+            this.glucose -= this.oxidationPerTick;
+        }
+        else{
+            var g = this.oxidationPerTick - this.glucose;
+            this.glucose = 0;
+            this.body.blood.removeGlucose(g);
+            this.glucoseAbsorbedPerTick += g;
+        }
             
-            var glycogenShare;
-            var fatShare;
-            var intensity = this.body.exerciseTypes.get(body.currExercise).intensity_;
-            if( intensity >= 6.0 ) {
-                glycogenShare = 0.3; // for MET 6 and above, 30% of energy comes from glycogen 
-                fatShare = 0.4;
-            } else {
-                    if( intensity < 3.0 ) {
-                        glycogenShare = 0;
-                        fatShare = 0.9;
-                    } else {
-                        glycogenShare = 0.3*(intensity - 3.0 )/3.0;
-                        fatShare = 0.9 -0.5*(intensity - 3.0)/3.0;
-                    }
-            }
-            x = poissonProcess.sample(100);
-            var glycogenConsumed = glycogenShare*(x/100.0)*1000.0*(this.body.currEnergyExpenditure)/4.0; // in milligrams
-            var energyFromFat = fatShare*(x/100.0)*(this.body.currEnergyExpenditure); // in kcal
-            
-            this.glycogen -= glycogenConsumed;
-            this.body.adiposeTissue.consumeFat(energyFromFat);
-            
-            var glycolysisShare;
-            
-            if( intensity < 18.0 ) {
-                x = poissonProcess.sample(100.0*this.glycolysisMin_);
-                x = x*(this.body.bodyWeight_)/100.0;
-                
-                if( x > this.glycolysisMax_*(this.body.bodyWeight_))
-                    x = this.glycolysisMax_*(this.body.bodyWeight_);
-                
-                this.glycolysisShare = x + ((intensity-1.0)/17.0)* ( (this.glycolysisMax_*(this.body.bodyWeight_)) - x);
-            } else glycolysisShare = this.glycolysisMax_*(this.body.bodyWeight_);
-            
-            this.glycogen -= glycolysisShare;
-            this.body.blood.lactate += glycolysisShare;
-        } else {
-            x =  poissonProcess.sample(100.0*this.basalGlucoseAbsorbed_);
-            x = x*(this.body.bodyWeight_)/100.0;
-            
-            this.body.blood.removeGlucose(x);
-            
-            this.glycogen += x;
-            if(this.glycogen > this.glycogenMax_)
+        var glycogenShare;
+        var intensity = this.body.exerciseTypes[this.body.currExercise].intensity;
+        
+        if(intensity >= 6){
+            glycogenShare = .3;
+        }
+        else{
+            if( intensity < 3.0 )
             {
-                this.glucose += this.glycogen - this.glycogenMax_;
-                this.glycogen = this.glycogenMax_;
+                glycogenShare = 0;
+            }
+            else
+            {
+                glycogenShare = 0.3*(intensity - 3.0 )/3.0;
+            }
+        }
+        
+        x = rand__;
+        this.glycogenOxidizedPerTick = glycogenShare * (x/100) * 1000 * (currEnergyNeed/4);
+        
+        this.glycogen -= this.glycogenOxidizedPerTick;
+        this.glycogenBreakdownPerTick += this.glycogenOxidizedPerTick;
+        
+        if(intensity < 18){
+            x = glycolysisMin__;
+            x = x * this.body.bodyWeight_ / 1000;
+            
+            if(x > this.glycolysisMax_ * this.body.bodyWeight_){
+                x = this.glycolysisMax_ * this.body.bodyWeight_;
             }
             
-            totalAbsorption = x;
-           
+            this.glycolysisPerTick = x + ((intensity - 1) / 17) * ((this.glycolysisMax_ + this.body.bodyWeight_) - x);
+        }
+        else{
+            this.glycolysisPerTick = this.glycolysisMax_ * this.body.bodyWeight_;
+        }
+        
+        this.glycogen -= this.glycolysisPerTick;
+        this.glycogenBreakdownPerTick += this.glycolysisPerTick;
+        this.body.blood.lactate += this.glycolysisPerTick;
+        
+        var kcalgenerated = ((this.oxidationPerTick + this.glycogenOxidizedPerTick) * .004) + (this.glycolysisPerTick * .004/15);
+        
+        if(kcalgenerated < currEnergyNeed){
+            this.body.adiposeTissue.consumeFat(currEnergyNeed - kcalgenerated);
+        }
+        
+        else{
+            x = basalAbsorption__;
+            x = x * this.body.bodyWeight_ / 1000;
+            
+            this.body.blood.removeGlucose();
+            this.glucoseAbsorbedPerTick = x;
+            this.glucose += x;
+            
             var bgl = this.body.blood.getBGL();
-            var glMuscles = this.glucose/this.volume_;
-            var diff = bgl-glMuscles;
+            var glMuscles = this.glucose / this.volume_;
+            var diff = bgl - glMuscles;
             
-            var scale = (1.0 - this.body.insulinResistance_)*(this.body.blood.insulin);
-            
+            var scale = 1 - this.body.insulinResistance_ * this.body.insulin;
             var g;
             
-            if( diff > 0 )
-            {
-                x = poissonProcess.sample(100.0*this.Glut4VMAX_);
-                x = x*(this.body.bodyWeight_)/100.0;
-                g = scale*x*diff/(diff + this.Glut4Km_);
-
-                this.body.blood.removeGlucose(g);
-                x = this.glycogen;
-                this.glycogen += (1.0 - this.glucoseOxidationFraction_)*g;
-                totalAbsorption += (1.0 - this.glucoseOxidationFraction_)*g;
+            if(diff > 0){
+                x = Glut4VMAX__;
+                x = x * this.body.bodyWeight_ / 1000;
+                g = scale * x * diff / (diff + this.Glut4Km_);
                 
-                if(this.glycogen > this.glycogenMax_)
-                {
-                    this.glucose += this.glycogen - this.glycogenMax_;
-                    this.glycogen = this.glycogenMax_;
-                }
+                this.body.blood.removeGlucose(g);
+                this.glucoseAbsorbedPerTick += g;
+                this.glucose += g;
             }
             
-        
-            scale = (1.0 - this.body.insulinResistance_)*(this.body.blood.insulin);
+            scale = 1 - this.body.insulinResistance_ * this.body.blood.insulin;
             
-            x = poissonProcess.sample(100.0*this.glycolysisMin_);
-            x = x*(this.body.bodyWeight_)/100.0;
+            x = glycolysisMin__;
+            x = x * this.body.bodyWeight_ / 1000;
             
-            if( x > this.glycolysisMax_*(this.body.bodyWeight_))
-                x = this.glycolysisMax_*(this.body.bodyWeight_);
+            if(x > this.glycolysisMax_ * this.body.bodyWeight_){
+                x = this.glycolysisMax_ * this.body.bodyWeight_;
+            }
             
-            toGlycolysis = x + scale* ( (this.glycolysisMax_*(this.body.bodyWeight_)) - x);
-            g = toGlycolysis;
+            this.glycolysisPerTick = x + scale * (this.glycolysisMax_ * this.body.bodyWeight_ - x);
             
-            if( g <= this.glucose ) {
+            g = this.glycolysisPerTick;
+            
+            if(g <= this.glucose){
                 this.glucose -= g;
-		        this.body.blood.lactate += g;
-            } else {
-            	g -= this.glucose;
+                this.body.blood.lactate += g;
+            }
+            else{
+                g -= this.glucose;
                 this.body.blood.lactate += this.glucose;
                 this.glucose = 0;
                 
-                if( this.glycogen >= g )
-                {
+                if(this.glycogen >= g){
                     this.glycogen -= g;
                     this.body.blood.lactate += g;
+                    this.glycogenBreakdownPerTick += g;
                 }
-                else
-                {
+                else{
                     this.body.blood.lactate += this.glycogen;
-                    toGlycolysis = toGlycolysis -g + this.glycogen;
+                    this.glycolysisPerTick = this.glycolysisPerTick - g + this.glycogen;
+                    this.glycogenBreakdownPerTick += this.glycogen;
                     this.glycogen = 0;
                 }
             }
-            //System.out.println("After glycolysis, muscle glycogen " + glycogen + " mg, blood lactate "
-            //+ body.blood.lactate + " mg, g " + g + " mg");
             
-            // consume fat for 90% of the energy needs during resting state
-            x = poissonProcess.sample(100);
-            var energyFromFat = 0.9*(x/100.0)*(this.body.currEnergyExpenditure); // in kcal
-            this.body.adiposeTissue.consumeFat(energyFromFat);
+            this.oxidationPerTick = .5 * this.glucose;
+            this.glucose *= .5;
+            
+            if(this.glucose > 0){
+                g = this.glucose;
+                
+                if(this.glycogen + g > this.glycogenMax_){
+                    g = this.glycogenMax_ - this.glycogen;
+                }
+                this.glycogen += g;
+                this.glycogenSynthesizedPerTick += g;
+                this.glucose -= g;
+            }
+            
+            var kcalgenerated = (this.oxidationPerTick * .004) + (this.glycolysisPerTick * .004 / 15);
+            
+            if(kcalgenerated < currEnergyNeed){
+                this.body.adiposeTissue.consumeFat(currEnergyNeed-kcalgenerated);
+            }
         }
         
-        if( this.glycogen < 0 ) {
+        if(this.glycogen < 0){
+            this.body.time_stamp();
             console.log("Glycogen went negative");
-            System.exit(-1); /// NEED TO SEE This
         }
         
-        //Muscles generate glutamine from branched amino acids.
-        if( this.body.blood.branchedAminoAcids > this.bAAToGlutamine_ ) {
-            this.body.blood.branchedAminoAcids -= this.bAAToGlutamine_;
-            this.body.blood.glutamine += this.bAAToGlutamine_;
-        } else {
-            this.body.blood.glutamine += this.body.blood.branchedAminoAcids;
-            this.body.blood.branchedAminoAcids = 0;
-        }
-        console.log("Muscles Working");
+        this.body.time_stamp();
+        console.log("Muscles:: GlucoseAbsorbed" + this.glucoseAbsorbedPerTick);
         
+        this.body.time_stamp();
+        console.log("Muscles:: GlycogenSynthesis" + this.glycogenSynthesizedPerTick);
+        
+        this.body.time_stamp();
+        console.log("Muscles:: GlycogenBreakdown" + this.glycogenBreakdownPerTick);
+        
+        this.body.time_stamp();
+        console.log("Muscles:: glycogen" + this.glycogen);
+        
+        this.body.time_stamp();
+        console.log("Muscles:: Oxidation" + this.oxidationPerTick);
+        
+        this.body.time_stamp();
+        console.log("Muscles:: GlycogenOxidation" + this.glycogenOxidizedPerTick);
+        
+        this.body.time_stamp();
+        console.log("Muscles:: Glycolysis" + this.glycolysisPerTick); 
+        
+        this.body.time_stamp();
+        console.log("Muscles:: Glucose" + this.glucose); 
     }
    
     setParams() {
