@@ -26,7 +26,7 @@ class AdiposeTissue{
         }
         */
         
-        //body.time_stamp();
+        //this.body.time_stamp();
         //console.log(" BodyWeight: " + this.body.bodyWeight_);
 	}
 
