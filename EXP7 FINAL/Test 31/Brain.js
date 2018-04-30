@@ -1,6 +1,6 @@
 class Brain{
     constructor(myBody){
-        this.glucoseOxidized_ = 1.08;
+        this.glucoseOxidized_ = 83.333;
         this.glucoseToAlanine_ = 0;
         this.bAAToGlutamine_ = 0;
         this.body = myBody;
@@ -10,7 +10,7 @@ class Brain{
     processTick() {
         var glucoseOxidized__ = poissonProcess.sample(1000.0 * this.glucoseOxidized_);
         
-        var g = (glucoseOxidized__)/1000;
+        var g = glucoseOxidized__ / 1000;
         this.oxidationPerTick = g;
         this.body.blood.removeGlucose(g + this.glucoseToAlanine_);
         this.body.blood.alanine += this.glucoseToAlanine_;
@@ -26,7 +26,7 @@ class Brain{
         }
         
         this.body.time_stamp();
-        console.log("Brain Oxidation" + this.bAAToGlutamine_ );
+        console.log("Brain Oxidation" + this.oxidationPerTick);
     }
 
     setParams(){
