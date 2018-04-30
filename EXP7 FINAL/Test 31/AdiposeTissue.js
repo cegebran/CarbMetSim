@@ -1,9 +1,4 @@
-// Import statements should be seen
-// Import from the body event should be seen
 class AdiposeTissue{
-	// Learn how to write the private variables
-
-
 	constructor(myBody){
 		this.body = myBody;
     	this.glucoseAbsorbed_ = 0;
@@ -13,6 +8,7 @@ class AdiposeTissue{
 	}
 
 	processTick(){
+        /*
         console.log(this.body.blood.getBGL());
 		if( this.body.blood.getBGL() < this.body.blood.normalGlucoseLevel_ ) {
             var lipolysis = this.body.insulinResistance_*this.lipolysisRate_;
@@ -28,12 +24,10 @@ class AdiposeTissue{
             this.body.blood.glutamine += this.body.blood.branchedAminoAcids;
             this.body.blood.branchedAminoAcids = 0;
         }
+        */
         
-        //System.out.println("Total Glucose Absorbed by Adipose Tissue " + totalGlucoseAbsorption);
-        //System.out.println("Glucose_Consumed_in_a_Minute_by_AdiposeTissue " + glucoseConsumedINaMinute);
-        
-        //SimCtl.time_stamp();
-        console.log(" BodyWeight: " + this.body.bodyWeight_);
+        //body.time_stamp();
+        //console.log(" BodyWeight: " + this.body.bodyWeight_);
 	}
 
 	setParams(){
@@ -51,23 +45,22 @@ class AdiposeTissue{
         // one gram of TAG has 9 kcal of energy
         //System.out.println("BodyWeight: Lipogenesis " + body.bodyWeight_ + " glucose " + glucoseInMG + " fat " + fat);
         this.body.bodyWeight_ -=  this.fat/1000.0;
-        this.fat += glucoseInMG*4.0/9000.0;
-        this.body.bodyWeight_ += this.fat/1000.0;
-        //System.out.println("BodyWeight: Lipogenesis " + body.bodyWeight_ + " glucose " + glucoseInMG + " fat " + fat);
+        this.fat += glucoseInMG * 4.0 / 9000.0;
+        this.body.bodyWeight_ += this.fat / 1000.0;
+        //console.log("BodyWeight: Lipogenesis " + this.body.bodyWeight_ + " glucose " + glucoseInMG + " fat " + this.fat);
     }
 
      consumeFat(kcal) {
     	this.body.bodyWeight_ -= this.fat/1000.0;
         this.fat -= this.kcal/9.0;
         this.body.bodyWeight_ += this.fat/1000.0;
-        console.log(kcal);
+        //console.log(kcal);
     }
 
       addFat(newFatInMG) {
     	 this.body.bodyWeight_ -= this.fat/1000.0;
     	 this.fat += newFatInMG/1000.0;
     	 this.body.bodyWeight_ += this.fat/1000.0;
-    	 //System.out.println("BodyWeight: addFat " + body.bodyWeight_ + " newfat " + newFatInMG);
+    	 //console.log("BodyWeight: addFat " + this.body.bodyWeight_ + " newfat " + newFatInMG);
     } 
-
 }
