@@ -27,7 +27,7 @@ class Liver {
         this.glycolysisToLactateFraction_ = 1; // by default glycolysis just generates all lactate
 
         // 2.5 micromol per kg per minute = 2.5*180.1559/1000 mg per kg per minute = 0.45038975 mg per kg per minute
-        // default gng rate is 5 micromol per kg per minute
+        // default rate is 5 micromol per kg per minute
         this.gluconeogenesisRate_ = 2.0*0.45038975;
         this.gngFromLactateRate_ = 9 * this.gluconeogenesisRate_; //by default
 
@@ -190,7 +190,8 @@ class Liver {
         scale = 1 - this.body.blood.insulin * (1 - this.body.insulinResistance_);
         x = gngRate__;
         
-        var gng = this.body.blood.consumeGNGSubstrates(gng);
+        var gng = x * scale * (this.body.bodyWeight_ / 1000);
+        gng = this.body.blood.consumeGNGSubstrates(gng);
         
         if( gng > 0 )
         {
