@@ -1,10 +1,7 @@
 //package sim;
 //import java.util.Map.Entry;
 
-//import enums.BodyOrgan;
-
 class Heart {
-
     constructor(mybody) {
     	this.body = mybody;
         this.lactateOxidized_ = 0;
@@ -16,12 +13,11 @@ class Heart {
         this.oxidationPerTick;
     }
     
-    processTick() {
+    processTick()
+    {
+        var basalGlucoseAbsorbed__ = poissonProcess.sample(1000.0 * this.basalGlucoseAbsorbed_);
         
-        var basalAbsorption = poissonProcess.sample(this.basalGlucoseAbsorbed_);
-        this.body.blood.removeGlucose(basalAbsorption);
-        
-        //var lactateOxidized__ = poissonProcess(1000 * this.lactateOxidized_);
+        var basalAbsorption = basalGlucoseAbsorbed__ / 1000;
         
         this.body.blood.removeGlucose(basalAbsorption);
         
@@ -38,16 +34,16 @@ class Heart {
         this.oxidationPerTick += g;
         
         this.body.time_stamp();
-
+        console.log("Heart:: Oxidation " + this.oxidationPerTick);
+        
         /*
+        var lactateOxidized = lactateOxidized__ / 1000;
         if( this.body.blood.lactate >= this.lactateOxidized_ ) {
             this.body.blood.lactate -= this.lactateOxidized_;
         } else {
             this.body.blood.lactate = 0;
         }
         */
-        console.log("Heart:: Oxidation " + this.oxidationPerTick);
-        
     }
     setParams() {
     for(var [key, value] of this.body.metabolicParameters.get(this.body.bodyState.state).get(BodyOrgan.ADIPOSE_TISSUE.value).entries()) {
