@@ -1,5 +1,4 @@
  class PortalVein {
-    	
         constructor(body_) {
         	this.body = body_;
             this.glucose = 0; //mg
@@ -14,7 +13,8 @@
             this.body.blood.removeGlucose(glucoseFromBlood);
             this.glucose += glucoseFromBlood;
             
-            //SimCtl.time_stamp();
+            //this.body.time_stamp();
+            //console.log("PortalVein:: " + this.glucose + " glucose/fluidVolume_ " + this.branchedAA + " " + this.unbranchedAA);
         }
         
         setParams() {
@@ -27,8 +27,8 @@
         
         getConcentration() {
         	var gl = this.glucose/this.fluidVolume_;
-            //SimCtl.time_stamp();
-            //System.out.println("GL in Portal Vein: " + gl);
+            //this.body.time_stamp();
+            //console.log("GL in Portal Vein: " + gl);
          
             return gl;
         }
@@ -53,8 +53,8 @@
         addAminoAcids(aa) {
         	this.branchedAA += 0.15*aa;
             this.unbranchedAA += 0.85*aa;
-            //SimCtl.time_stamp();
-            console.log(" PortalVein: bAA " + this.branchedAA + ", uAA " + this.unbranchedAA);
+            //this.body.time_stamp();
+            //console.log(" PortalVein: bAA " + this.branchedAA + ", uAA " + this.unbranchedAA);
         }
         
         releaseAminoAcids() {
@@ -64,12 +64,10 @@
             this.unbranchedAA = 0;
             this.body.blood.branchedAminoAcids += this.branchedAA;
             this.branchedAA = 0;
-               
 
             // who consumes these amino acids from blood other than liver?
             // brain consumes branched amino acids
         }
-
     }
 
 
