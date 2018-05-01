@@ -1,6 +1,0 @@
-1 jogging 50
-2 curls 75
-3 walking 20
-4 swim 60
-5 benchPress 80
-6 lunges 40
