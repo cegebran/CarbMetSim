@@ -1515,7 +1515,7 @@ class HumanBody{
     }
 
     readEvents(completedActivitiesArray){
-        
+
     }
 
     currentEnergyExpenditure(){
@@ -1689,6 +1689,24 @@ function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_ty
     var userId = firebase.auth().currentUser.uid;
 
     var newActivitySequenceKey = firebase.database().ref().child('activitySequences').push().key;
+
+
+    var d = new Date();
+    var month = d.getMonth() + 1;
+    var dateString = month + "/" + d.getDate() + "/" + d.getFullYear();
+
+    var dateObj = {
+        dateCreated: dateString,
+        endDay: endDay,
+        endHour: endHour,
+        endMinute: endMinute
+    };
+
+    var exerciseSubtype = {};
+    exerciseSubtype['/users/' + userId + '/activitySequences/' + newActivitySequenceKey] = dateObj;
+
+    firebase.database().ref().update(exerciseSubtype);
+
 
     //for each element
     var i = 1;
@@ -1929,8 +1947,52 @@ exports.new_simulation_get = function(req, res) {
                 }
         
                 exerciseActivitiesArray = exerciseKeyDataArray;
-                   
-                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray});
+
+                var activitySequenceKeyArray = [];
+                var activitySequenceDataArray = [];
+                var activitySequenceArray = [];
+
+                var baseName = "Create New Activity Sequence";
+                var baseActivities = [];
+                var activitySequenceBase = {name: baseName, activities: baseActivities};
+                activitySequenceDataArray.push(activitySequenceBase);
+
+                var userId = firebase.auth().currentUser.uid;
+                var query = firebase.database().ref('/users/' + userId + '/activitySequences').orderByKey();
+                query.once('value').then(function(snapshot) {
+                    snapshot.forEach(function(childSnapshot) {
+                        var item = childSnapshot.val();
+                        item.key = childSnapshot.key;
+
+                        var date = item.dateCreated;
+
+                        var activitiesInSequence = [];
+                        childSnapshot.forEach(function(doubleChildSnapshot){
+                            var item1 = doubleChildSnapshot.val();
+                                item1.key = doubleChildSnapshot.key;
+                                activitiesInSequence.push(item1);
+                        });
+
+                        var exerciseCt = 0;
+                        var foodCt = 0;
+                        for(p = 0; p < activitiesInSequence.length; p++){
+                            if(activitiesInSequence[p].activity_type == "Food"){
+                                foodCt++;
+                            }
+                            if(activitiesInSequence[p].activity_type == "Exercise"){
+                                exerciseCt++;
+                            }
+                        }
+
+                        var sequenceName = "Created on: " + date + ", # Exercise Activities: " + exerciseCt + ", # Food Activities: " + foodCt;
+                        var newObj = {name: sequenceName, activities: activitiesInSequence};
+                        activitySequenceDataArray.push(newObj);
+                    });
+
+                    activitySequenceArray = activitySequenceDataArray;
+                       
+                    res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, simulations: activitySequenceArray});
+                });
             });
         });
     } else {
@@ -2103,9 +2165,53 @@ exports.new_simulation_post = function(req, res) {
                 
                 writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, endDay, endHour, endMinute);
 
-                runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, req, res, endDay, endHour, endMinute);
+                //runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, req, res, endDay, endHour, endMinute);
 
-                res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray});
+                var activitySequenceKeyArray = [];
+                var activitySequenceDataArray = [];
+                var activitySequenceArray = [];
+
+                var baseName = "Create New Activity Sequence";
+                var baseActivities = [];
+                var activitySequenceBase = {name: baseName, activities: baseActivities};
+                activitySequenceDataArray.push(activitySequenceBase);
+
+                var userId = firebase.auth().currentUser.uid;
+                var query = firebase.database().ref('/users/' + userId + '/activitySequences').orderByKey();
+                query.once('value').then(function(snapshot) {
+                    snapshot.forEach(function(childSnapshot) {
+                        var item = childSnapshot.val();
+                        item.key = childSnapshot.key;
+
+                        var date = item.dateCreated;
+
+                        var activitiesInSequence = [];
+                        childSnapshot.forEach(function(doubleChildSnapshot){
+                            var item1 = doubleChildSnapshot.val();
+                                item1.key = doubleChildSnapshot.key;
+                                activitiesInSequence.push(item1);
+                        });
+
+                        var exerciseCt = 0;
+                        var foodCt = 0;
+                        for(p = 0; p < activitiesInSequence.length; p++){
+                            if(activitiesInSequence[p].activity_type == "Food"){
+                                foodCt++;
+                            }
+                            if(activitiesInSequence[p].activity_type == "Exercise"){
+                                exerciseCt++;
+                            }
+                        }
+
+                        var sequenceName = "Created on: " + date + ", # Exercise Activities: " + exerciseCt + ", # Food Activities: " + foodCt;
+                        var newObj = {name: sequenceName, activities: activitiesInSequence};
+                        activitySequenceDataArray.push(newObj);
+                    });
+
+                    activitySequenceArray = activitySequenceDataArray;
+                       
+                    res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, simulations: activitySequenceArray});
+                });
             });
         });
     });
