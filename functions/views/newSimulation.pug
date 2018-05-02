@@ -957,8 +957,6 @@ block content
                     endTimeValue = calculateTimeValue(dayValue, hourValue, minuteValue);
                 }
 
-                alert(endTimeValue);
-
                 while(deletedF_notDeletedT[i] != null){
                     var element = i + 1;
 
@@ -998,14 +996,9 @@ block content
 
                         if((endTimeCompleted == true) && (activityTimeCompleted == true)){
                             var dayValue = parseInt(dayArray[i]);
-                            alert(dayValue);
                             var hourValue = parseInt(hourArray[i]);
-                            alert(hourValue);
                             var minuteValue = parseInt(minuteArray[i]);
-                            alert(minuteValue);
                             var totalTimeValue = calculateTimeValue(dayValue, hourValue, minuteValue);
-
-                            alert(totalTimeValue);
 
                             if((totalTimeValue >= endTimeValue) && (endTimeGood == true)){
                                 issues.push("- The end time for the simulation must be later than all the activity times");
