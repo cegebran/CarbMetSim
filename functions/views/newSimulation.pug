@@ -49,7 +49,7 @@ block content
 
                 label(id='dayNumberLabel0') Date (Day:Hour:Minute) : 
                 div.form-inline(id='dayInLine0')
-                    input(type='number', min='0', name='dayNumberInput0', id='dayNumberInput0', onkeypress="return isNumberKey(event)", oninput='dayChange(this.value, this)')
+                    input(type='number', min='1', name='dayNumberInput0', id='dayNumberInput0', onkeypress="return isNumberKey(event)", oninput='dayChange(this.value, this)')
                     label(id='firstSplit') :
                     select#hour0.form-control(type='select', placeholder='', name='hourSelect0', required='false', style='width:200px', onchange='hourChange(this.value, this)')
                         for hour in hours
@@ -75,7 +75,7 @@ block content
 
         label(id='endTimeLabel') Simulation End Time (Day:Hour:Minute) :
         div.form-inline(id='simEndTime')
-            input(type='number', min='0', name='endTimeDayInput', id='endTimeDayInput', onkeypress="return isNumberKey(event)")
+            input(type='number', min='1', name='endTimeDayInput', id='endTimeDayInput', onkeypress="return isNumberKey(event)")
             label(id='break1') :
             select#endTimeHourSelect.form-control(type='select', placeholder='', name='endTimeHourSelect', required='false', style='width:200px')
                 for hour in hours
@@ -338,7 +338,7 @@ block content
                     document.getElementById("dayInLine" + i).childNodes[2].value = hour;
                     document.getElementById("dayInLine" + i).childNodes[4].value = minute;
 
-                    hourArray[i - 1] = day;
+                    hourArray[i - 1] = hour;
                     minuteArray[i - 1] = minute;
                     dayArray[i - 1] = day;
 
@@ -894,6 +894,12 @@ block content
                 dayArray[number - 1] = value;
             }
 
+            function calculateTimeValue(day, hour, minute){
+                var dayValue = (day - 1) * 1440;
+                var hourValue = hour * 60;
+                return (dayValue + hourValue + minute);
+            }
+
             function validateForm(){
                 var i = 0;
                 var issues = [];
@@ -915,9 +921,14 @@ block content
                     }
                 }
 
+                var endTimeCompleted = true;
+
+                var endTimeGood = true;
+
                 if(document.getElementById("endTimeDayInput").value == ""){
                     issues.push("- Simulation end day must be entered");
                     document.getElementById("endTimeDayInput").style.borderColor = "red";
+                    endTimeCompleted = false;
                 }else{
                     document.getElementById("endTimeDayInput").style.borderColor = "inherit";
                 }
@@ -925,6 +936,7 @@ block content
                 if(document.getElementById("endTimeHourSelect").value == "Hour"){
                     issues.push("- Simulation end hour must be selected");
                     document.getElementById("endTimeHourSelect").style.borderColor = "red";
+                    endTimeCompleted = false;
                 }else{
                     document.getElementById("endTimeHourSelect").style.borderColor = "inherit";
                 }
@@ -932,9 +944,20 @@ block content
                 if(document.getElementById("endTimeMinuteSelect").value == "Minute"){
                     issues.push("- Simulation end minute must be selected");
                     document.getElementById("endTimeMinuteSelect").style.borderColor = "red";
+                    endTimeCompleted = false;
                 }else{
                     document.getElementById("endTimeMinuteSelect").style.borderColor = "inherit";
                 }
+
+                var endTimeValue = 0;
+                if(endTimeCompleted == true){
+                    var dayValue = parseInt(document.getElementById("endTimeDayInput").value);
+                    var hourValue = parseInt(document.getElementById("endTimeHourSelect").value);
+                    var minuteValue = parseInt(document.getElementById("endTimeMinuteSelect").value);
+                    endTimeValue = calculateTimeValue(dayValue, hourValue, minuteValue);
+                }
+
+                alert(endTimeValue);
 
                 while(deletedF_notDeletedT[i] != null){
                     var element = i + 1;
@@ -947,9 +970,12 @@ block content
                     }
 
                     if(deletedF_notDeletedT[i] == true){
+
+                        var activityTimeCompleted = true;
                         if(dayArray[i] == ""){
                             issues.push("- Activity Entry #" + numberToDisplay + " is missing the day entry");
                             document.getElementById("dayInLine" + element).childNodes[0].style.borderColor = "red";
+                            activityTimeCompleted = false;
                         }else{
                             document.getElementById("dayInLine" + element).childNodes[0].style.borderColor = "inherit";
                         }
@@ -957,6 +983,7 @@ block content
                         if(hourArray[i] == "Hour"){
                             issues.push("- Activity Entry #" + numberToDisplay + " is missing the month selection");
                             document.getElementById("dayInLine" + element).childNodes[2].style.borderColor = "red";
+                            activityTimeCompleted = false;
                         }else{
                             document.getElementById("dayInLine" + element).childNodes[2].style.borderColor = "inherit";
                         }
@@ -964,8 +991,26 @@ block content
                         if(minuteArray[i] == "Minute"){
                             issues.push("- Activity Entry #" + numberToDisplay + " is missing the minute selection");
                             document.getElementById("dayInLine" + element).childNodes[4].style.borderColor = "red";
+                            activityTimeCompleted = false;
                         }else{
                             document.getElementById("dayInLine" + element).childNodes[4].style.borderColor = "inherit";
+                        }
+
+                        if((endTimeCompleted == true) && (activityTimeCompleted == true)){
+                            var dayValue = parseInt(dayArray[i]);
+                            alert(dayValue);
+                            var hourValue = parseInt(hourArray[i]);
+                            alert(hourValue);
+                            var minuteValue = parseInt(minuteArray[i]);
+                            alert(minuteValue);
+                            var totalTimeValue = calculateTimeValue(dayValue, hourValue, minuteValue);
+
+                            alert(totalTimeValue);
+
+                            if((totalTimeValue >= endTimeValue) && (endTimeGood == true)){
+                                issues.push("- The end time for the simulation must be later than all the activity times");
+                                endTimeGood = false;
+                            }
                         }
 
                         if(food_exercise[i] == "Exercise"){
@@ -1083,6 +1128,16 @@ block content
                         }
                     }
                     i++;
+                }
+
+                if(endTimeGood == false){
+                    document.getElementById("endTimeDayInput").style.borderColor = "red";
+                    document.getElementById("endTimeHourSelect").style.borderColor = "red";
+                    document.getElementById("endTimeMinuteSelect").style.borderColor = "red";
+                }else{
+                    document.getElementById("endTimeDayInput").style.borderColor = "inherit";
+                    document.getElementById("endTimeHourSelect").style.borderColor = "inherit";
+                    document.getElementById("endTimeMinuteSelect").style.borderColor = "inherit";
                 }
                 
                 if(issues.length == 0){
