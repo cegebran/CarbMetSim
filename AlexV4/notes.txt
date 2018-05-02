@@ -1,0 +1,28 @@
+notes
+AdiposeTissue -
+Blood -
+Brain - 
+Heart - 
+Intestine - 
+Kidney - 
+Liver - 
+Muscles - 
+PortalVein - 
+Stomach - 
+
+
+Problems
+
+
+Intestine
+
+Line 203 - Intestine:: glLumen: 0 glEntero NaN glPortal NaN, activeAbsorption 0 passiveAbsorption 0
+Line 303 - Intestine:: Glycolysis NaN
+
+
+fire_event()
+
+grab fire element in queue
+
+checks if element's fire time is greater than body's ticks
+	if true, return -1
