@@ -118,7 +118,7 @@ class Liver {
         
         //glycogen breakdown (depends on insulin and glucose level)
         
-        scale = 1 - (this.body.blood.insulin)*(1 - (this.body.insulinResistance_));
+        scale = (1 - (this.body.blood.insulin))*(1 - (this.body.insulinResistance_));
         glInLiver = this.glucose/this.fluidVolume_;
         
         if( glInLiver > this.normalGlucoseLevel_ ) 
@@ -169,7 +169,7 @@ class Liver {
     
         //gluconeogenesis. Depends on insulin level and on substrate concentration.
 
-        scale = 1 - (this.body.blood.insulin)*(1 - (this.body.insulinResistance_));
+        scale = (1 - (this.body.blood.insulin))*(1 - (this.body.insulinResistance_));
         x = poissonProcess.sample(x*this.gluconeogenesisRate_);
         var gng = x *scale * (this.body.bodyWeight)/1000.0;
         gng = this.body.blood.consumeGNGSubstrates(gng);
@@ -217,7 +217,7 @@ class Liver {
         {
             var diff = glInLiver - bgl;
             x = poissonProcess.sample(x*this.Glut2VMAX_);
-            x *= (body->bodyWeight)/1000.0;
+            x *= (bodybodyWeight)/1000.0;
             var g = x*diff/(diff + this.Glut2Km_);
         
             if( g > this.glucose ) {
