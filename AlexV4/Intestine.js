@@ -217,7 +217,7 @@ class Intestine{
         
         var glutamineOxidationRate__ = poissonProcess.sample(1000.0 * this.glutamineOxidationRate_);
         
-        var absorbedAA = (1.0) * poissonProcess.sample(this.aminoAcidsAbsorptionRate__)/1000.0;
+        var absorbedAA = (1.0) * poissonProcess.sample(aminoAcidsAbsorptionRate__)/1000.0;
         
 
         if(this.protein < absorbedAA )
