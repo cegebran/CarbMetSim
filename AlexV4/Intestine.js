@@ -229,7 +229,7 @@ class Intestine{
         this.protein -= absorbedAA;
         
         //Glutamine is oxidized
-        var g = (1.0) * poissonProcess.sample(this.glutamineOxidationRate__)/1000;
+        var g = (1.0) * poissonProcess.sample(glutamineOxidationRate__)/1000;
         
         if(this.body.blood.glutamine < g)
         {
