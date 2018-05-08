@@ -7,6 +7,9 @@ var poissonProcess = require('poisson-process');
 const TICKS_PER_DAY = 24 * 60;
 const TICKS_PER_HOUR = 60;
 
+// Organ shared Values
+var normalGlucoseLevel_ = 100; //mg/dl
+
 // Priority Queue Start
 class QElement {
     constructor(firetime, activityID, subID, howmuch)
@@ -240,7 +243,7 @@ class Blood{	////////////////////===============================================
     
         this.glycolysisToLactate_ = 1;
     
-        this.normalGlucoseLevel_ = 100; //mg/dl
+        //this.normalGlucoseLevel_ = 100; //mg/dl
         this.highGlucoseLevel_ = 200; //mg/dl
         this.minGlucoseLevel_ = 40; //mg/dl
         this.highLactateLevel_ = 4053.51; // mg
@@ -289,10 +292,10 @@ class Blood{	////////////////////===============================================
         if(bgl >= this.highGlucoseLevel_){
             this.insulin = this.body.insulinPeakLevel_;
         }else{
-            if(bgl < this.normalGlucoseLevel_){
+            if(bgl < normalGlucoseLevel_){
                 this.insulin = 0;
             }else{
-                this.insulin = (this.body.insulinPeakLevel_)*(bgl - this.normalGlucoseLevel_)/(this.highGlucoseLevel_ - this.normalGlucoseLevel_);
+                this.insulin = (this.body.insulinPeakLevel_)*(bgl - normalGlucoseLevel_)/(this.highGlucoseLevel_ - normalGlucoseLevel_);
             }
         }
     
@@ -333,7 +336,7 @@ class Blood{	////////////////////===============================================
                 case "glycationProbSlope_" : { this.glycationProbSlope_ = value; break; }
                 case "glycationProbConst_" : { this.glycationProbConst_ = value; break; }
                 case "minGlucoseLevel_" : { this.minGlucoseLevel_ = value; break; }
-                case "normalGlucoseLevel_" : { this.normalGlucoseLevel_ = value; break; }
+                case "normalGlucoseLevel_" : { normalGlucoseLevel_ = value; break; }
                 case "highGlucoseLevel_" : { this.highGlucoseLevel_ = value; break; }
                 case "highLactateLevel_" : { this.highLactateLevel_ = value; break; }
                 case "glycolysisMin_" : { this.glycolysisMin_ = value; break; }
@@ -425,6 +428,7 @@ class Brain{
         if(retValue == -1){
             return -1;
         }
+
         this.body.blood.alanine += this.glucoseToAlanine_;
 
         //Brain generate glutamine from branched amino acids.
@@ -515,10 +519,10 @@ class Heart{
 // Intestine Start
 class Chyme{
     constructor(){
-        this.origRAG = "";
-        this.origSAG = "";
-        this.RAG = "";
-        this.SAG = "";
+        this.origRAG = 0;
+        this.origSAG = 0;
+        this.RAG = 0;
+        this.SAG = 0;
         this.ts = 0;
     }
 }
@@ -1083,7 +1087,7 @@ class Liver{
             for(var [key, value] of this.body.metabolicParameters.get(this.body.bodyState.state).get(BodyOrgan.LIVER.value).entries()){    		
                 switch (key) {
     			case "fluidVolume_" : { this.fluidVolume_ = key; break; }
-    			case "normalGlucoseLevel_" : { this.normalGlucoseLevel_ = key; break; }
+    			case "normalGlucoseLevel_" : { normalGlucoseLevel_ = key; break; }
     			case "Glut2Km_" : { this.Glut2Km_ = key; break; }
     			case "Glut2VMAX_" : { this.Glut2VMAX_ = key; break; }
     			case "glucoseToGlycogen_" : { this.glucoseToGlycogen_ = key; break; }
