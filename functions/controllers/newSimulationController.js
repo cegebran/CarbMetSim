@@ -168,8 +168,8 @@ class Blood{	////////////////////===============================================
         this.bin0--;
         if(this.bin0 < 0) this.bin0 = Blood.MAXAGE;
         //New RBCs take birth
-        this.AgeBins[bin0].RBCs = this.rbcBirthRate_;
-        this.AgeBins[bin0].glycatedRBCs = 0;
+        this.AgeBins[this.bin0].RBCs = this.rbcBirthRate_;
+        this.AgeBins[this.bin0].glycatedRBCs = 0;
     
         //console.log("New RBCs: " + AgeBins[bin0].RBCs);
         // Old (100 to 120 days old) RBCs die
@@ -728,7 +728,7 @@ class Intestine{
         
         var glutamineOxidationRate__ = poissonProcess.sample(1000.0 * this.glutamineOxidationRate_);
         
-        var absorbedAA = (1.0) * poissonProcess.sample(this.aminoAcidsAbsorptionRate__)/1000.0;
+        var absorbedAA = (1.0) * poissonProcess.sample(aminoAcidsAbsorptionRate__)/1000.0;
         
 
         if(this.protein < absorbedAA){
@@ -739,7 +739,7 @@ class Intestine{
         this.protein -= absorbedAA;
         
         //Glutamine is oxidized
-        var g = (1.0) * poissonProcess.sample(this.glutamineOxidationRate__)/1000;
+        var g = (1.0) * poissonProcess.sample(glutamineOxidationRate__)/1000;
         
         if(this.body.blood.glutamine < g){
                 this.body.blood.alanine += this.glutamineToAlanineFraction_*(this.body.blood.glutamine);
@@ -2007,7 +2007,7 @@ class HumanBody{
         console.log(this.elapsed_days() + ":" + this.elapsed_hours() + ":" + this.elapsed_minutes());
     }
     
-    processTick(){
+    processTick(simulationTickValuesArray, tick){
         var brainProcessTickRet = this.brain.processTick();
         if(brainProcessTickRet == -1){
             return -1;
@@ -2081,6 +2081,15 @@ class HumanBody{
             //}
         }
 
+        var bodyBGL = this.blood.getBGL();
+
+        var tickData ={
+            Tick: tick,
+            BGL: bodyBGL
+        };
+
+        simulationTickValuesArray.push(tickData);
+
         return 0;
     }
     
@@ -2140,18 +2149,17 @@ class HumanBody{
         }
     }
     
-    run_simulation(){
+    run_simulation(simulationTickValuesArray){
         var continueLoop = true;
         while(continueLoop == true){
             //keep looping until fire_event() returns -1
-            console.log("////////////////" + this.ticks);
             while(this.fire_event() == 1);
             
             if(this.fire_event() == -2){
                 continueLoop = false;
             }
 
-            var processTickRet = this.processTick();
+            var processTickRet = this.processTick(simulationTickValuesArray, this.ticks);
             if(processTickRet < 0){
                 continueLoop = false;
             }
@@ -2281,7 +2289,7 @@ function timeCalculation(dayInput0, hourSelect0, minuteSelect0){
     return totalReturn;
 }
 
-function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, req, res, endDay, endHour, endMinute, foodActivitiesArray, exerciseActivitiesArray){
+function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, req, res, endDay, endHour, endMinute, foodActivitiesArray, exerciseActivitiesArray, simulationTickValuesArray){
     var nextActivityTypeID = totalActivitiesInDb_1;
     var nextFoodTypeID = totalFoodTypesinDb_1;
     var nextExerciseTypeID = totalExerciseTypesinDb_1;
@@ -2368,7 +2376,7 @@ function runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoo
 
     humanBody.readEvents(completedActivitiesArray);
 
-    humanBody.run_simulation();
+    humanBody.run_simulation(simulationTickValuesArray);
 }
 
 function writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, endDay, endHour, endMinute){
@@ -2691,6 +2699,8 @@ exports.new_simulation_get = function(req, res) {
 };
 
 exports.new_simulation_post = function(req, res) {
+    var simulationTickValuesArray = [];
+
     var hourArray = [];
     var hourString = "Hour";
     var hourID = "Hour";
@@ -2851,7 +2861,7 @@ exports.new_simulation_post = function(req, res) {
                 
                 writeActivitySetToDatabaseArray(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, endDay, endHour, endMinute);
 
-                runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, req, res, endDay, endHour, endMinute, foodActivitiesArray, exerciseActivitiesArray);
+                runSimulationProgram(activity_type0, food_type0, exercise_type0, newFoodName0, newFoodServingSize0, newFoodFat0, newFoodProtein0, newFoodRAG0, newFoodSAG0, newExerciseName0, newExerciseIntensity0, foodQtyInput0, exerciseQtyInput0, activityDbArray, totalActivitiesInDb_1, totalExerciseTypesinDb_1, totalFoodTypesinDb_1, dayInput0, hourSelect0, minuteSelect0, deleted, req, res, endDay, endHour, endMinute, foodActivitiesArray, exerciseActivitiesArray, simulationTickValuesArray);
 
                 var activitySequenceKeyArray = [];
                 var activitySequenceDataArray = [];
@@ -2896,7 +2906,8 @@ exports.new_simulation_post = function(req, res) {
 
                     activitySequenceArray = activitySequenceDataArray;
                        
-                    res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, simulations: activitySequenceArray});
+                    //res.render('newSimulation', {activityTypes: activityTypesArray, foodTypes: foodActivitiesArray, exerciseTypes: exerciseActivitiesArray, hours: hourArray, minutes: minutesArray, simulations: activitySequenceArray});
+                    res.render('simulationResults', {tickDataArray: simulationTickValuesArray});
                 });
             });
         });
